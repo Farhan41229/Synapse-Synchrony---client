@@ -3,11 +3,12 @@ import CountUp from 'react-countup';
 
 const StatsCounter = ({ themeForegroundStyle }) => {
   const stats = [
-    { value: 85, label: 'Increased Revenue', suffix: '%' },
-    { value: 40, label: 'Better Yields', suffix: '%' },
-    { value: 95, label: 'Customer Satisfaction', suffix: '%' },
-    { value: 24, label: 'Expert Support', suffix: '/7' },
+    { value: 90, label: 'Student Engagement', suffix: '%' },
+    { value: 75, label: 'Academic Progress', suffix: '%' },
+    { value: 85, label: 'Wellness Improvement', suffix: '%' },
+    { value: 24, label: 'Mentor Support', suffix: '/7' },
   ];
+
 
   return (
     <div

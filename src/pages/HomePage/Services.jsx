@@ -1,66 +1,66 @@
 import React, { useEffect } from 'react';
 
-import marketplaceImage from '../../assets/Logo/marketplace.webp';
-import farmersImage from '../../assets/Logo/success.jpg';
+import communityImage from '../../assets/Logo/marketplace.webp';
+import wellnessImage from '../../assets/Logo/success.jpg';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import ServiceCard from './ServiceCard';
 import FeaturedShowcase from './FeaturedShowcase';
-import { Bell, CheckSquare, LineChart, Target } from 'lucide-react';
+import { Users, MessageCircle, Calendar, BarChart2 } from 'lucide-react';
 
 const services = [
   {
-    icon: CheckSquare,
-    title: 'Habit Creation',
+    icon: Users,
+    title: 'Community Connection',
     description:
-      'Add new habits to your daily routine and start building consistency and productivity.',
+      'Connect with peers, mentors, and communities to foster support and collaboration.',
     features: [
-      'Custom Habit Setup',
-      'Multiple Categories',
-      'Daily / Weekly Goals',
-      'Quick Add',
+      'Peer-to-peer Networking',
+      'Mentorship Opportunities',
+      'Study Groups',
+      'Community Events',
     ],
     color: 'bg-green-500',
   },
   {
-    icon: Bell,
-    title: 'Smart Reminders',
+    icon: MessageCircle,
+    title: 'Real-Time Messaging',
     description:
-      'Never miss a habit with intelligent notifications and scheduling options.',
+      'Engage in meaningful conversations and stay connected with real-time chat functionality.',
     features: [
-      'Daily Reminders',
-      'Push Notifications',
-      'Custom Schedules',
-      'Snooze / Repeat',
-    ],
-    color: 'bg-yellow-500',
-  },
-  {
-    icon: LineChart,
-    title: 'Progress Analytics',
-    description:
-      'Track your progress and visualize your performance with insightful charts and graphs.',
-    features: [
-      'Daily / Weekly Stats',
-      'Completion Charts',
-      'Streak Analysis',
-      'Habit Trends',
+      'Direct Messaging',
+      'Group Chats',
+      'Mentor Support',
+      'Instant Notifications',
     ],
     color: 'bg-blue-500',
   },
   {
-    icon: Target,
-    title: 'Streak Tracking',
+    icon: Calendar,
+    title: 'Campus Updates',
     description:
-      'Monitor streaks and milestones to stay motivated and maintain long-term consistency.',
+      'Stay informed with real-time updates about campus events, deadlines, and activities.',
     features: [
-      'Longest Streaks',
-      'Goal Milestones',
-      'Achievements & Badges',
-      'Motivational Alerts',
+      'Real-Time Notifications',
+      'Event Reminders',
+      'Personalized Schedules',
+      'Important Alerts',
     ],
-    color: 'bg-green-500',
+    color: 'bg-yellow-500',
+  },
+  {
+    icon: BarChart2,
+    title: 'Wellness & Progress Tracking',
+    description:
+      'Track your mental well-being, academic progress, and overall growth with visual analytics.',
+    features: [
+      'Mood & Stress Analytics',
+      'Academic Performance Tracking',
+      'Goal Progression Charts',
+      'Engagement Insights',
+    ],
+    color: 'bg-purple-500',
   },
 ];
 
@@ -84,11 +84,11 @@ const Services = () => {
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-snug">
-            Empowering Every Step of Agriculture
+            Empowering Students for Success
           </h2>
           <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-            From marketplace to smart farming — discover our complete ecosystem
-            built for modern agriculture.
+            From community building to progress tracking — discover the tools
+            designed for student wellness, collaboration, and growth.
           </p>
         </div>
 
@@ -104,8 +104,8 @@ const Services = () => {
         {/* Showcase Section */}
         <div data-aos="fade-up" data-aos-delay={100}>
           <FeaturedShowcase
-            marketplaceImage={marketplaceImage}
-            farmersImage={farmersImage}
+            marketplaceImage={communityImage}
+            farmersImage={wellnessImage}
           />
         </div>
       </div>

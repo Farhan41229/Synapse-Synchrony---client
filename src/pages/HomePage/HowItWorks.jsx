@@ -1,44 +1,36 @@
 import React, { useEffect } from 'react';
-import {
-  CheckSquare,
-  Bell,
-  LineChart,
-  Target,
-  Award,
-  Users,
-  MessageSquare,
-  BookOpen,
-} from 'lucide-react';
+import { Users, MessageCircle, Calendar, BarChart2 } from 'lucide-react'; // Updated icons to suit project
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 const steps = [
   {
     step: 1,
-    icon: CheckSquare,
-    title: 'Create Habits',
+    icon: Users,
+    title: 'Join the Community',
     description:
-      'Start by adding new habits to build your daily routine and consistency.',
+      'Connect with peers and mentors to create a supportive, collaborative environment.',
   },
   {
     step: 2,
-    icon: Bell,
-    title: 'Set Reminders',
-    description: 'Never miss a habit by scheduling smart daily notifications.',
+    icon: MessageCircle,
+    title: 'Join Conversations',
+    description:
+      'Participate in discussions, share insights, and stay motivated with real-time messaging.',
   },
   {
     step: 3,
-    icon: LineChart,
-    title: 'Track Progress',
+    icon: Calendar,
+    title: 'Stay Informed',
     description:
-      'Visualize your performance with daily, weekly, and monthly progress charts.',
+      'Track campus events, workshops, and key updates to engage with the community effectively.',
   },
   {
     step: 4,
-    icon: Target,
-    title: 'Streak Tracking',
+    icon: BarChart2,
+    title: 'Track Progress',
     description:
-      'Monitor your longest streaks and stay motivated to keep consistency.',
+      'Track your well-being and academic progress with insightful visual analytics.',
   },
 ];
 
@@ -61,10 +53,11 @@ const HowItWorks = () => {
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-snug">
-            How Habitude Works
+            How Synapse Works
           </h2>
           <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-            Build better habits in four simple steps
+            Empowering students with wellness, collaboration, and growth in four
+            simple steps.
           </p>
         </div>
 
@@ -80,19 +73,19 @@ const HowItWorks = () => {
                 className="relative z-10 group flex flex-col items-center text-center transition-transform duration-300 hover:-translate-y-2"
               >
                 {/* Step Number */}
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#EF4444] flex items-center justify-center text-xl sm:text-2xl font-extrabold text-white shadow-md group-hover:scale-110 transition-transform duration-300 z-20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#15a33d] flex items-center justify-center text-xl sm:text-2xl font-extrabold text-white shadow-md group-hover:scale-110 transition-transform duration-300 z-20">
                   {step.step}
                 </div>
 
                 {/* Card */}
                 <div className="rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-between bg-white/5 dark:bg-white/10 border border-white/10 dark:border-white/20 backdrop-blur-md">
                   {/* Icon */}
-                  <div className="mt-8 mb-6 w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-2xl border-2 border-[#EF4444] shadow-md group-hover:bg-[#EF4444] transition-colors duration-300">
-                    <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-[#EF4444] group-hover:text-white transition-colors duration-300" />
+                  <div className="mt-8 mb-6 w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-2xl border-2 border-[#15a33d] shadow-md group-hover:bg-[#15a33d] transition-colors duration-300">
+                    <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-[#15a33d] group-hover:text-white transition-colors duration-300" />
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg sm:text-xl md:text-xl font-bold mb-3 group-hover:text-[#EF4444] transition-colors duration-300">
+                  <h3 className="text-lg sm:text-xl md:text-xl font-bold mb-3 group-hover:text-[#15a33d] transition-colors duration-300">
                     {step.title}
                   </h3>
 

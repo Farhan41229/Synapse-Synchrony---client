@@ -4,24 +4,25 @@ import CountUp from 'react-countup';
 
 const stats = [
   {
-    icon: <Users className="w-5 h-5 text-[#EF4444]" />,
+    icon: <Users className="w-5 h-5 text-[#15a33d]" />,
     value: 10000,
     suffix: '+',
-    label: 'Active Users',
+    label: 'Connected Students',
   },
   {
-    icon: <TrendingUp className="w-5 h-5 text-[#EF4444]" />,
+    icon: <TrendingUp className="w-5 h-5 text-[#15a33d]" />,
     value: 500,
     suffix: '+',
-    label: 'Habits Tracked',
+    label: 'Collaborations',
   },
   {
-    icon: <CheckSquare className="w-5 h-5 text-[#EF4444]" />,
+    icon: <CheckSquare className="w-5 h-5 text-[#15a33d]" />,
     value: 98,
     suffix: '%',
-    label: 'Success Rate',
+    label: 'Engagement Rate',
   },
 ];
+
 
 const QuickStats = () => {
   return (

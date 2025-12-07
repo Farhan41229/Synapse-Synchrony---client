@@ -12,6 +12,8 @@ import {
   FileText,
   Book,
   MessageCircle,
+  Calendar,
+  BarChart2,
 } from 'lucide-react';
 
 import AOS from 'aos';
@@ -19,77 +21,52 @@ import 'aos/dist/aos.css';
 
 const features = [
   {
-    icon: CheckSquare,
-    path: '/add-habit',
-    title: 'Habit Creation',
-    desc: 'Add new habits to start building routines and consistency.',
+    icon: Users,
+    path: '/community',
+    title: 'Community Hub',
+    desc: 'Engage with peers, share progress, and foster collaboration.',
   },
   {
-    icon: Bell,
-    path: '/reminders',
-    title: 'Daily Reminders',
-    desc: 'Set smart reminders so you never miss your daily habits.',
-  },
-  {
-    icon: LineChart,
-    path: '/dashboard/analytics',
-    title: 'Progress Analytics',
-    desc: 'Visualize your performance with weekly and monthly charts.',
+    icon: MessageCircle,
+    path: '/chat',
+    title: 'Messaging',
+    desc: 'Connect with friends or mentors to stay motivated and share insights.',
   },
   {
     icon: Target,
-    path: '/streaks',
-    title: 'Streak Tracker',
-    desc: 'Track your longest streaks and daily consistency milestones.',
+    path: '/goals',
+    title: 'Goal Setting',
+    desc: 'Set personal or collaborative goals for growth and progress.',
   },
   {
-    icon: Award,
-    path: '/achievements',
-    title: 'Achievement Badges',
-    desc: 'Earn badges and rewards for reaching consistency goals.',
+    icon: Calendar,
+    path: '/events',
+    title: 'Campus Events',
+    desc: 'Stay updated on campus activities and important events.',
   },
   {
-    icon: Users,
-    path: '/community',
-    title: 'Community Feed',
-    desc: 'Share your progress and get inspired by others’ journeys.',
+    icon: BarChart2,
+    path: '/dashboard',
+    title: 'Progress Tracker',
+    desc: 'Monitor your progress and trends with insightful analytics.',
   },
   {
     icon: BookOpen,
     path: '/journal',
     title: 'Journal & Notes',
-    desc: 'Reflect daily and log thoughts alongside your habit progress.',
-  },
-  {
-    icon: Settings,
-    path: '/settings',
-    title: 'Settings',
-    desc: 'Manage your preferences, notifications, and account options.',
-  },
-  // New features
-  {
-    icon: MessageCircle,
-    path: '/chat',
-    title: 'Messaging',
-    desc: 'Chat with friends or mentors to stay motivated and share tips.',
+    desc: 'Reflect on your experiences and log thoughts alongside goals.',
   },
   {
     icon: FileText,
-    path: '/blog',
-    title: 'Habit Blog',
-    desc: 'Read and share articles, tips, and success stories.',
-  },
-  {
-    icon: MessageSquare,
-    path: '/community-questions',
-    title: 'Community Q&A',
-    desc: 'Ask questions and get answers from experienced users.',
-  },
-  {
-    icon: Book,
     path: '/resources',
-    title: 'Resources Library',
-    desc: 'Access guides, templates, and other helpful materials.',
+    title: 'Resources',
+    desc: 'Access guides, tools, and materials to support your journey.',
+  },
+  {
+    icon: Award,
+    path: '/achievements',
+    title: 'Achievements',
+    desc: 'Earn rewards and recognition for milestones and successes.',
   },
 ];
 
@@ -114,11 +91,10 @@ const Features = () => {
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
-            Tools to Build Better Habits
+            Tools to Foster Growth and Connection
           </h2>
           <p className="text-base md:text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
-            Everything you need — from habit tracking to progress analytics — in
-            one beautiful dashboard.
+            All-in-one dashboard for well-being, collaboration, and growth.
           </p>
         </div>
 
@@ -131,13 +107,13 @@ const Features = () => {
               data-aos="zoom-in"
               data-aos-delay={i * 100}
               className="cursor-pointer rounded-2xl p-6 sm:p-8 bg-white/5 dark:bg-white/10 border border-white/10 dark:border-white/20 
-              backdrop-blur-md shadow-sm hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] 
+              backdrop-blur-md shadow-2xl hover:shadow-[0_10px_30px_rgba(68,239,68,0.2)] 
               hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
             >
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-[#EF4444] flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-[#04642a] flex items-center justify-center mb-5 shadow-md group-hover:scale-110 transition-transform duration-300">
                 <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-[#EF4444] transition-colors duration-300">
+              <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-[#04642a] transition-colors duration-300">
                 {title}
               </h3>
               <p className="text-sm md:text-base flex-grow text-gray-700 dark:text-gray-300">
