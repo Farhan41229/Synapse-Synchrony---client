@@ -16,9 +16,9 @@ const ServiceCard = ({
   return (
     <div
       data-aos="zoom-in-up"
-      className="rounded-2xl p-6 sm:p-8 bg-white/5 border border-white/10 
+      className="rounded-2xl p-6 sm:p-8 bg-white/5 dark:bg-white/10 border border-white/10 dark:border-white/20 
       backdrop-blur-md shadow-sm hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] 
-      hover:-translate-y-2 transition-all duration-300 flex flex-col h-full text-gray-100"
+      hover:-translate-y-2 transition-all duration-300 flex flex-col h-full text-black dark:text-gray-300"
     >
       {/* Icon */}
       <div
@@ -29,18 +29,18 @@ const ServiceCard = ({
       </div>
 
       {/* Title */}
-      <h3 className="text-lg md:text-xl font-semibold mb-2 hover:text-[#EF4444] transition-colors duration-300">
+      <h3 className="text-lg md:text-xl font-semibold mb-2 hover:text-[#EF4444] dark:hover:text-[#EF4444] transition-colors duration-300">
         {title}
       </h3>
 
       {/* Description */}
-      <p className="text-sm md:text-base text-gray-300 mb-4 flex-grow">
+      <p className="text-sm md:text-base text-black dark:text-gray-400 mb-4 flex-grow">
         {description}
       </p>
 
       {/* Features List */}
       {features && features.length > 0 && (
-        <ul className="space-y-2 text-sm text-gray-300">
+        <ul className="space-y-2 text-sm text-black dark:text-gray-400">
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-start">
               <span className="w-2 h-2 bg-[#EF4444] rounded-full mt-1.5 mr-2"></span>

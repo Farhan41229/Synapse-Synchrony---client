@@ -109,14 +109,14 @@ const Features = () => {
   };
 
   return (
-    <div className="bg-[#111827] text-gray-100 py-16 md:py-24 min-h-screen flex items-center">
+    <div className="min-h-screen py-16 md:py-24 flex items-center transition-colors duration-300 ease-in-out bg-white dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16" data-aos="fade-up">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">
             Tools to Build Better Habits
           </h2>
-          <p className="text-base md:text-lg max-w-2xl mx-auto text-gray-300">
+          <p className="text-base md:text-lg max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
             Everything you need — from habit tracking to progress analytics — in
             one beautiful dashboard.
           </p>
@@ -130,7 +130,7 @@ const Features = () => {
               onClick={(e) => handleClick(path, e)}
               data-aos="zoom-in"
               data-aos-delay={i * 100}
-              className="cursor-pointer rounded-2xl p-6 sm:p-8 bg-white/5 border border-white/10 
+              className="cursor-pointer rounded-2xl p-6 sm:p-8 bg-white/5 dark:bg-white/10 border border-white/10 dark:border-white/20 
               backdrop-blur-md shadow-sm hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] 
               hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
             >
@@ -140,7 +140,7 @@ const Features = () => {
               <h3 className="text-lg md:text-xl font-semibold mb-2 group-hover:text-[#EF4444] transition-colors duration-300">
                 {title}
               </h3>
-              <p className="text-sm md:text-base flex-grow text-gray-300">
+              <p className="text-sm md:text-base flex-grow text-gray-700 dark:text-gray-300">
                 {desc}
               </p>
             </div>

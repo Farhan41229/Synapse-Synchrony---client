@@ -97,15 +97,15 @@ const FarmerSuccessStoriesSection = () => {
   return (
     <div
       id="farmer-stories"
-      className="bg-[#111827] text-gray-100 py-20 md:py-24 overflow-hidden min-h-screen flex items-center"
+      className="bg-white dark:bg-[#111827] text-gray-900 dark:text-gray-100 py-20 md:py-24 overflow-hidden min-h-screen flex items-center transition-colors duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Header */}
         <div className="text-center mb-16" data-aos="fade-up">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
             Success Stories
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-gray-300">
+          <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-gray-600 dark:text-gray-300">
             Real users, real results. See how Habitude transforms daily
             routines.
           </p>
@@ -113,8 +113,11 @@ const FarmerSuccessStoriesSection = () => {
 
         {/* Story Card */}
         <div
-          className="rounded-2xl p-6 md:p-12 bg-white/5 border border-white/10 
-          backdrop-blur-md shadow-sm hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] transition-all duration-300"
+          className="rounded-2xl p-6 md:p-12 
+          bg-white dark:bg-white/10 
+          border border-gray-200 dark:border-white/10 
+          shadow-xl dark:shadow-none
+          backdrop-blur-md transition-all duration-300"
           data-aos="fade-up"
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -131,10 +134,12 @@ const FarmerSuccessStoriesSection = () => {
                   className="w-24 h-24 rounded-full object-cover mb-4 lg:mb-0 lg:mr-6 border-4 border-[#EF4444] shadow-lg"
                 />
                 <div>
-                  <h3 className="text-2xl font-bold mb-1">
+                  <h3 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">
                     {currentFarmer.name}
                   </h3>
-                  <p className="mb-1 text-gray-300">{currentFarmer.location}</p>
+                  <p className="mb-1 text-gray-500 dark:text-gray-300">
+                    {currentFarmer.location}
+                  </p>
                   <p className="text-[#EF4444] font-semibold">
                     {currentFarmer.specialty}
                   </p>
@@ -145,27 +150,27 @@ const FarmerSuccessStoriesSection = () => {
                         className="h-5 w-5 text-yellow-400 fill-current"
                       />
                     ))}
-                    <span className="ml-2 text-sm text-gray-400">
+                    <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
                       5.0 Rating
                     </span>
                   </div>
                 </div>
               </div>
 
-              <blockquote className="text-lg sm:text-xl italic mb-8 leading-relaxed text-gray-200">
+              <blockquote className="text-lg sm:text-xl italic mb-8 leading-relaxed text-gray-700 dark:text-gray-200">
                 "{currentFarmer.quote}"
               </blockquote>
 
               <div className="flex justify-center lg:justify-start space-x-4">
                 <button
                   onClick={prevStory}
-                  className="bg-white/10 border border-white/20 text-gray-100 p-3 rounded-full hover:bg-[#EF4444] hover:text-white shadow-lg transition-all duration-300"
+                  className="bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-white/20 text-gray-600 dark:text-gray-100 p-3 rounded-full hover:bg-[#EF4444] hover:text-white hover:border-[#EF4444] shadow-sm hover:shadow-lg transition-all duration-300"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
                 <button
                   onClick={nextStory}
-                  className="bg-[#EF4444] text-white p-3 rounded-full hover:bg-[#dc2626] shadow-lg transition-all duration-300"
+                  className="bg-[#EF4444] text-white p-3 rounded-full hover:bg-[#dc2626] shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   <ChevronRight className="h-6 w-6" />
                 </button>
@@ -179,18 +184,23 @@ const FarmerSuccessStoriesSection = () => {
                 return (
                   <div
                     key={index}
-                    className="rounded-xl p-4 sm:p-6 text-center bg-white/5 border border-white/10 
-                    backdrop-blur-md hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] transition-all duration-300"
+                    className="rounded-xl p-4 sm:p-6 text-center 
+                    bg-gray-50 dark:bg-white/10 
+                    border border-gray-200 dark:border-white/10 
+                    backdrop-blur-md hover:shadow-lg dark:hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] 
+                    transition-all duration-300 group"
                     data-aos="zoom-in"
                     data-aos-delay={index * 100}
                   >
-                    <div className="bg-[#EF4444]/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <div className="bg-[#EF4444]/10 dark:bg-[#EF4444]/20 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300">
                       <Icon className="h-6 w-6 text-[#EF4444]" />
                     </div>
-                    <p className="text-2xl font-bold text-white mb-1">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
                       {result.value}
                     </p>
-                    <p className="text-sm text-gray-300">{result.metric}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">
+                      {result.metric}
+                    </p>
                   </div>
                 );
               })}
@@ -204,7 +214,9 @@ const FarmerSuccessStoriesSection = () => {
                 key={index}
                 onClick={() => setCurrentStory(index)}
                 className={`w-3 h-3 rounded-full transition-all duration-300 mx-1 ${
-                  index === currentStory ? 'bg-[#EF4444]' : 'bg-gray-500'
+                  index === currentStory
+                    ? 'bg-[#EF4444]'
+                    : 'bg-gray-300 dark:bg-gray-600'
                 }`}
               />
             ))}

@@ -55,7 +55,7 @@ const HowItWorks = () => {
   return (
     <div
       id="how-it-works"
-      className="md:py-24 py-16 min-h-screen flex items-center overflow-hidden bg-[#111827] text-gray-100"
+      className="md:py-24 py-16 min-h-screen flex items-center overflow-hidden bg-white dark:bg-[#111827] text-gray-900 dark:text-gray-100"
     >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -63,16 +63,13 @@ const HowItWorks = () => {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-snug">
             How Habitude Works
           </h2>
-          <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-gray-300">
-            Build better habits in eight simple steps
+          <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
+            Build better habits in four simple steps
           </p>
         </div>
 
         {/* Steps Grid */}
         <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
-          {/* Connecting Line for Desktop */}
-          {/* <div className="hidden lg:block absolute top-32 left-0 w-full h-0.5 bg-gray-700 z-0"></div> */}
-
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
@@ -88,7 +85,7 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Card */}
-                <div className="rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-between bg-white/5 border border-white/10 backdrop-blur-md">
+                <div className="rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-between bg-white/5 dark:bg-white/10 border border-white/10 dark:border-white/20 backdrop-blur-md">
                   {/* Icon */}
                   <div className="mt-8 mb-6 w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-2xl border-2 border-[#EF4444] shadow-md group-hover:bg-[#EF4444] transition-colors duration-300">
                     <Icon className="w-10 h-10 sm:w-12 sm:h-12 text-[#EF4444] group-hover:text-white transition-colors duration-300" />
@@ -100,7 +97,7 @@ const HowItWorks = () => {
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm sm:text-base md:text-base leading-relaxed max-w-xs flex-grow text-gray-300">
+                  <p className="text-sm sm:text-base md:text-base leading-relaxed max-w-xs flex-grow text-gray-700 dark:text-gray-300">
                     {step.description}
                   </p>
                 </div>

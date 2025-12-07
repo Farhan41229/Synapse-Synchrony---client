@@ -65,7 +65,7 @@ const services = [
 ];
 
 const Services = () => {
-  // Initialize AOS with same config as HowItWorks for consistency
+  // Initialize AOS with the same config as HowItWorks for consistency
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -78,7 +78,7 @@ const Services = () => {
   return (
     <div
       id="services"
-      className="md:py-24 py-16 min-h-screen flex items-center overflow-hidden bg-[#111827] text-gray-100"
+      className="md:py-24 py-16 min-h-screen flex items-center overflow-hidden bg-white dark:bg-[#111827] text-gray-900 dark:text-gray-100"
     >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -86,7 +86,7 @@ const Services = () => {
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-snug">
             Empowering Every Step of Agriculture
           </h2>
-          <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-gray-300">
+          <p className="text-base sm:text-lg md:text-xl max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
             From marketplace to smart farming — discover our complete ecosystem
             built for modern agriculture.
           </p>

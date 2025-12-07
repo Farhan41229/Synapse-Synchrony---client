@@ -18,7 +18,7 @@ const Home = () => {
       <Services />
       {/* <LatestReviews /> */}
       <FarmerSuccessStoriesSection />
-      <OurTrustedPartnersSection />
+      {/* <OurTrustedPartnersSection /> */}
       <BecomePartner />
     </>
   );

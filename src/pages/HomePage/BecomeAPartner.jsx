@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
-
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { Bell, CheckSquare, Download, LineChart, Mail, Users } from 'lucide-react';
+import {
+  Bell,
+  CheckSquare,
+  Download,
+  LineChart,
+  Mail,
+  Users,
+} from 'lucide-react';
 
 const partnerBenefits = [
   {
@@ -31,7 +37,6 @@ const partnerBenefits = [
   },
 ];
 
-
 const BecomePartner = () => {
   useEffect(() => {
     AOS.init({
@@ -44,7 +49,7 @@ const BecomePartner = () => {
   }, []);
 
   return (
-    <div className="py-20 md:py-24 min-h-screen flex items-center overflow-hidden bg-[#111827] text-gray-100">
+    <div className="py-20 md:py-24 min-h-screen flex items-center overflow-hidden bg-white dark:bg-[#111827] text-gray-900 dark:text-gray-100">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div
@@ -52,10 +57,10 @@ const BecomePartner = () => {
           data-aos="fade-up"
           data-aos-duration="900"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 leading-snug">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
             Become a Partner
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-gray-300">
+          <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-gray-900 dark:text-gray-400">
             Join our global ecosystem of innovators, organizations, and experts
             dedicated to transforming modern agriculture sustainably.
           </p>
@@ -68,7 +73,7 @@ const BecomePartner = () => {
             return (
               <div
                 key={index}
-                className="group relative flex flex-col items-center text-center rounded-2xl p-8 shadow-sm hover:shadow-lg transition-all duration-300 bg-white/5 border border-white/10 backdrop-blur-md"
+                className="group relative flex flex-col items-center text-center rounded-2xl p-8 shadow-lg hover:shadow-lg transition-all duration-300 bg-white/10 dark:bg-white/20 border border-gray-100 dark:border-white/20 backdrop-blur-md"
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
                 data-aos-duration="900"
@@ -84,7 +89,7 @@ const BecomePartner = () => {
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm sm:text-base text-gray-300">
+                <p className="text-sm sm:text-base text-gray-900 dark:text-gray-400">
                   {benefit.description}
                 </p>
               </div>

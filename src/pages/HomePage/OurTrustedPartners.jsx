@@ -37,8 +37,7 @@ const partners = [
   {
     name: 'Gramik',
     logo: 'https://i.ibb.co/YqZcVd5/gramic-Photoroom.png',
-    description:
-      'Gramik aka Agrijunction, supplies various Agri input products and services to farmers.',
+    description: 'Gramik supplies various Agri input products and services.',
   },
   {
     name: 'Nutrian',
@@ -60,7 +59,7 @@ const OurTrustedPartnersSection = () => {
   }, []);
 
   return (
-    <div className="bg-[#111827] text-gray-100 py-20 overflow-hidden">
+    <div className="bg-gray-50 dark:bg-[#111827] text-gray-900 dark:text-gray-100 py-20 overflow-hidden transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div
@@ -68,10 +67,10 @@ const OurTrustedPartnersSection = () => {
           data-aos="fade-up"
           data-aos-duration="900"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
             Our Trusted Partners
           </h2>
-          <p className="text-base sm:text-lg max-w-2xl mx-auto text-gray-300">
+          <p className="text-base sm:text-lg max-w-2xl mx-auto text-gray-600 dark:text-gray-300">
             We collaborate with leading organizations to deliver the best
             agricultural solutions.
           </p>
@@ -88,25 +87,39 @@ const OurTrustedPartnersSection = () => {
               data-aos-delay={row * 100}
             >
               <div
-                className={`flex gap-16 animate-marquee${
+                className={`flex gap-8 animate-marquee${
                   row === 1 ? '-reverse' : ''
                 }`}
               >
+                {/* Using concat to duplicate the list for seamless infinite scrolling.
+                   Increased min-width slightly for better readability. 
+                */}
                 {partners.concat(partners).map((partner, index) => (
                   <div
                     key={index}
-                    className="flex flex-col items-center justify-center min-w-[250px] p-4 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl shadow-md"
+                    className="
+                      flex flex-col items-center justify-center 
+                      min-w-[280px] p-6 
+                      bg-white dark:bg-white/5 
+                      border border-gray-200 dark:border-white/10 
+                      rounded-2xl shadow-sm hover:shadow-md 
+                      backdrop-blur-md transition-all duration-300
+                    "
                   >
-                    <img
-                      src={partner.logo}
-                      alt={partner.name}
-                      className="w-24 h-24 object-contain mb-2"
-                    />
-                    <h3 className="text-sm font-semibold text-gray-200 text-center">
+                    <div className="h-24 w-full flex items-center justify-center mb-4 bg-gray-50 dark:bg-transparent rounded-lg p-2">
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 text-center mb-2">
                       {partner.name}
                     </h3>
-                    {/* Description */}
-                    <p className="text-sm text-center">{partner.description}</p>
+                    <p className="text-sm text-center text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {partner.description}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -115,33 +128,32 @@ const OurTrustedPartnersSection = () => {
         </div>
       </div>
 
-      {/* Marquee Animation */}
-      <style jsx>{`
+      {/* Marquee Animation Styles */}
+      <style>{`
         .animate-marquee {
           display: flex;
-          gap: 4rem;
-          animation: marquee 20s linear infinite;
+          width: max-content;
+          animation: marquee 40s linear infinite;
         }
         .animate-marquee-reverse {
           display: flex;
-          gap: 4rem;
-          animation: marqueeReverse 20s linear infinite;
+          width: max-content;
+          animation: marqueeReverse 40s linear infinite;
         }
+        
+        /* Pause on hover for better UX */
+        .animate-marquee:hover, 
+        .animate-marquee-reverse:hover {
+          animation-play-state: paused;
+        }
+
         @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
         @keyframes marqueeReverse {
-          0% {
-            transform: translateX(-50%);
-          }
-          100% {
-            transform: translateX(0);
-          }
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
         }
       `}</style>
     </div>
