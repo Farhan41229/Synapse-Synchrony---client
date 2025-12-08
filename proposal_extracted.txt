@@ -1,0 +1,381 @@
+Synapse
+Synchrony
+CSE 4510 Project Proposal
+A network of productivity 
+and mental well-being.25 November, 2025
+1 
+T h e  T e a m
+M d .  S a m i u l  I s l a m
+2 2 0 0 4 1 2 0 7
+M d .  F a r h a n  I s h r a q
+2 2 0 0 4 1 2 1 7
+F a r h a n  T a h s i n  K h a n
+2 2 0 0 4 1 2 2 9
+T a s h i n  M u s t a k i m
+2 2 0 0 4 1 2 3 9
+M a z h a r u l  I s l a m  
+2 2 0 0 4 1 2 5 1
+M u h a t a d i  B i n  M a r u f
+2 2 0 0 4 1 2 4 9
+
+M o t i v a t i o n
+CSE 4510 Project Proposal
+2 
+Rising stress, anxiety, and depression are common,
+while traditional monitoring is often invasive,
+stigmatizing, or slow to provide early support.
+Mental Health Challenges
+Traditional chat and social platforms can be
+distracting and not inclusive for differently-abled
+students.
+Distraction in Communication
+Academic collaboration is fragmented across tools,
+causing inefficiency and limited engagement.
+Fragmented Collaboration
+Campus updates, events, and notices are scattered,
+making it hard for students to stay informed.
+Information Gaps
+Modern campuses are not only centers for academic learning but also hubs of social interaction, collaboration, and
+personal growth. However, students today face a range of challenges:
+
+O b j e c t i v e
+CSE 4510 Project Proposal
+3 
+Non-invasive assessment of student mental health
+to provide proactive insights and interventions.
+AI-powered mental wellness monitoring
+Real-time, encrypted chat that supports accessibility
+features, including sign language-to-text and speech
+translation, ensuring every student can communicate
+effectively.
+Inclusive, secure communication
+A visual collaboration space with whiteboard
+channels, featuring a note-sharing portal enhanced
+with AI summarization to boost teamwork and
+knowledge sharing.
+Collaborative learning space
+A dynamic portal for campus events, lost-and-
+found notices, and personal blogs to foster
+community engagement.
+Centralized information dissemination
+To develop a web-application that enhances the academic, social, and mental well-being of students on campus
+through a unified platform that integrates:
+
+CSE 4510 Project Proposal
+4 
+Ensuring the following requirements will help us successfully deploy our project.
+F e a t u r e s
+SynapseChat MediLink SynapsePortalSynapseWorkspace
+
+S y n a p s e W o r k s p a c e
+CSE 4510 Project Proposal
+5 
+Supports multiple file types: PDF, DOCX, PPT, images
+(JPEG/PNG), and handwritten notes
+Drag-and-drop or file picker upload for quick sharing
+Automatic file preview for notes, slides, and images
+without requiring downloads
+Organized under subjects, tags, or course channels for
+easier discovery
+Permission controls allowing users to make files public,
+private, or group-specific
+Versioning to update files while keeping older copies
+accessible
+Inline commenting so peers can discuss or clarify
+specific sections of a file
+File - Sharing Portal: White-board collaborative channels: 
+Channel-based structure similar to Discord, but
+visually interactive instead of audio-based
+Drawing tools:  Pen, highlighter, shapes, arrows,
+diagrams
+Sticky notes and text boxes for explanations and
+brainstorming
+Layering and color-coded inputs to distinguish
+contributors
+Integrated file/slide import for marking up study
+materials
+Persistent boards saved per session with the
+ability to revisit, edit, or export.
+
+S y n a p s e C h a t
+CSE 4510 Project Proposal
+6 
+Sign language →  text translator
+Speech →  text converter
+Text →  speech generator
+ Ensures communication equality & inclusivity
+for differently-abled students.
+Accessibility & inclusivity features:
+Minimalist UI that hides non-essential buttons,
+animations, and chat clutter.
+Temporarily disables pop-up notifications, message
+previews, and sound alerts to maintain focus.
+Distraction-free mode:
+Low-latency messaging with read receipts,
+typing indicators, and reliability under high load.
+Secure chats for individuals and groups,
+preventing unauthorized access.
+End-to-end encrypted messaging:
+Channels for clubs, departments, study groups,
+and student communities.
+Threaded conversations to keep discussions
+organized within each channel
+Multi-channel messaging:
+
+M e d i L i n k
+CSE 4510 Project Proposal
+7 
+A u t o m a t i c a l l y  p r o m p t s  s t u d e n t s  t o  t a k e  s h o r t
+b r e a k s  w h e n  d e t e c t i n g  s i g n s  o f  f a t i g u e ,  s u c h  a s
+l o n g  c o n t i n u o u s  s c r e e n  t i m e  o r  r e d u c e d  a c t i v i t y
+a c c u r a c y
+ A l l o w s  u s e r s  t o  c o n f i g u r e  w h e n  a n d  w h a t  t y p e s
+o f  a l e r t s  t h e y  w a n t  t o  r e c e i v e .
+Context-Aware Alerts:
+Identifies micro-changes in activity that may indicate early
+sadness, anxiety, or overwhelming academic pressure.
+ Detects deviations from the user’s normal behavior—such
+as reduced interaction, increased late-night activity, or
+inconsistent study patterns—as early indicators of stress.
+Early Stress & Mood Detection
+A v o i d s  i n v a s i v e  m e t h o d s  s u c h  a s  f a c i a l  s c a n s  o r  h e a r t
+r a t e  m o n i t o r i n g ,  e n s u r i n g  s t u d e n t s  f e e l  c o m f o r t a b l e  a n d
+u n o b s e r v e d .
+ A n a l y z e s  d a i l y  r o u t i n e s — s u c h  a s  p e a k  p r o d u c t i v i t y
+t i m e s ,  b r e a k  p a t t e r n s ,  o r  i r r e g u l a r  a c t i v i t y — t o  d e t e c t
+p o t e n t i a l  s t r e s s  o r  f a t i g u e .Non-Invasive Behavioral Analysis:
+Displays daily, weekly, and monthly mood patterns
+through intuitive charts or color-coded indicators.
+Shows improvement streaks—such as consistent
+calm days or reduced stress indicators—to motivate
+healthy habits.
+Mood Trend Dashboard:
+
+S y n a p s e P o r t a l
+CSE 4510 Project Proposal
+8 
+Lost & Found System:
+Displays all upcoming campus events, workshops,
+seminars, and extracurricular activities in real time.
+Provides comprehensive information including date, time,
+location, organizer, and description.
+Real-Time Event Listings:
+All official campus notifications—academic,
+administrative, and extracurricular—are collected in one
+place.
+Users receive real-time notifications for urgent
+announcements such as schedule changes, exam updates,
+or emergency alerts.
+Centralized Campus Updates:
+Students can write and share personal experiences,
+campus life stories, or academic insights.
+Other students can comment, ask questions, or
+provide suggestions to encourage interaction.
+Student Blog & Experience Sharing:
+Students can easily report lost or found items by
+uploading descriptions, photos, and relevant details.
+ Users can search for items by keyword, category,
+location, or date to find matches efficiently.
+
+CSE 4510 Project Proposal
+9 
+W E E K  1
+I d e a  E x p l o r a t i o n
+P r o j e c t  P l a n n i n g
+P h a s e
+S y s t e m  D e s i g n
+F r o n t  -  e n d
+( U I  +  W e b  S c r e e n )
+B a c k  -  E n d  
+( A P I s  +  D a t a b a s e )
+I n t e g r a t i o n  &
+O p t i m i z a t i o n
+B u f f e r  -  T i m e
+D e b u g g i n g  &
+T e s t i n g
+D e p l o y m e n t
+W E E K  5
+W E E K  3
+W E E K  7
+W E E K  2
+W E E K  6
+W E E K  4
+W E E K  8
+PROJECT BREAKDOWN
+W E E K  9
+
+Major Stakeholders
+S
+U
+F
+M
+Students benefit from wellness
+tracking, collaborative tools,
+inclusive communication, time-
+management and information
+access.
+Faculties can efficiently share
+materials, monitor student
+engagement, and supervise
+interactive collaboration,
+enhancing teaching effectiveness
+and academic guidance.
+Mental Health Professionals can
+use AI-driven wellness trends and
+secure communication tools to
+provide timely, personalized
+support and early interventions for
+students’ mental health.
+University Administration gains
+actionable insights from wellness
+and engagement analytics,
+enabling informed decisions on
+policies, events, and student
+support initiatives.
+1 0 
+CSE 4510 Project Proposal
+
+T o o l s  &  T e c h n o l o g i e s
+Continuous Integration/Deployment
+Programming Languages
+1 1 
+CSE 4510 Project Proposal
+Front - End
+JavaScript
+Python
+React.js
+Tailwind CSS
+Back - End + Database
+Node.js
+Express.js
+MongoDB with Mongoose
+S e c u r i t y
+J W T ( J S O N  W e b  T o k e n )
+B C r y p t  H a s h
+M i s c e l l a n e o u s
+File Handling: Multer, S3, Cloudinary
+Testing: Jest, Supertest 
+Helmet.js (HTTP headers security) 
+OpenCV libraries & Gen AI with Gemini API
+
+Critical Challenges 
+2
+1
+3
+Real-time
+Encrypted Chat
+AI-powered Health
+Monitoring
+Note Sharing &
+Collaboration
+1 2 
+4
+Information
+Portal
+CSE 4510 Project Proposal
+
+A I - p o w e r e d  H e a l t h
+M o n i t o r i n g  
+CSE 4510 Project Proposal
+1 3 
+Handling sensitive information securely can be
+challenging.
+Ensuring informed consent and compliance with
+privacy regulations.
+Privacy and Ethical Concerns
+Safeguarding messages, files, and media with end-
+to-end encryption.
+Preventing unauthorized access, data leaks, and
+man-in-the-middle attacks.
+Security Risks
+Risk of false positives (flagging healthy behavior as
+stress) or false negatives (missing real stress).
+Variability in individual behavior and external factors
+can reduce model reliability.
+Accuracy of AI Predictions
+Maintaining instant message delivery even during
+peak usage or large group chats.
+Optimizing encryption/decryption processes to
+avoid delays.
+Ensuring smooth performance across multiple
+devices (desktop, mobile, tablet).
+Latency and Scalability
+R e a l - t i m e
+E n c r y p t e d  C h a t
+
+N o t e  S h a r i n g  &
+C o l l a b o r a t i o n   
+CSE 4510 Project Proposal
+1 4 
+AI may misinterpret complex content or miss
+key points, producing incomplete or misleading
+summaries.
+Notes may include images, tables, or mixed
+media that AI struggles to summarize correctly.
+AI Summarization Quality
+Detecting and filtering inappropriate, offensive, or
+spam content in real time.
+Handling diverse content types (text, images, videos,
+links) effectively.
+Content Moderation 
+Handling multiple users editing the same note
+simultaneously without overwriting each other’s
+changes.
+Minimizing delays so that updates appear
+instantly to all collaborators.
+Concurrent Editing Conflicts
+Ensuring event information, lost & found posts,
+and announcements are posted and updated in
+real time.
+Maintaining reliability during high-traffic
+periods or peak academic seasons.
+Timeliness of Updates
+I n f o r m a t i o n  
+P o r t a l
+
+Conflicting Requirements
+21
+Notification Needs 
+VS
+ Mental Wellness Goals
+Inclusivity Features 
+VS
+ System Performance
+1 5 
+CSE 4510 Project Proposal
+
+I n c l u s i v i t y  F e a t u r e s  
+V S
+ S y s t e m  P e r f o r m a n c e
+CSE 4510 Project Proposal
+1 6 
+Real-time sign-language-to-text, speech-to-text, and
+text-to-speech require intensive computation.
+But the system also needs to maintain low latency for
+real-time chat and collaboration.
+ 
+Conflict:
+N o t i f i c a t i o n  N e e d s  
+V S
+ M e n t a l  W e l l n e s s  G o a l s
+Event updates, collaboration edits, wellness
+alerts, and chat messages all require timely
+notifications.
+But too many notifications increase stress,
+contradicting the wellness objective.
+ 
+Conflict:
+Real-time AI translation →  increases server
+workload and delays.
+ High-speed performance →  limits AI translation
+frequency or complexity.
+Trade-Off:
+Frequent notifications →  user awareness but
+higher mental load.
+Reduced notifications →  fewer updates and
+missed events.
+Trade-Off:
+
+Thank you
+1 7 
+CSE 4510 Project Proposal
