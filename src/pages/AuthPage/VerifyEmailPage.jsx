@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
+import { useAuthStore } from '@/store/authStore';
+import toast from 'react-hot-toast';
 const VerifyEmailPage = () => {
   const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
-  const error = null; // Replace with actual error state
-  const isLoading = false; // Replace with actual loading state
+  const { error, isLoading, verifyEmail } = useAuthStore();
   const handleChange = (index, value) => {
     const newCode = [...code];
 
@@ -41,8 +42,24 @@ const VerifyEmailPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Implement email verification logic here
-    navigate('/');
+    const verificationCode = code.join('');
+    console.log('Verifying code:', verificationCode);
+    try {
+      await verifyEmail(verificationCode);
+      // On successful verification, navigate to the desired page
+      toast.success('Email verified successfully');
+      navigate('/'); // Replace with actual route
+    } catch (error) {
+      console.error('Verification failed:', error);
+      toast.error('Verification failed. Please try again.');
+    }
   };
+  // Auto submit when all fields are filled
+  useEffect(() => {
+    if (code.every((digit) => digit !== '')) {
+      handleSubmit(new Event('submit'));
+    }
+  }, [code]);
   return (
     <div className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden">
       <motion.div
