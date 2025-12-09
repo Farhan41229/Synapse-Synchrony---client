@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Input from '@/components/Inputs/Input';
 import { Lock, Mail, User } from 'lucide-react';
+import { Link } from 'react-router';
+import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
 const SignUpPage = () => {
   const [name, setname] = useState('');
   const [email, setemail] = useState('');
@@ -27,23 +29,23 @@ const SignUpPage = () => {
             type="text"
             placeholder="Full Name"
             value={name}
-            onchange={(e) => setname(e.target.value)}
+            onChange={(e) => setname(e.target.value)}
           />
           <Input
             icon={Mail}
             type="email"
             placeholder="Email Address"
             value={email}
-            onchange={(e) => setemail(e.target.value)}
+            onChange={(e) => setemail(e.target.value)}
           />
           <Input
             icon={Lock}
             type="password"
             placeholder="Password"
             value={password}
-            onchange={(e) => setpassword(e.target.value)}
+            onChange={(e) => setpassword(e.target.value)}
           />
-          {/* Password Strength Meter */}
+          <PasswordStrengthMeter password={password} />
           <motion.button
             className="mt-5 w-full py-3 px-4 bg-linear-to-r from-green-500 to-emerald-600 text-white 
 						font-bold rounded-lg shadow-lg hover:from-green-600
@@ -52,8 +54,19 @@ const SignUpPage = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-          ></motion.button>
+          >
+            Sign Up
+          </motion.button>
         </form>
+      </div>
+
+      <div className="px-8 py-4 bg-gray-900 bg-opacity-50 flex justify-center">
+        <p className="text-sm text-gray-400">
+          Already have an account?{' '}
+          <Link to={'/auth/login'} className="text-green-400 hover:underline">
+            Login
+          </Link>
+        </p>
       </div>
     </motion.div>
   );
