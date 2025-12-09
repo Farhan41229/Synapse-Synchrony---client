@@ -17,6 +17,7 @@ export const useAuthStore = create((set) => ({
         password,
         name,
       });
+      console.log('The response of signup is: ', response);
       set({
         user: response.data.data.user,
         isAuthenticated: true,
@@ -71,6 +72,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await axios.post(`${AUTH_URL}/verify-email`, { code });
+      console.log('The response of the verify email is: ', response);
       set({
         user: response.data.data.user,
         isAuthenticated: true,
