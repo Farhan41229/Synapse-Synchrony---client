@@ -1,10 +1,23 @@
 import { ModeToggle } from '@/components/mode-toggle';
 import NavButton from './NavButton';
 import { useNavigate } from 'react-router';
+import { useAuthStore } from '@/store/authStore';
+import toast from 'react-hot-toast';
 
 const NavMenuGeneral = () => {
   const navigate = useNavigate();
-  const user = undefined; // Placeholder for your auth logic
+  const { user, isLoading, logout } = useAuthStore(); // Placeholder for your auth logic
+
+  const HandleLogout = async () => {
+    try {
+      await logout();
+      toast.success('Logged out successfully');
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+      toast.error('Error logging out. Please try again.');
+    }
+  };
 
   return (
     <div className="flex justify-center items-center gap-2">
@@ -14,23 +27,26 @@ const NavMenuGeneral = () => {
 
       <ModeToggle />
 
-      {user && (
+      {/* {user && (
         <>
           <NavButton label="My Habits" address="/dashboard/my-habits" />
           <NavButton label="Add Habit" address="/dashboard/add-habit" />
         </>
-      )}
+      )} */}
 
       {user ? (
         <button
-          className="btn bg-gray-900 text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-200 ml-2"
-          onClick={() => {}}
+          className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6"
+          onClick={() => {
+            HandleLogout();
+          }}
+          disabled={isLoading}
         >
-          Logout
+          {isLoading ? 'Logging out...' : 'Logout'}
         </button>
       ) : (
         <button
-          onClick={() => navigate('/auth')}
+          onClick={() => navigate('/auth/login')}
           className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6"
         >
           Login
