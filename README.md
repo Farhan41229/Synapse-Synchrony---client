@@ -64,6 +64,17 @@ Synapse-Synchrony---client/
 
 ---
 
+## 🔐 Authentication Server (backend)
+- **Purpose:** Express + MongoDB auth service for signup → verify → login → logout → reset flows. Issues JWT via HttpOnly cookie; bcrypt-hashed passwords; CORS pinned to localhost client.
+- **Status:** Core flows live; password-reset email send is scaffolded but not wired; Mailtrap helpers exist though controllers currently use Brevo.
+- **Quick start:** `npm install && npm run dev` (defaults to port `5000`); update CORS in `server.js` if the client URL changes.
+- **Env (.env):** `PORT=5000`, `MONGODB_URI=...`, `JWT_SECRET=...`, `NODE_ENV=development`, `BREVO_API_KEY=...`, `MAILTRAP_TOKEN=...`, `CLIENT_URL=http://localhost:5173`.
+- **API (base `/api/auth`):** `POST /signup`, `POST /verify-email`, `POST /login`, `POST /logout`, `POST /forgot-password`, `POST /reset-password/:token`, `GET /check-auth` (JWT cookie required).
+- **Security:** HttpOnly + same-site cookies (secure in production), JWT 7d expiry, bcrypt salts=10, `VerifyToken` middleware reads `req.cookies.token`.
+- **Gaps to harden:** add input validation (zod/celebrate), rate limiting + helmet, wire password reset email delivery, consider short-lived access+refresh with rotation, add logging/metrics and structured errors.
+
+---
+
 ## 🔗 Proposal Alignment (Frontend vs Vision)
 - **SynapseWorkspace:** Visual nods via Services/Features cards, but no file upload/preview, versioning, inline comments, or whiteboard channels.
 - **SynapseChat:** CTA cards mention inclusive chat; no real-time messaging, E2E encryption, sign-language/speech translation, threads, or distraction-free mode.
