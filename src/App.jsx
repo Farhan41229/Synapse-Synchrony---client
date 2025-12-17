@@ -9,12 +9,16 @@ import Loader from './components/Loaders/Loader';
 function App() {
   const { isCheckingAuth, isAuthenticated, user, checkAuth, isLoading } =
     useAuthStore();
+
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // ✅ run once on initial load
+
   if (isCheckingAuth || isLoading) {
     return <Loader />;
   }
+
   console.log('Is Authenticated: ', isAuthenticated);
   console.log('User: ', user);
 

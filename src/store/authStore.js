@@ -1,9 +1,9 @@
 import { create } from 'zustand';
 import axios from 'axios';
-const AUTH_URL = 'http://localhost:3001/api/auth';
-axios.defaults.withCredentials = true;
+
 export const useAuthStore = create((set) => ({
   user: null,
+  accessToken: null,
   isAuthenticated: false,
   error: null,
   isLoading: false,
@@ -12,14 +12,11 @@ export const useAuthStore = create((set) => ({
   signup: async (email, password, name) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${AUTH_URL}/signup`, {
-        email,
-        password,
-        name,
-      });
-      console.log('The response of signup is: ', response);
+      const response = await axios.post('/auth/register', { email, password, name });
+
       set({
         user: response.data.data.user,
+        accessToken: response.data.data.accessToken,
         isAuthenticated: true,
         isLoading: false,
       });
@@ -31,17 +28,16 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
+
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${AUTH_URL}/login`, {
-        email,
-        password,
-      });
-      console.log('The login response is: ', response);
+      const response = await axios.post('/auth/login', { email, password });
+
       set({
-        isAuthenticated: true,
         user: response.data.data.user,
+        accessToken: response.data.data.accessToken,
+        isAuthenticated: true,
         error: null,
         isLoading: false,
       });
@@ -53,53 +49,81 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
+
   logout: async () => {
     set({ isLoading: true, error: null });
     try {
-      await axios.post(`${AUTH_URL}/logout`);
+      await axios.post('/auth/logout');
+
       set({
         user: null,
+        accessToken: null,
         isAuthenticated: false,
         error: null,
         isLoading: false,
       });
-    } catch (error) {
-      set({ error: 'Error logging out', isLoading: false });
-      throw error;
+    } catch {
+      // even if server fails, clear client state
+      set({
+        user: null,
+        accessToken: null,
+        isAuthenticated: false,
+        error: null,
+        isLoading: false,
+      });
     }
   },
+
   verifyEmail: async (code) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${AUTH_URL}/verify-email`, { code });
-      console.log('The response of the verify email is: ', response);
+      const response = await axios.post('/auth/verify-email', { code });
+
       set({
         user: response.data.data.user,
         isAuthenticated: true,
         isLoading: false,
       });
+
       return response.data;
     } catch (error) {
       set({
-        error: error.response.data.message || 'Error verifying email',
+        error: error.response?.data?.message || 'Error verifying email',
         isLoading: false,
       });
       throw error;
     }
   },
+
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
+
     try {
-      const response = await axios.get(`${AUTH_URL}/check-auth`);
-      console.log('The Check auth Response is : ', response);
+      // 1) Get a new access token using HttpOnly refresh cookie
+      const refreshRes = await axios.post('/auth/refresh');
+      const accessToken = refreshRes.data.data.accessToken;
+
+      // 2) Fetch user profile using the access token
+      const meRes = await axios.get('/auth/me', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
       set({
-        user: response.data.data.user,
+        user: meRes.data.data.user,
+        accessToken,
         isAuthenticated: true,
         isCheckingAuth: false,
+        error: null,
       });
-    } catch (error) {
-      set({ error: null, isCheckingAuth: false, isAuthenticated: false });
-      throw error;
+    } catch {
+      // Refresh failed => treat as logged out
+      set({
+        user: null,
+        accessToken: null,
+        isAuthenticated: false,
+        isCheckingAuth: false,
+        error: null,
+      });
     }
   },
 }));
