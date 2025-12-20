@@ -3,6 +3,16 @@ import NavButton from './NavButton';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '@/store/authStore';
 import toast from 'react-hot-toast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChartBar, LogOut, MessageCircle, User } from 'lucide-react';
 
 const NavMenuGeneral = () => {
   const navigate = useNavigate();
@@ -35,15 +45,40 @@ const NavMenuGeneral = () => {
       )} */}
 
       {user ? (
-        <button
-          className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6"
-          onClick={() => {
-            HandleLogout();
-          }}
-          disabled={isLoading}
-        >
-          {isLoading ? 'Logging out...' : 'Logout'}
-        </button>
+        // <button
+        //   className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6"
+        //   onClick={() => {
+        //     HandleLogout();
+        //   }}
+        //   disabled={isLoading}
+        // >
+        //   {isLoading ? 'Logging out...' : 'Logout'}
+        // </button>
+        //
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Avatar className={'mx-2 hover:cursor-pointer outline-0'}>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent sideOffset={20}>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              {' '}
+              <User /> Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              {' '}
+              <MessageCircle /> Chat
+            </DropdownMenuItem>
+            <DropdownMenuItem variant="destructive">
+              {' '}
+              <LogOut /> Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
         <button
           onClick={() => navigate('/auth/login')}

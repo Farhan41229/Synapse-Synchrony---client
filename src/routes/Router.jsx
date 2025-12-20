@@ -7,6 +7,8 @@ import AuthHomePage from '@/pages/AuthPage/AuthHomePage';
 import SignUpPage from '@/pages/AuthPage/SignUpPage';
 import LoginPage from '@/pages/AuthPage/LoginPage';
 import VerifyEmailPage from '@/pages/AuthPage/VerifyEmailPage';
+import DashboardLayout from '@/layouts/DashboardLayout';
+import Chat from '@/components/DashboardComponents/Shared/Chat';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,11 @@ const router = createBrowserRouter([
         Component: VerifyEmailPage,
       },
     ],
+  },
+  {
+    path: '/dashboard',
+    Component: DashboardLayout,
+    children: [{ path: 'chat', Component: Chat }],
   },
 ]);
 
