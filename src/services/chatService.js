@@ -1,4 +1,5 @@
-import axios from 'axios';
+// /Synapse-Synchrony---client/src/services/chatService.js
+import api from './api'; // IMPORTANT: use your configured axios export
 import { useAuthStore } from '../store/authStore';
 
 /**
@@ -6,39 +7,50 @@ import { useAuthStore } from '../store/authStore';
  * Handles all conversation-related API calls
  */
 
-// Get current user ID helper
-const getCurrentUserId = () => {
-  return useAuthStore.getState().user?.id;
+const getId = (maybe) => {
+  if (!maybe) return null;
+  if (typeof maybe === 'string') return maybe;
+  return maybe.id || maybe._id || null;
 };
 
-// Get all conversations for current user
+const getCurrentUserId = () => getId(useAuthStore.getState().user);
+
 export const getConversations = async () => {
   try {
-    const response = await axios.get('/conversations');
-    const conversations = response.data.data.conversations;
+    // no leading slash because baseURL already includes "/api"
+    const response = await api.get('conversations');
+
+    const conversations =
+      response?.data?.data?.conversations ??
+      response?.data?.conversations ??
+      [];
+
     const currentUserId = getCurrentUserId();
-    
-    // Transform backend data to frontend format
+    if (!Array.isArray(conversations)) return [];
+
     return conversations.map((conv) => {
-      // For direct chats, find the OTHER participant (not current user)
-      const otherParticipant = conv.participants.find(
-        (p) => p.userId._id !== currentUserId
-      );
-      
+      const convId = getId(conv);
+      const participants = Array.isArray(conv?.participants) ? conv.participants : [];
+
+      const otherParticipant =
+        conv?.type === 'direct'
+          ? participants.find((p) => getId(p?.userId) && getId(p.userId) !== currentUserId)
+          : null;
+
       const participantUser = otherParticipant?.userId;
-      
+
       return {
-        id: conv._id,
-        type: conv.type,
-        // For direct chats, show other person's name. For groups, show group name
-        name: conv.type === 'group' 
-          ? conv.name 
-          : participantUser?.name || 'Unknown User',
-        avatar: conv.avatar || null,
-        participants: conv.participants,
-        lastMessage: conv.lastMessage || null,
-        updatedAt: conv.updatedAt,
-        unreadCount: 0, // Will be implemented later with read receipts
+        id: convId,
+        type: conv?.type || 'direct',
+        name:
+          conv?.type === 'group'
+            ? (conv?.name || 'Group')
+            : (participantUser?.name || 'Unknown User'),
+        avatar: conv?.avatar || participantUser?.avatar || null,
+        participants,
+        lastMessage: conv?.lastMessage || null,
+        updatedAt: conv?.updatedAt || conv?.createdAt || null,
+        unreadCount: conv?.unreadCount ?? 0,
       };
     });
   } catch (error) {
@@ -47,87 +59,93 @@ export const getConversations = async () => {
   }
 };
 
-// Get single conversation by ID
 export const getConversation = async (conversationId) => {
   try {
-    const response = await axios.get(`/conversations/${conversationId}`);
-    return response.data.data.conversation;
+    const response = await api.get(`conversations/${conversationId}`);
+    return (
+      response?.data?.data?.conversation ??
+      response?.data?.conversation ??
+      response?.data?.data
+    );
   } catch (error) {
     console.error('Error fetching conversation:', error);
     throw error;
   }
 };
 
-// Create or get direct conversation
 export const createDirectConversation = async (participantId) => {
   try {
-    const response = await axios.post('/conversations/direct', {
-      participantId,
-    });
-    return response.data.data.conversation;
+    const response = await api.post('conversations/direct', { participantId });
+    return (
+      response?.data?.data?.conversation ??
+      response?.data?.conversation ??
+      response?.data?.data
+    );
   } catch (error) {
     console.error('Error creating direct conversation:', error);
     throw error;
   }
 };
 
-// Create group conversation
 export const createGroupConversation = async (name, participantIds) => {
   try {
-    const response = await axios.post('/conversations/group', {
-      name,
-      participantIds,
-    });
-    return response.data.data.conversation;
+    const response = await api.post('conversations/group', { name, participantIds });
+    return (
+      response?.data?.data?.conversation ??
+      response?.data?.conversation ??
+      response?.data?.data
+    );
   } catch (error) {
     console.error('Error creating group conversation:', error);
     throw error;
   }
 };
 
-// Update group name
 export const updateGroupName = async (conversationId, name) => {
   try {
-    const response = await axios.patch(`/conversations/${conversationId}/name`, {
-      name,
-    });
-    return response.data.data.conversation;
+    const response = await api.patch(`conversations/${conversationId}/name`, { name });
+    return (
+      response?.data?.data?.conversation ??
+      response?.data?.conversation ??
+      response?.data?.data
+    );
   } catch (error) {
     console.error('Error updating group name:', error);
     throw error;
   }
 };
 
-// Add member to group
 export const addGroupMember = async (conversationId, userId) => {
   try {
-    const response = await axios.post(`/conversations/${conversationId}/members`, {
-      userId,
-    });
-    return response.data.data.conversation;
+    const response = await api.post(`conversations/${conversationId}/members`, { userId });
+    return (
+      response?.data?.data?.conversation ??
+      response?.data?.conversation ??
+      response?.data?.data
+    );
   } catch (error) {
     console.error('Error adding group member:', error);
     throw error;
   }
 };
 
-// Remove member from group
 export const removeGroupMember = async (conversationId, userId) => {
   try {
-    const response = await axios.delete(
-      `/conversations/${conversationId}/members/${userId}`
+    const response = await api.delete(`conversations/${conversationId}/members/${userId}`);
+    return (
+      response?.data?.data?.conversation ??
+      response?.data?.conversation ??
+      response?.data?.data
     );
-    return response.data.data.conversation;
   } catch (error) {
     console.error('Error removing group member:', error);
     throw error;
   }
 };
 
-// Delete/leave conversation
 export const deleteConversation = async (conversationId) => {
   try {
-    const response = await axios.delete(`/conversations/${conversationId}`);
+    const response = await api.delete(`conversations/${conversationId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting conversation:', error);
