@@ -12,14 +12,14 @@ export default function useMessages(conversationId, { limit = 50 } = {}) {
 
   const loadInitial = useCallback(async () => {
     if (!conversationId) return;
+
     setIsLoadingInitial(true);
     try {
       const res = await getMessages(conversationId, { limit });
-      setMessages(res.messages);
+      setMessages(res.messages || []);
       setHasMore(res.pagination?.hasMore ?? false);
       setNextCursor(res.pagination?.nextCursor ?? null);
 
-      // ✅ this line is what was crashing before
       await markMessagesAsRead(conversationId);
     } catch (e) {
       toast.error('Failed to load messages');
@@ -31,10 +31,13 @@ export default function useMessages(conversationId, { limit = 50 } = {}) {
 
   const loadOlder = useCallback(async () => {
     if (!conversationId || !hasMore || !nextCursor) return;
+
     setIsLoadingOlder(true);
     try {
       const res = await getMessages(conversationId, { limit, before: nextCursor });
-      setMessages((prev) => [...res.messages, ...prev]);
+      const older = res.messages || [];
+      setMessages((prev) => [...older, ...prev]);
+
       setHasMore(res.pagination?.hasMore ?? false);
       setNextCursor(res.pagination?.nextCursor ?? null);
     } catch (e) {
@@ -49,13 +52,55 @@ export default function useMessages(conversationId, { limit = 50 } = {}) {
     setMessages([]);
     setHasMore(false);
     setNextCursor(null);
-    loadInitial();
+
+    if (conversationId) loadInitial();
   }, [conversationId, loadInitial]);
 
+  // optimistic append + dedupe by id
   const appendMessage = useCallback((msg) => {
     if (!msg) return;
-    setMessages((prev) => [...prev, msg]);
+    const id = msg.id || msg._id;
+
+    setMessages((prev) => {
+      if (id && prev.some((m) => (m.id || m._id) === id)) return prev;
+      return [...prev, { ...msg, id }];
+    });
   }, []);
 
-  return { messages, hasMore, nextCursor, isLoadingInitial, isLoadingOlder, loadOlder, reload: loadInitial, appendMessage };
+  // update message content/status by id (for edited event)
+  const updateMessage = useCallback((patch) => {
+    if (!patch) return;
+    const id = patch.id || patch._id;
+    if (!id) return;
+
+    setMessages((prev) =>
+      prev.map((m) => ((m.id || m._id) === id ? { ...m, ...patch, id } : m))
+    );
+  }, []);
+
+  // soft-delete in UI by id (for deleted event)
+  const markMessageDeleted = useCallback((messageId) => {
+    if (!messageId) return;
+
+    setMessages((prev) =>
+      prev.map((m) =>
+        (m.id || m._id) === messageId
+          ? { ...m, isDeleted: true, content: '', attachments: [] }
+          : m
+      )
+    );
+  }, []);
+
+  return {
+    messages,
+    hasMore,
+    nextCursor,
+    isLoadingInitial,
+    isLoadingOlder,
+    loadOlder,
+    reload: loadInitial,
+    appendMessage,
+    updateMessage,
+    markMessageDeleted,
+  };
 }
