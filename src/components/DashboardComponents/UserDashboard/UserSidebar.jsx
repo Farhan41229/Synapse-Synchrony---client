@@ -61,7 +61,7 @@ const UserSidebar = () => {
   const photourl = user?.avatar;
   return (
     <Sidebar collapsible="icon" className="z-20">
-      <SidebarHeader className="pt-20 ">
+      <SidebarHeader className="">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>

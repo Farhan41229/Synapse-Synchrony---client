@@ -1,20 +1,24 @@
+import DashboardNavbar from '@/components/DashboardComponents/Shared/DashboardNavbar';
 import UserSidebar from '@/components/DashboardComponents/UserDashboard/UserSidebar';
 import Navbar from '@/components/Shared/Navbar/Navbar';
 import { Sidebar, SidebarProvider } from '@/components/ui/sidebar';
 import React from 'react';
+import { Outlet } from 'react-router';
 
 const DashboardLayout = () => {
   return (
     <>
-      <div>
-        <nav className="sticky top-0 z-100">
-          <Navbar />
-        </nav>
-        <main className="flex gap-2">
-          <SidebarProvider>
-            <UserSidebar />
-          </SidebarProvider>
-        </main>
+      <div className="flex">
+        <SidebarProvider>
+          <UserSidebar />
+          <main className="w-full">
+            <DashboardNavbar />
+            <div className="px-4">
+              {/* {children} */}
+              <Outlet />
+            </div>
+          </main>
+        </SidebarProvider>
       </div>
     </>
   );
