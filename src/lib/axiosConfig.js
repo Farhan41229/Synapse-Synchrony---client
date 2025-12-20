@@ -1,69 +1,56 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-// Base configuration
 axios.defaults.baseURL = 'http://localhost:3001/api';
 axios.defaults.withCredentials = true;
 
-console.log('🔧 Axios configured with baseURL:', axios.defaults.baseURL);
+const isDev = import.meta?.env?.MODE === 'development';
 
-// Request interceptor: Attach access token to all requests
+let refreshPromise = null;
+
 axios.interceptors.request.use(
   (config) => {
     const accessToken = useAuthStore.getState().accessToken;
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
-      console.log('📤 Request with token:', config.method.toUpperCase(), config.url);
-    }
+    if (accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: Auto-refresh on 401
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    if (!originalRequest) return Promise.reject(error);
 
-    // Avoid infinite loop on /auth/refresh endpoint
-    if (originalRequest.url === '/auth/refresh') {
-      console.log('❌ Refresh token failed');
+    // Robust refresh-loop guard
+    if (String(originalRequest.url || '').includes('/auth/refresh')) {
       return Promise.reject(error);
     }
 
-    // If 401 and haven't retried yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      console.log('🔄 Token expired, attempting refresh...');
-
       try {
-        // Try to refresh token
-        const refreshRes = await axios.post('/auth/refresh');
+        // single-flight refresh
+        if (!refreshPromise) {
+          refreshPromise = axios.post('/auth/refresh').finally(() => {
+            refreshPromise = null;
+          });
+        }
+
+        const refreshRes = await refreshPromise;
         const newAccessToken = refreshRes.data.data.accessToken;
 
-        console.log('✅ Token refreshed successfully');
+        useAuthStore.setState({ accessToken: newAccessToken, isAuthenticated: true });
 
-        // Update store
-        useAuthStore.setState({ 
-          accessToken: newAccessToken,
-          isAuthenticated: true 
-        });
-
-        // Retry original request with new token
+        originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
         return axios(originalRequest);
       } catch (refreshError) {
-        console.log('❌ Refresh failed, logging out');
-        
-        // Refresh failed - logout user
-        useAuthStore.setState({
-          user: null,
-          accessToken: null,
-          isAuthenticated: false,
-        });
-        
+        if (isDev) console.error('Refresh failed', refreshError);
+        useAuthStore.setState({ user: null, accessToken: null, isAuthenticated: false });
         return Promise.reject(refreshError);
       }
     }

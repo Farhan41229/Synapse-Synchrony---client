@@ -10,7 +10,7 @@ import {
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import heroImage from '../../assets/Logo/Banner Image.webp';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import QuickStats from './QuickStats';
 
 const HeroSection = () => {

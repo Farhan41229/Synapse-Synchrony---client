@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { X as XIcon } from 'lucide-react';
 import logo from '../../assets/Logo/Rootfarming.png'; // Keep existing logo for now
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 

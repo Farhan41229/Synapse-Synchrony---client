@@ -26,18 +26,24 @@ const ChatContainer = () => {
   }, []);
 
   // Fetch all conversations
-  const fetchConversations = async () => {
-    try {
-      setIsLoadingConversations(true);
-      const data = await chatService.getConversations();
-      setConversations(data);
-    } catch (error) {
-      toast.error('Failed to load conversations');
-      console.error('Error loading conversations:', error);
-    } finally {
-      setIsLoadingConversations(false);
+const fetchConversations = async () => {
+  try {
+    setIsLoadingConversations(true);
+    const data = await chatService.getConversations();
+    setConversations(data);
+
+    // If none selected yet, auto-select the first conversation
+    if (!selectedConversation && data.length > 0) {
+      setSelectedConversation(data[0]);
+      if (!messages[data[0].id]) await fetchMessages(data[0].id);
     }
-  };
+  } catch {
+    toast.error('Failed to load conversations');
+  } finally {
+    setIsLoadingConversations(false);
+  }
+};
+
 
 // Fetch messages for a conversation
 const fetchMessages = async (conversationId) => {
@@ -131,7 +137,12 @@ const fetchMessages = async (conversationId) => {
         conversations={conversations}
         selectedConversationId={selectedConversation?.id}
         onSelectConversation={handleSelectConversation}
+        onConversationCreated={async () => {
+          // Reload list so both users see the new conversation
+          await fetchConversations();
+        }}
       />
+
 
       {/* Chat Area */}
       <main className="flex-1 flex flex-col">
