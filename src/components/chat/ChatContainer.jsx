@@ -1,158 +1,134 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 import Sidebar from './Sidebar';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
-
-// MOCK CONVERSATIONS
-const mockConversations = [
-  {
-    id: '1',
-    name: 'John Doe',
-    avatar: null,
-    type: 'direct',
-    lastMessage: {
-      content: 'Hey! How are you doing?',
-      senderId: '2',
-    },
-    updatedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    unreadCount: 2,
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    avatar: null,
-    type: 'direct',
-    lastMessage: {
-      content: 'See you tomorrow!',
-      senderId: '1',
-    },
-    updatedAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-    unreadCount: 0,
-  },
-  {
-    id: '3',
-    name: 'Project Team',
-    avatar: null,
-    type: 'group',
-    lastMessage: {
-      content: 'Meeting at 3 PM',
-      senderId: '3',
-    },
-    updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    unreadCount: 5,
-  },
-];
-
-// MOCK MESSAGES
-const mockMessages = {
-  '1': [
-    {
-      id: 'm1',
-      conversationId: '1',
-      senderId: '2',
-      senderName: 'John Doe',
-      content: 'Hey! How are you doing?',
-      createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-    },
-    {
-      id: 'm2',
-      conversationId: '1',
-      senderId: '1',
-      content: "I'm good! Thanks for asking. How about you?",
-      createdAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
-    },
-    {
-      id: 'm3',
-      conversationId: '1',
-      senderId: '2',
-      senderName: 'John Doe',
-      content: 'Doing great! Working on the new project.',
-      createdAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    },
-  ],
-  '2': [
-    {
-      id: 'm4',
-      conversationId: '2',
-      senderId: '1',
-      content: 'Hey Jane! Are we still on for tomorrow?',
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: 'm5',
-      conversationId: '2',
-      senderId: '2',
-      senderName: 'Jane Smith',
-      content: 'Yes! See you tomorrow at 10 AM.',
-      createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-    },
-  ],
-  '3': [
-    {
-      id: 'm6',
-      conversationId: '3',
-      senderId: '3',
-      senderName: 'Mike Johnson',
-      content: 'Team meeting at 3 PM today.',
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: 'm7',
-      conversationId: '3',
-      senderId: '4',
-      senderName: 'Sarah Lee',
-      content: "Got it! I'll be there.",
-      createdAt: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(),
-    },
-  ],
-};
+import Loader from '../Loaders/Loader';
+import * as chatService from '../../services/chatService';
+import * as messageService from '../../services/messageService';
 
 /**
  * ChatContainer Component
- * 2-column layout: Sidebar (conversations) + Chat Area (messages)
+ * 2-column layout with real API integration
  */
 const ChatContainer = () => {
+  const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState({});
+  const [isLoadingConversations, setIsLoadingConversations] = useState(true);
+  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
 
-  const handleSelectConversation = (conversation) => {
-    setSelectedConversation(conversation);
-    
-    // Load messages for this conversation (mock data)
-    if (!messages[conversation.id]) {
-      setMessages((prev) => ({
-        ...prev,
-        [conversation.id]: mockMessages[conversation.id] || [],
-      }));
+  // Fetch conversations on mount
+  useEffect(() => {
+    fetchConversations();
+  }, []);
+
+  // Fetch all conversations
+  const fetchConversations = async () => {
+    try {
+      setIsLoadingConversations(true);
+      const data = await chatService.getConversations();
+      setConversations(data);
+    } catch (error) {
+      toast.error('Failed to load conversations');
+      console.error('Error loading conversations:', error);
+    } finally {
+      setIsLoadingConversations(false);
     }
   };
 
-  const handleSendMessage = (content) => {
-    if (!selectedConversation) return;
-
-    const newMessage = {
-      id: `m${Date.now()}`,
-      conversationId: selectedConversation.id,
-      senderId: '1', // Current user ID (mock)
-      content,
-      createdAt: new Date().toISOString(),
-    };
-
+// Fetch messages for a conversation
+const fetchMessages = async (conversationId) => {
+  try {
+    setIsLoadingMessages(true);
+    const data = await messageService.getMessages(conversationId);
+    
     setMessages((prev) => ({
       ...prev,
-      [selectedConversation.id]: [
-        ...(prev[selectedConversation.id] || []),
-        newMessage,
-      ],
+      [conversationId]: data.messages, // Get messages from transformed data
     }));
+
+    // Mark messages as read
+    await messageService.markMessagesAsRead(conversationId);
+  } catch (error) {
+    toast.error('Failed to load messages');
+    console.error('Error loading messages:', error);
+  } finally {
+    setIsLoadingMessages(false);
+  }
+};
+
+
+  // Handle conversation selection
+  const handleSelectConversation = async (conversation) => {
+    setSelectedConversation(conversation);
+    
+    // Load messages if not already loaded
+    if (!messages[conversation.id]) {
+      await fetchMessages(conversation.id);
+    }
   };
+
+  // Handle sending a message
+  const handleSendMessage = async (content) => {
+    if (!selectedConversation || !content.trim()) return;
+
+    try {
+      setIsSendingMessage(true);
+      
+      // Send message to backend
+      const newMessage = await messageService.sendMessage(
+        selectedConversation.id,
+        content
+      );
+
+      // Add message to local state
+      setMessages((prev) => ({
+        ...prev,
+        [selectedConversation.id]: [
+          ...(prev[selectedConversation.id] || []),
+          newMessage,
+        ],
+      }));
+
+      // Update conversation's last message
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.id === selectedConversation.id
+            ? {
+                ...conv,
+                lastMessage: {
+                  content: newMessage.content,
+                  senderId: newMessage.senderId,
+                  timestamp: newMessage.createdAt,
+                },
+                updatedAt: newMessage.createdAt,
+              }
+            : conv
+        )
+      );
+
+      toast.success('Message sent!');
+    } catch (error) {
+      toast.error('Failed to send message');
+      console.error('Error sending message:', error);
+    } finally {
+      setIsSendingMessage(false);
+    }
+  };
+
+  // Show loader while loading conversations
+  if (isLoadingConversations) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex h-screen bg-background">
       {/* Sidebar */}
       <Sidebar
-        conversations={mockConversations}
+        conversations={conversations}
         selectedConversationId={selectedConversation?.id}
         onSelectConversation={handleSelectConversation}
       />
@@ -165,12 +141,21 @@ const ChatContainer = () => {
             <ChatHeader conversation={selectedConversation} />
 
             {/* Messages List */}
-            <MessageList
-              messages={messages[selectedConversation.id] || []}
-            />
+            {isLoadingMessages ? (
+              <div className="flex-1 flex items-center justify-center">
+                <Loader />
+              </div>
+            ) : (
+              <MessageList
+                messages={messages[selectedConversation.id] || []}
+              />
+            )}
 
             {/* Message Input */}
-            <MessageInput onSendMessage={handleSendMessage} />
+            <MessageInput
+              onSendMessage={handleSendMessage}
+              disabled={isSendingMessage}
+            />
           </>
         ) : (
           // No conversation selected
@@ -194,7 +179,9 @@ const ChatContainer = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Welcome to Chat</h3>
               <p className="text-muted-foreground">
-                Select a conversation to start messaging
+                {conversations.length === 0
+                  ? 'No conversations yet. Start chatting!'
+                  : 'Select a conversation to start messaging'}
               </p>
             </div>
           </div>
