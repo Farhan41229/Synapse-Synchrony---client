@@ -1,6 +1,6 @@
 import FloatingShape from '@/components/FloatingShape';
 import React from 'react';
-import { Outlet } from 'react-router';
+import { Outlet } from 'react-router-dom';
 
 const AuthLayout = () => {
   return (

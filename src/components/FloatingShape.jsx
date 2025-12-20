@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
+
 const FloatingShape = ({ color, size, top, left, delay }) => {
   return (
     <motion.div
@@ -17,7 +17,7 @@ const FloatingShape = ({ color, size, top, left, delay }) => {
         delay,
       }}
       aria-hidden="true"
-    ></motion.div>
+    />
   );
 };
 

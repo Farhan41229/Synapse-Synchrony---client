@@ -1,20 +1,20 @@
-import { ModeToggle } from '@/components/mode-toggle';
+import { ModeToggle } from '../../mode-toggle';
 import NavButton from './NavButton';
-import { useNavigate } from 'react-router';
-import { useAuthStore } from '@/store/authStore';
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../../../store/authStore';
 import toast from 'react-hot-toast';
 
 const NavMenuGeneral = () => {
   const navigate = useNavigate();
-  const { user, isLoading, logout } = useAuthStore(); // Placeholder for your auth logic
+  const { user, isAuthenticated, isLoading, logout } = useAuthStore();
 
-  const HandleLogout = async () => {
+  const handleLogout = async () => {
     try {
       await logout();
       toast.success('Logged out successfully');
-      navigate('/');
+      navigate('/'); // or '/auth/login' if you prefer
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error('Error logging out. Please try again.');
     }
   };
@@ -27,20 +27,19 @@ const NavMenuGeneral = () => {
 
       <ModeToggle />
 
-      {/* {user && (
+      {isAuthenticated && user && (
         <>
           <NavButton label="My Habits" address="/dashboard/my-habits" />
           <NavButton label="Add Habit" address="/dashboard/add-habit" />
         </>
-      )} */}
+      )}
 
-      {user ? (
+      {isAuthenticated ? (
         <button
-          className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6"
-          onClick={() => {
-            HandleLogout();
-          }}
+          className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6 disabled:opacity-60"
+          onClick={handleLogout}
           disabled={isLoading}
+          type="button"
         >
           {isLoading ? 'Logging out...' : 'Logout'}
         </button>
@@ -48,6 +47,7 @@ const NavMenuGeneral = () => {
         <button
           onClick={() => navigate('/auth/login')}
           className="btn bg-[#097133] text-white hover:bg-[#04642a] border-none ml-2 px-6"
+          type="button"
         >
           Login
         </button>

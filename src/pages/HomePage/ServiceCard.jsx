@@ -1,14 +1,8 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-const ServiceCard = ({
-  icon: Icon,
-  title,
-  description,
-  features,
-  color = 'bg-[#EF4444]',
-}) => {
+const ServiceCard = ({ icon: Icon, title, description, features, color = 'bg-[#EF4444]' }) => {
   useEffect(() => {
     AOS.init({ duration: 900, once: true, easing: 'ease-in-out' });
   }, []);
@@ -20,30 +14,26 @@ const ServiceCard = ({
       backdrop-blur-md shadow-sm hover:shadow-[0_10px_30px_rgba(239,68,68,0.2)] 
       hover:-translate-y-2 transition-all duration-300 flex flex-col h-full text-black dark:text-gray-300"
     >
-      {/* Icon */}
       <div
         className={`w-16 h-16 md:w-20 md:h-20 rounded-xl ${color} flex items-center justify-center mb-5 
         shadow-md transition-transform duration-300 group-hover:scale-110`}
       >
-        <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+        {Icon ? <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" /> : null}
       </div>
 
-      {/* Title */}
       <h3 className="text-lg md:text-xl font-semibold mb-2 hover:text-[#EF4444] dark:hover:text-[#EF4444] transition-colors duration-300">
         {title}
       </h3>
 
-      {/* Description */}
       <p className="text-sm md:text-base text-black dark:text-gray-400 mb-4 flex-grow">
         {description}
       </p>
 
-      {/* Features List */}
-      {features && features.length > 0 && (
+      {features?.length > 0 && (
         <ul className="space-y-2 text-sm text-black dark:text-gray-400">
           {features.map((feature, idx) => (
             <li key={idx} className="flex items-start">
-              <span className="w-2 h-2 bg-[#EF4444] rounded-full mt-1.5 mr-2"></span>
+              <span className="w-2 h-2 bg-[#EF4444] rounded-full mt-1.5 mr-2" />
               {feature}
             </li>
           ))}
