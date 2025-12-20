@@ -1,5 +1,4 @@
-// /Synapse-Synchrony---client/src/components/chat/ChatContainer.jsx
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import Sidebar from './Sidebar';
 import ChatHeader from './ChatHeader';
@@ -8,6 +7,7 @@ import MessageInput from './MessageInput';
 import Loader from '../Loaders/Loader';
 import * as messageService from '../../services/messageService';
 import useChat from '../../hooks/useChat';
+import useMessages from '../../hooks/useMessages';
 
 const ChatContainer = () => {
   const {
@@ -19,43 +19,19 @@ const ChatContainer = () => {
     selectConversation,
   } = useChat({ autoSelectFirst: true });
 
-  const [messages, setMessages] = useState({});
-  const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const {
+    messages,
+    hasMore,
+    isLoadingInitial,
+    isLoadingOlder,
+    loadOlder,
+    appendMessage,
+  } = useMessages(selectedConversationId, { limit: 50 });
+
   const [isSendingMessage, setIsSendingMessage] = useState(false);
 
-  const fetchMessages = async (conversationId) => {
-    try {
-      setIsLoadingMessages(true);
-
-      const data = await messageService.getMessages(conversationId);
-
-      setMessages((prev) => ({
-        ...prev,
-        [conversationId]: data.messages,
-      }));
-
-      await messageService.markMessagesAsRead(conversationId);
-    } catch (error) {
-      toast.error('Failed to load messages');
-      console.error('Error loading messages:', error);
-    } finally {
-      setIsLoadingMessages(false);
-    }
-  };
-
-  // Load messages when selected conversation changes (only once per conversation)
-  useEffect(() => {
-    if (!selectedConversationId) return;
-    if (messages[selectedConversationId]) return;
-    fetchMessages(selectedConversationId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedConversationId]);
-
-  const handleSelectConversation = async (conversation) => {
+  const handleSelectConversation = (conversation) => {
     selectConversation(conversation);
-    if (conversation?.id && !messages[conversation.id]) {
-      await fetchMessages(conversation.id);
-    }
   };
 
   const handleSendMessage = async (content) => {
@@ -63,19 +39,11 @@ const ChatContainer = () => {
 
     try {
       setIsSendingMessage(true);
-
       const newMessage = await messageService.sendMessage(
         selectedConversation.id,
         content
       );
-
-      setMessages((prev) => ({
-        ...prev,
-        [selectedConversation.id]: [
-          ...(prev[selectedConversation.id] || []),
-          newMessage,
-        ],
-      }));
+      appendMessage(newMessage);
     } catch (error) {
       toast.error('Failed to send message');
       console.error('Error sending message:', error);
@@ -102,15 +70,23 @@ const ChatContainer = () => {
           <>
             <ChatHeader conversation={selectedConversation} />
 
-            {isLoadingMessages ? (
+            {isLoadingInitial ? (
               <div className="flex-1 flex items-center justify-center">
                 <Loader />
               </div>
             ) : (
-              <MessageList messages={messages[selectedConversation.id] || []} />
+              <MessageList
+                messages={messages}
+                hasMore={hasMore}
+                isLoadingOlder={isLoadingOlder}
+                onLoadOlder={loadOlder}
+              />
             )}
 
-            <MessageInput onSendMessage={handleSendMessage} disabled={isSendingMessage} />
+            <MessageInput
+              onSendMessage={handleSendMessage}
+              disabled={isSendingMessage}
+            />
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center bg-secondary/20">

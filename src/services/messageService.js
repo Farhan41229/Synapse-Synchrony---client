@@ -1,130 +1,83 @@
-import axios from 'axios';
+import api from './api'; // configured axios instance (baseURL + interceptors)
 
-/**
- * Message Service
- * Handles all message-related API calls
- */
+const normalizeMessage = (msg) => ({
+  id: msg._id,
+  conversationId: msg.conversationId,
+  senderId: msg.senderId?._id || msg.senderId,
+  sender: msg.senderId,
+  content: msg.content,
+  type: msg.type,
+  attachments: msg.attachments || [],
+  createdAt: msg.createdAt,
+  updatedAt: msg.updatedAt,
+  isEdited: msg.isEdited,
+  isDeleted: msg.isDeleted,
+});
 
-// Get messages for a conversation (with pagination)
-export const getMessages = async (conversationId, limit = 50, before = null) => {
-  try {
-    const params = { limit };
-    if (before) {
-      params.before = before;
-    }
+export const getMessages = async (
+  conversationId,
+  { limit = 50, before = null } = {}
+) => {
+  const params = { limit };
+  if (before) params.before = before;
 
-    const response = await axios.get(
-      `/conversations/${conversationId}/messages`,
-      { params }
-    );
-    
-    const messages = response.data.data.messages || [];
-    
-    // Transform backend data to frontend format
-    return {
-      messages: messages.map((msg) => ({
-        id: msg._id, // Transform _id to id
-        conversationId: msg.conversationId,
-        senderId: msg.senderId?._id || msg.senderId,
-        sender: msg.senderId, // Full sender object
-        content: msg.content,
-        type: msg.type,
-        createdAt: msg.createdAt,
-        isEdited: msg.isEdited,
-        isDeleted: msg.isDeleted,
-      })),
-      hasMore: response.data.data.hasMore || false,
-    };
-  } catch (error) {
-    console.error('Error fetching messages:', error);
-    throw error;
-  }
+  const res = await api.get(`/conversations/${conversationId}/messages`, { params });
+
+  const data = res.data?.data || {};
+  const pagination = data.pagination || {};
+
+  // Backend often returns newest -> oldest; UI should be oldest -> newest
+  const raw = data.messages || [];
+  const ordered = raw.slice().reverse();
+
+  return {
+    messages: ordered.map(normalizeMessage),
+    pagination: {
+      hasMore: !!pagination.hasMore,
+      nextCursor: pagination.nextCursor ?? null,
+      prevCursor: pagination.prevCursor ?? null,
+      count: pagination.count ?? ordered.length,
+      limit: pagination.limit ?? limit,
+    },
+  };
 };
 
-
-// Send a new message
 export const sendMessage = async (conversationId, content, type = 'text') => {
-  try {
-    const response = await axios.post(
-      `/conversations/${conversationId}/messages`,
-      {
-        content,
-        type,
-      }
-    );
-    
-    const msg = response.data.data.message;
-    
-    // Transform to frontend format
-    return {
-      id: msg._id,
-      conversationId: msg.conversationId,
-      senderId: msg.senderId,
-      content: msg.content,
-      type: msg.type,
-      createdAt: msg.createdAt,
-      isEdited: false,
-      isDeleted: false,
-    };
-  } catch (error) {
-    console.error('Error sending message:', error);
-    throw error;
-  }
+  const res = await api.post(`/conversations/${conversationId}/messages`, {
+    content,
+    type,
+  });
+
+  const msg = res.data?.data?.message;
+  return normalizeMessage(msg);
 };
 
-
-// Edit a message
 export const editMessage = async (conversationId, messageId, content) => {
-  try {
-    const response = await axios.patch(
-      `/conversations/${conversationId}/messages/${messageId}`,
-      {
-        content,
-      }
-    );
-    return response.data.data.message;
-  } catch (error) {
-    console.error('Error editing message:', error);
-    throw error;
-  }
+  const res = await api.patch(
+    `/conversations/${conversationId}/messages/${messageId}`,
+    { content }
+  );
+  return res.data?.data?.message;
 };
 
-// Delete a message
 export const deleteMessage = async (conversationId, messageId) => {
-  try {
-    const response = await axios.delete(
-      `/conversations/${conversationId}/messages/${messageId}`
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error deleting message:', error);
-    throw error;
-  }
+  const res = await api.delete(
+    `/conversations/${conversationId}/messages/${messageId}`
+  );
+  return res.data;
 };
 
-// Mark messages as read
 export const markMessagesAsRead = async (conversationId, messageId = null) => {
-  try {
-    const response = await axios.post(
-      `/conversations/${conversationId}/messages/read`,
-      messageId ? { messageId } : {}
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Error marking messages as read:', error);
-    throw error;
-  }
+  const res = await api.post(
+    `/conversations/${conversationId}/messages/read`,
+    messageId ? { messageId } : {}
+  );
+  return res.data;
 };
 
-// Get unread message count
 export const getUnreadCount = async (conversationId) => {
-  try {
-    const response = await axios.get(
-      `/conversations/${conversationId}/messages/unread-count`
-    );
-    return response.data.data.unreadCount;
-  } catch (error) {
-    console.error('Error fetching unread count:', error);
-    throw error;
-  }
+  const res = await api.get(
+    `/conversations/${conversationId}/messages/unread-count`
+  );
+  return res.data?.data?.unreadCount;
 };
