@@ -31,7 +31,7 @@ const ChatBody = ({ chatId, messages, onReply }) => {
     <div className="w-full max-w-6xl mx-auto flex flex-col px-3 py-2">
       {messages.map((message) => (
         <ChatBodyMessage
-          key={message._id}
+          key={message?._id}
           message={message}
           onReply={onReply}
         />

@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-import { useAuthStore } from '@/store/authStore';
 import { generateUUID } from '@/lib/helper';
 export const API = 'http://localhost:3001/api';
 axios.defaults.withCredentials = true;
@@ -87,7 +86,7 @@ export const useChat = create((set, get) => ({
       chatId,
       content: content || '',
       image: image || null,
-      sender: user,
+      sender: user?._id,
       replyTo: replyTo || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -111,7 +110,8 @@ export const useChat = create((set, get) => ({
         image,
         replyToId: replyTo?._id,
       });
-      const { userMessage } = data;
+      console.log('The result from the Send Message is : ', data);
+      const { userMessage } = data?.data;
       //replace the temp user message
       set((state) => {
         if (!state.singleChat) return state;

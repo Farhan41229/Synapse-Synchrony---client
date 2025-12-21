@@ -10,8 +10,8 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
   const { user } = useAuthStore();
 
   const userId = user?._id || null;
-  const isCurrentUser = message.sender?._id === userId;
-  const senderName = isCurrentUser ? 'You' : message.sender?.name;
+  const isCurrentUser = message?.sender?._id === userId;
+  const senderName = isCurrentUser ? 'You' : message?.sender?.name;
 
   const replySendername =
     message.replyTo?.sender?._id === userId

@@ -60,6 +60,7 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
       replyTo: replyTo,
       user,
     };
+    console.log('The payload for Send Message is: ', payload);
     //Send Message
     sendMessage(payload);
 
@@ -72,7 +73,7 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
     <>
       <div
         className="sticky bottom-0
-       inset-x-0 z-[999]
+       inset-x-0 z-999
        bg-card border-t border-border py-4
       "
       >
@@ -137,7 +138,7 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
                     {...field}
                     autoComplete="off"
                     placeholder="Type new message"
-                    className="min-h-[40px] bg-background"
+                    className="min-h-10 bg-background"
                   />
                 </FormItem>
               )}
