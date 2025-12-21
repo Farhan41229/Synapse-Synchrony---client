@@ -45,12 +45,13 @@ export const useChat = create((set, get) => ({
   createChat: async (payload) => {
     set({ isCreatingChat: true });
     try {
+      console.log('The payload recieved is : ', payload);
       const response = await axios.post(`${API}/chat/create-chat`, {
         ...payload,
       });
       console.log('Response from Creating Chat: ', response);
-      get().addNewChat(response.data?.data?.chat);
-      return response.data?.data?.chat;
+      get().addNewChat(response.data?.data);
+      return response.data?.data;
     } catch (error) {
       console.log('Error in fetching Chats', error);
       return null;

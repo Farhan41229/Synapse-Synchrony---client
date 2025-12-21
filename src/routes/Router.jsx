@@ -10,6 +10,7 @@ import VerifyEmailPage from '@/pages/AuthPage/VerifyEmailPage';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 import ChatLayout from '@/components/DashboardComponents/Shared/Chat/ChatLayout';
+import SingleChat from '@/components/DashboardComponents/Shared/Chat/SingleChat';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -38,7 +39,13 @@ const router = createBrowserRouter([
   {
     path: '/dashboard',
     Component: DashboardLayout,
-    children: [{ path: 'chat', Component: ChatLayout }],
+    children: [
+      { path: 'chat', Component: ChatLayout },
+      {
+        path: 'chat/:id',
+        Component: SingleChat,
+      },
+    ],
   },
 ]);
 

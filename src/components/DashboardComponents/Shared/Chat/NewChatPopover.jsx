@@ -65,6 +65,7 @@ export const NewChatPopover = memo(() => {
       participants: selectedUsers,
       groupName: groupName,
     });
+    console.log('Here is the bothersome Response: ', response);
     setIsOpen(false);
     resetState();
     navigate(`/dashboard/chat/${response?._id}`);
@@ -75,7 +76,7 @@ export const NewChatPopover = memo(() => {
     try {
       const response = await createChat({
         isGroup: false,
-        participantId: userId,
+        participantID: userId,
       });
       setIsOpen(false);
       resetState();
