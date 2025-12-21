@@ -1,9 +1,11 @@
 import React from 'react';
+import ChatList from './Chat/ChatList';
 
 const Chat = () => {
   return (
     <div>
-      <h1>This is the Chat</h1>
+      <ChatList />
+      {/* <h1>Chat</h1> */}
     </div>
   );
 };
