@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { useSocket } from '@/hooks/use-socket';
 export const AUTH_URL = 'http://localhost:3001/api/auth';
 axios.defaults.withCredentials = true;
 export const useAuthStore = create((set) => ({
@@ -23,6 +24,7 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         isLoading: false,
       });
+      useSocket.getState().connectSocket();
     } catch (error) {
       set({
         error: error.response?.data?.message || 'Signup failed',
@@ -45,6 +47,7 @@ export const useAuthStore = create((set) => ({
         error: null,
         isLoading: false,
       });
+      useSocket.getState().connectSocket();
     } catch (error) {
       set({
         error: error.response?.data?.message || 'Error logging in',
@@ -63,6 +66,7 @@ export const useAuthStore = create((set) => ({
         error: null,
         isLoading: false,
       });
+      useSocket.getState().disconnectSocket();
     } catch (error) {
       set({ error: 'Error logging out', isLoading: false });
       throw error;
@@ -78,6 +82,7 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         isLoading: false,
       });
+      useSocket.getState().connectSocket();
       return response.data;
     } catch (error) {
       set({
@@ -97,6 +102,7 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         isCheckingAuth: false,
       });
+      useSocket.getState().connectSocket();
     } catch (error) {
       set({ error: null, isCheckingAuth: false, isAuthenticated: false });
       throw error;

@@ -1,17 +1,18 @@
 import { io, Socket } from 'socket.io-client';
 import { create } from 'zustand';
-const BASE_URL = 'http://localhost:3001/api';
+const BASE_URL = 'http://localhost:3001';
 
 export const useSocket = create()((set, get) => ({
   socket: null,
   onlineUser: [],
   connectSocket: () => {
     const { socket } = get();
-    console.log(socket, 'socket');
+    console.log('Socket : ', socket);
     if (socket?.connected) return;
 
     const newSocket = io(BASE_URL, {
       withCredentials: true,
+      transports: ['websocket'], // Explicitly set the transport type
       autoConnect: true,
     });
 

@@ -17,6 +17,7 @@ import { ChartBar, LogOut, MessageCircle, User } from 'lucide-react';
 const NavMenuGeneral = () => {
   const navigate = useNavigate();
   const { user, isLoading, logout } = useAuthStore(); // Placeholder for your auth logic
+  const photourl = user?.avatar || null;
 
   const HandleLogout = async () => {
     try {
@@ -58,7 +59,7 @@ const NavMenuGeneral = () => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar className={'mx-2 hover:cursor-pointer outline-0'}>
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage src={photourl} />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -73,7 +74,12 @@ const NavMenuGeneral = () => {
               {' '}
               <MessageCircle /> Chat
             </DropdownMenuItem>
-            <DropdownMenuItem variant="destructive">
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={() => {
+                HandleLogout();
+              }}
+            >
               {' '}
               <LogOut /> Logout
             </DropdownMenuItem>
