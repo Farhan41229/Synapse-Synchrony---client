@@ -15,8 +15,8 @@ function App() {
   if (isCheckingAuth || isLoading) {
     return <Loader />;
   }
-  console.log('Is Authenticated: ', isAuthenticated);
-  console.log('User: ', user);
+  // console.log('Is Authenticated: ', isAuthenticated);
+  // console.log('User: ', user);
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">

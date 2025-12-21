@@ -57,7 +57,7 @@ const items = [
 ];
 const UserSidebar = () => {
   const { user } = useAuthStore();
-  console.log(user);
+  // console.log(user);
   const photourl = user?.avatar;
   return (
     <Sidebar collapsible="icon" className="z-20">

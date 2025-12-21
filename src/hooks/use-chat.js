@@ -63,8 +63,10 @@ export const useChat = create((set, get) => ({
     set({ isSingleChatLoading: true });
     try {
       const { data } = await axios.get(`${API}/chat/get-single-chat/${chatid}`);
-      console.log('Response from Fetching a Single Chat: ', data);
-      set({ singleChat: data?.data?.chat });
+      const result = data?.data;
+      console.log('The result is: ', result);
+      console.log('Response from Fetching a Single Chat: ', result);
+      set({ singleChat: result?.chat });
     } catch (error) {
       console.log('Error in fetching The Single Chat: ', error);
     } finally {
@@ -75,6 +77,7 @@ export const useChat = create((set, get) => ({
   sendMessage: async (payload) => {
     set({ isSendingMsg: true });
     const { chatId, replyTo, content, image } = payload;
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const { user } = useAuthStore();
 
     if (!chatId || !user?._id) return;

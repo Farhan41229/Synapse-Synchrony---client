@@ -16,7 +16,7 @@ import { Link } from 'react-router';
 
 const DashboardNavbar = () => {
   const { user } = useAuthStore();
-  console.log(user);
+  // console.log(user);
   const photourl = user?.avatar;
   const dbUser = undefined;
 
