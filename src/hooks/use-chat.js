@@ -86,7 +86,7 @@ export const useChat = create((set, get) => ({
       chatId,
       content: content || '',
       image: image || null,
-      sender: user?._id,
+      sender: user,
       replyTo: replyTo || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

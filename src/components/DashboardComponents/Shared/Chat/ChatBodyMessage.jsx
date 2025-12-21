@@ -7,16 +7,22 @@ import { Button } from '@/components/ui/button';
 import { ReplyIcon } from 'lucide-react';
 
 const ChatBodyMessage = memo(({ message, onReply }) => {
+  // ✅ CRITICAL: Check if message exists BEFORE accessing any properties
+  if (!message) {
+    console.warn('ChatBodyMessage received undefined message');
+    return null;
+  }
+
   const { user } = useAuthStore();
 
   const userId = user?._id || null;
   const isCurrentUser = message?.sender?._id === userId;
-  const senderName = isCurrentUser ? 'You' : message?.sender?.name;
+  const senderName = isCurrentUser ? 'You' : message?.sender?.name || 'Unknown';
 
   const replySendername =
-    message.replyTo?.sender?._id === userId
+    message?.replyTo?.sender?._id === userId
       ? 'You'
-      : message.replyTo?.sender?.name;
+      : message?.replyTo?.sender?.name || 'Unknown';
 
   const containerClass = cn(
     'group flex gap-2 py-3 px-4',
@@ -47,8 +53,8 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
       {!isCurrentUser && (
         <div className="flex-shrink-0 flex items-start">
           <AvatarWithBadge
-            name={message.sender?.name || 'No name'}
-            src={message.sender?.avatar || ''}
+            name={message?.sender?.name || 'Unknown'}
+            src={message?.sender?.avatar || ''}
           />
         </div>
       )}
@@ -70,7 +76,7 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
             </div>
 
             {/* ReplyToBox */}
-            {message.replyTo && (
+            {message?.replyTo && (
               <div className={replyBoxClass}>
                 <h5 className="font-medium">{replySendername}</h5>
                 <p
@@ -85,14 +91,10 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
             )}
 
             {message?.image && (
-              <img
-                src={message?.image || ''}
-                alt=""
-                className="rounded-lg max-w-xs"
-              />
+              <img src={message.image} alt="" className="rounded-lg max-w-xs" />
             )}
 
-            {message.content && <p>{message.content}</p>}
+            {message?.content && <p>{message.content}</p>}
           </div>
 
           {/* Reply Icon Button */}
@@ -114,7 +116,7 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
           </Button>
         </div>
 
-        {message.status && (
+        {message?.status && (
           <span
             className="block
            text-[10px] text-gray-400 mt-0.5"
