@@ -1,6 +1,10 @@
 import { memo, useEffect, useState } from 'react';
 import { useChat } from '@/hooks/use-chat';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, PenBoxIcon, Search, UsersIcon } from 'lucide-react';
 import {
@@ -21,6 +25,7 @@ export const NewChatPopover = memo(() => {
   const [isOpen, setIsOpen] = useState(false);
   const [isGroupMode, setIsGroupMode] = useState(false);
   const [groupName, setGroupName] = useState('');
+  const [searchQuery, setSearchQuery] = useState(''); // Added search query state
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   const [loadingUserId, setLoadingUserId] = useState(null);
@@ -28,6 +33,8 @@ export const NewChatPopover = memo(() => {
   useEffect(() => {
     fetchAllUsers();
   }, [fetchAllUsers]);
+
+  console.log(users);
 
   const toggleUserSelection = (id) => {
     setSelectedUsers((prev) =>
@@ -42,6 +49,7 @@ export const NewChatPopover = memo(() => {
   const resetState = () => {
     setIsGroupMode(false);
     setGroupName('');
+    setSearchQuery(''); // Reset search query
     setSelectedUsers([]);
   };
 
@@ -59,7 +67,7 @@ export const NewChatPopover = memo(() => {
     });
     setIsOpen(false);
     resetState();
-    navigate(`/chat/${response?._id}`);
+    navigate(`/dashboard/chat/${response?._id}`);
   };
 
   const handleCreateChat = async (userId) => {
@@ -71,13 +79,18 @@ export const NewChatPopover = memo(() => {
       });
       setIsOpen(false);
       resetState();
-      navigate(`/chat/${response?._id}`);
+      navigate(`/dashboard/chat/${response?._id}`);
     } finally {
       setLoadingUserId(null);
       setIsOpen(false);
       resetState();
     }
   };
+
+  // Filter users based on search query
+  const filteredUsers = users?.filter((user) =>
+    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
@@ -112,9 +125,11 @@ export const NewChatPopover = memo(() => {
 
           <InputGroup>
             <InputGroupInput
-              value={isGroupMode ? groupName : ''}
-              onChange={
-                isGroupMode ? (e) => setGroupName(e.target.value) : undefined
+              value={isGroupMode ? groupName : searchQuery}
+              onChange={(e) =>
+                isGroupMode
+                  ? setGroupName(e.target.value)
+                  : setSearchQuery(e.target.value)
               }
               placeholder={isGroupMode ? 'Enter group name' : 'Search name'}
             />
@@ -133,9 +148,11 @@ export const NewChatPopover = memo(() => {
             <div className="flex items-center justify-center py-8">
               <Spinner className="w-6 h-6" />
             </div>
-          ) : users && users?.length === 0 ? (
+          ) : filteredUsers && filteredUsers?.length === 0 ? (
             <div className="text-center text-muted-foreground py-8">
-              No users found
+              {searchQuery
+                ? 'No users found matching your search'
+                : 'No users found'}
             </div>
           ) : !isGroupMode ? (
             <>
@@ -143,7 +160,7 @@ export const NewChatPopover = memo(() => {
                 disabled={isCreatingChat}
                 onClick={() => setIsGroupMode(true)}
               />
-              {users?.map((user) => (
+              {filteredUsers?.map((user) => (
                 <ChatUserItem
                   key={user._id}
                   user={user}
@@ -154,7 +171,7 @@ export const NewChatPopover = memo(() => {
               ))}
             </>
           ) : (
-            users?.map((user) => (
+            filteredUsers?.map((user) => (
               <GroupUserItem
                 key={user._id}
                 user={user}
@@ -192,7 +209,9 @@ const UserAvatar = memo(({ user }) => (
     <AvatarWithBadge name={user.name} src={user.avatar ?? ''} />
     <div className="flex-1 min-w-0">
       <h5 className="text-[13.5px] font-medium truncate">{user.name}</h5>
-      <p className="text-xs text-muted-foreground">Hey there! I'm using Synapse</p>
+      <p className="text-xs text-muted-foreground">
+        Hey there! I'm using Synapse
+      </p>
     </div>
   </>
 ));
@@ -242,10 +261,7 @@ const GroupUserItem = memo(({ user, isSelected, onToggle }) => (
       "
   >
     <UserAvatar user={user} />
-    <Checkbox
-      checked={isSelected}
-      onCheckedChange={() => onToggle(user._id)}
-    />
+    <Checkbox checked={isSelected} onCheckedChange={() => onToggle(user._id)} />
   </label>
 ));
 

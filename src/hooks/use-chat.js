@@ -1,23 +1,29 @@
 import { create } from 'zustand';
 import axios from 'axios';
-// import { useSocket } from '@/hooks/use-socket';
+
+import { useAuthStore } from '@/store/authStore';
+import { generateUUID } from '@/lib/helper';
 export const API = 'http://localhost:3001/api';
 axios.defaults.withCredentials = true;
 export const useChat = create((set, get) => ({
   chats: [],
   users: [],
   singleChat: null,
+
   isUsersLoading: false,
   isChatsLoading: false,
   isCreatingChat: false,
   isSingleChatLoading: false,
+  isSendingMsg: false,
+
+  currentAIStreamId: null,
 
   fetchAllUsers: async () => {
     set({ isUsersLoading: true });
     try {
-      const { data } = await axios.get(`${API}//user/get-users`);
+      const { data } = await axios.get(`${API}/user/get-users`);
       console.log('Data from fetching All Users : ', data);
-      set({ users: data?.data.users });
+      set({ users: data?.data });
     } catch (error) {
       console.log('Error in fetching All Users', error);
     } finally {
@@ -47,6 +53,7 @@ export const useChat = create((set, get) => ({
       return response.data?.data?.chat;
     } catch (error) {
       console.log('Error in fetching Chats', error);
+      return null;
     } finally {
       set({ isCreatingChat: false });
     }
@@ -61,6 +68,64 @@ export const useChat = create((set, get) => ({
       console.log('Error in fetching The Single Chat: ', error);
     } finally {
       set({ isSingleChatLoading: false });
+    }
+  },
+
+  sendMessage: async (payload) => {
+    set({ isSendingMsg: true });
+    const { chatId, replyTo, content, image } = payload;
+    const { user } = useAuthStore();
+
+    if (!chatId || !user?._id) return;
+
+    const tempUserId = generateUUID();
+
+    const tempMessage = {
+      _id: tempUserId,
+      chatId,
+      content: content || '',
+      image: image || null,
+      sender: user,
+      replyTo: replyTo || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'sending...',
+    };
+
+    set((state) => {
+      if (state.singleChat?.chat?._id !== chatId) return state;
+      return {
+        singleChat: {
+          ...state.singleChat,
+          messages: [...state.singleChat.messages, tempMessage],
+        },
+      };
+    });
+
+    try {
+      const { data } = await axios.post(`${API}/chat/create-message`, {
+        chatId,
+        content,
+        image,
+        replyToId: replyTo?._id,
+      });
+      const { userMessage } = data;
+      //replace the temp user message
+      set((state) => {
+        if (!state.singleChat) return state;
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: state.singleChat.messages.map((msg) =>
+              msg._id === tempUserId ? userMessage : msg
+            ),
+          },
+        };
+      });
+    } catch (error) {
+      console.log('Error in Sending Message : ', error);
+    } finally {
+      set({ isSendingMsg: false });
     }
   },
 
@@ -80,5 +145,30 @@ export const useChat = create((set, get) => ({
         };
       }
     });
+  },
+
+  updateChatLastMessage: (chatId, lastMessage) => {
+    set((state) => {
+      const chat = state.chats.find((c) => c._id === chatId);
+      if (!chat) return state;
+      return {
+        chats: [
+          { ...chat, lastMessage },
+          ...state.chats.filter((c) => c._id !== chatId),
+        ],
+      };
+    });
+  },
+
+  addNewMessage: (chatId, message) => {
+    const chat = get().singleChat;
+    if (chat?.chat._id === chatId) {
+      set({
+        singleChat: {
+          chat: chat.chat,
+          messages: [...chat.messages, message],
+        },
+      });
+    }
   },
 }));
