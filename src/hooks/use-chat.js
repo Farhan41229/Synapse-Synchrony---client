@@ -4,6 +4,7 @@ import axios from 'axios';
 import { generateUUID } from '@/lib/helper';
 export const API = 'http://localhost:3001/api';
 axios.defaults.withCredentials = true;
+
 export const useChat = create((set, get) => ({
   chats: [],
   users: [],
@@ -29,6 +30,7 @@ export const useChat = create((set, get) => ({
       set({ isUsersLoading: false });
     }
   },
+
   fetchChats: async () => {
     set({ isChatsLoading: true });
     try {
@@ -41,6 +43,7 @@ export const useChat = create((set, get) => ({
       set({ isChatsLoading: false });
     }
   },
+
   createChat: async (payload) => {
     set({ isCreatingChat: true });
     try {
@@ -52,22 +55,23 @@ export const useChat = create((set, get) => ({
       get().addNewChat(response.data?.data);
       return response.data?.data;
     } catch (error) {
-      console.log('Error in fetching Chats', error);
+      console.log('Error in creating Chat', error);
       return null;
     } finally {
       set({ isCreatingChat: false });
     }
   },
+
   fetchSingleChat: async (chatid) => {
     set({ isSingleChatLoading: true });
     try {
       const { data } = await axios.get(`${API}/chat/get-single-chat/${chatid}`);
       const result = data?.data;
-      console.log('The result is: ', result);
       console.log('Response from Fetching a Single Chat: ', result);
       set({ singleChat: result });
     } catch (error) {
       console.log('Error in fetching The Single Chat: ', error);
+      set({ singleChat: null });
     } finally {
       set({ isSingleChatLoading: false });
     }
@@ -77,7 +81,10 @@ export const useChat = create((set, get) => ({
     set({ isSendingMsg: true });
     const { chatId, replyTo, content, image, user } = payload;
 
-    if (!chatId || !user?._id) return;
+    if (!chatId || !user?._id) {
+      set({ isSendingMsg: false });
+      return;
+    }
 
     const tempUserId = generateUUID();
 
@@ -93,39 +100,99 @@ export const useChat = create((set, get) => ({
       status: 'sending...',
     };
 
+    console.log('Adding temp message:', tempMessage);
+
+    // Add temp message optimistically
     set((state) => {
-      if (state.singleChat?.chat?._id !== chatId) return state;
+      if (!state.singleChat || state.singleChat?.chat?._id !== chatId) {
+        console.log('Chat ID mismatch or no singleChat');
+        return state;
+      }
+
+      const currentMessages = state.singleChat.messages || [];
+
+      console.log('Current messages:', currentMessages);
+      console.log('Adding temp message to array');
+
       return {
         singleChat: {
           ...state.singleChat,
-          messages: [...state.singleChat.messages, tempMessage],
+          messages: [...currentMessages, tempMessage],
         },
       };
     });
 
     try {
-      const { data } = await axios.post(`${API}/chat/create-message`, {
+      const response = await axios.post(`${API}/chat/create-message`, {
         chatId,
         content,
         image,
         replyToId: replyTo?._id,
       });
-      console.log('The result from the Send Message is : ', data);
-      const { userMessage } = data?.data;
-      //replace the temp user message
+
+      console.log('Full axios response:', response);
+      console.log('Response data:', response.data);
+
+      // ✅ FIXED: Axios response structure is { data: { error, message, data } }
+      // So response.data is your API response
+      // And response.data.data contains your actual data
+      const apiData = response.data;
+      console.log('API data:', apiData);
+
+      const userMessage = apiData?.data;
+      console.log('Extracted userMessage:', userMessage);
+
+      if (!userMessage) {
+        console.error('No userMessage found in response');
+        console.error('Full response.data:', apiData);
+        // Remove temp message on error
+        set((state) => {
+          if (!state.singleChat) return state;
+          return {
+            singleChat: {
+              ...state.singleChat,
+              messages: (state.singleChat.messages || []).filter(
+                (msg) => msg?._id !== tempUserId
+              ),
+            },
+          };
+        });
+        return;
+      }
+
+      console.log('Replacing temp message with real message:', userMessage);
+
+      // Replace the temp user message with real one
       set((state) => {
         if (!state.singleChat) return state;
+
+        const currentMessages = state.singleChat.messages || [];
+
         return {
           singleChat: {
             ...state.singleChat,
-            messages: state.singleChat.messages.map((msg) =>
-              msg._id === tempUserId ? userMessage : msg
+            messages: currentMessages.map((msg) =>
+              msg?._id === tempUserId ? userMessage : msg
             ),
           },
         };
       });
     } catch (error) {
       console.log('Error in Sending Message : ', error);
+
+      // Remove the temp message on error
+      set((state) => {
+        if (!state.singleChat) return state;
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: (state.singleChat.messages || []).filter(
+              (msg) => msg?._id !== tempUserId
+            ),
+          },
+        };
+      });
     } finally {
       set({ isSendingMsg: false });
     }
@@ -137,7 +204,6 @@ export const useChat = create((set, get) => ({
         (c) => c._id === newChat._id
       );
       if (existingChatIndex !== -1) {
-        //move the chat to the top
         return {
           chats: [newChat, ...state.chats.filter((c) => c._id !== newChat._id)],
         };
@@ -163,12 +229,16 @@ export const useChat = create((set, get) => ({
   },
 
   addNewMessage: (chatId, message) => {
-    const chat = get().singleChat;
-    if (chat?.chat._id === chatId) {
+    const state = get();
+    const chat = state.singleChat;
+
+    if (chat?.chat?._id === chatId) {
+      const currentMessages = chat.messages || [];
+
       set({
         singleChat: {
           chat: chat.chat,
-          messages: [...chat.messages, message],
+          messages: [...currentMessages, message],
         },
       });
     }
