@@ -81,6 +81,8 @@ export const useChat = create((set, get) => ({
     set({ isSendingMsg: true });
     const { chatId, replyTo, content, image, user } = payload;
 
+    console.log('ReplyTo from payload: ', replyTo);
+
     if (!chatId || !user?._id) {
       set({ isSendingMsg: false });
       return;
@@ -121,13 +123,13 @@ export const useChat = create((set, get) => ({
         },
       };
     });
-
+    console.log('Debugging Reply to : ', replyTo);
     try {
       const response = await axios.post(`${API}/chat/create-message`, {
         chatId,
         content,
         image,
-        replyToId: replyTo?._id,
+        replyTo: replyTo,
       });
 
       console.log('Full axios response:', response);

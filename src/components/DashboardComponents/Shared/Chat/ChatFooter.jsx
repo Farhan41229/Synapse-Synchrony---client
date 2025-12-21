@@ -53,17 +53,26 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
       toast.error('Please enter a message or select an image');
       return;
     }
+
+    // ✅ CRITICAL FIX: Capture replyTo BEFORE clearing it
+    // This prevents race conditions where replyTo becomes null before sendMessage uses it
+    const currentReplyTo = replyTo;
+
     const payload = {
       chatId,
       content: values.message,
       image: image || undefined,
-      replyTo: replyTo,
+      replyTo: currentReplyTo?._id || null, // ✅ Use the captured value
       user,
     };
-    console.log('The payload for Send Message is: ', payload);
-    //Send Message
+
+    // console.log('The payload for Send Message is: ', payload);
+    // console.log('ReplyTo in payload:', currentReplyTo);
+
+    // Send Message
     sendMessage(payload);
 
+    // ✅ Clear reply state AFTER sending (synchronously, but payload already has the value)
     onCancelReply();
     handleRemoveImage();
     form.reset();
