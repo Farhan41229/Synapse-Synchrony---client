@@ -19,7 +19,7 @@ const SingleChat = () => {
 
   const currentUserId = user?._id || null;
   let chat = singleChat?.chat;
-  const messages = singleChat?.messages || [];
+  let messages = singleChat?.messages || [];
 
   useEffect(() => {
     console.log('Fetching the Single Chat for the id: ', chatId);
@@ -50,7 +50,8 @@ const SingleChat = () => {
   //   chat,
   //   singleChat
   // );
-  chat = singleChat;
+  chat = singleChat?.chat;
+  messages = singleChat?.messages;
 
   if (!chat) {
     return (

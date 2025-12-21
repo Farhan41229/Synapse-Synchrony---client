@@ -9,11 +9,13 @@ import { Form, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import ChatReplyBar from './ChatReplyBar';
 import { useChat } from '@/hooks/use-chat';
+import { useAuthStore } from '@/store/authStore';
 
 const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
   const messageSchema = z.object({
     message: z.string().optional(),
   });
+  const { user } = useAuthStore();
 
   const { sendMessage, isSendingMsg } = useChat();
 
@@ -56,6 +58,7 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
       content: values.message,
       image: image || undefined,
       replyTo: replyTo,
+      user,
     };
     //Send Message
     sendMessage(payload);

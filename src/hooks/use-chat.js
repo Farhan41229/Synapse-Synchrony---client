@@ -66,7 +66,7 @@ export const useChat = create((set, get) => ({
       const result = data?.data;
       console.log('The result is: ', result);
       console.log('Response from Fetching a Single Chat: ', result);
-      set({ singleChat: result?.chat });
+      set({ singleChat: result });
     } catch (error) {
       console.log('Error in fetching The Single Chat: ', error);
     } finally {
@@ -76,9 +76,7 @@ export const useChat = create((set, get) => ({
 
   sendMessage: async (payload) => {
     set({ isSendingMsg: true });
-    const { chatId, replyTo, content, image } = payload;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { user } = useAuthStore();
+    const { chatId, replyTo, content, image, user } = payload;
 
     if (!chatId || !user?._id) return;
 

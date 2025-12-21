@@ -11,6 +11,10 @@ const ChatHeader = ({ chat, currentUserId }) => {
     currentUserId
   );
 
+  console.log(
+    `The name is ${name}. The subheading is: ${subheading}. The avatar is : ${avatar}`
+  );
+
   return (
     <div
       className="sticky top-0
