@@ -43,7 +43,6 @@ const ChatHeader = ({ chat, currentUserId }) => {
 
         const client = StreamChat.getInstance(STREAM_API_KEY);
 
-        // ✅ Connect current user
         await client.connectUser(
           {
             id: user._id,
@@ -55,16 +54,11 @@ const ChatHeader = ({ chat, currentUserId }) => {
 
         console.log('User connected to Stream');
 
-        // ❌ REMOVED: Frontend cannot upsert users - users are registered on backend during login/signup
-        // Both users should already be registered in Stream from the backend
-
-        // Create channel ID (sorted to ensure consistency)
         const channelId = [user._id, otherUser._id].sort().join('-');
 
         console.log('Creating channel with ID:', channelId);
         console.log('Members:', [user._id, otherUser._id]);
 
-        // Create or get the channel
         const currChannel = client.channel('messaging', channelId, {
           members: [user._id, otherUser._id],
           name: `${user.name} and ${otherUser.name}`,
@@ -89,37 +83,53 @@ const ChatHeader = ({ chat, currentUserId }) => {
     // Cleanup function
     return () => {
       if (chatClient) {
+        console.log('Disconnecting chat client...');
         chatClient.disconnectUser();
       }
     };
   }, [tokenData, user, otherUser?._id, STREAM_API_KEY]);
 
-  const handleVideoCall = () => {
+  const handleVideoCall = async () => {
     if (!channel) {
       toast.error('Video call not ready. Please wait...');
       return;
     }
 
-    // ✅ FIXED: Use the CHAT ID as the call ID so both users join the same call
-    // Don't use Date.now() - that creates a different call each time!
-    const callId = chatId; // Use the chat ID from params
-    const callUrl = `${window.location.origin}/call/${callId}`;
+    try {
+      // ✅ FIXED: Use the CHAT ID as the call ID
+      const callId = chatId;
+      const callUrl = `${window.location.origin}/call/${callId}`;
 
-    // Send the call invitation message
-    channel.sendMessage({
-      text: `🎥 Video call invitation: ${callUrl}`,
-      attachments: [
-        {
-          type: 'video_call',
-          call_url: callUrl,
-        },
-      ],
-    });
+      // Send the call invitation message
+      await channel.sendMessage({
+        text: `🎥 Video call invitation: ${callUrl}`,
+        attachments: [
+          {
+            type: 'video_call',
+            call_url: callUrl,
+          },
+        ],
+      });
 
-    toast.success('Video call invitation sent!');
+      toast.success('Starting video call...');
 
-    // Navigate to the call page
-    navigate(`/call/${callId}`);
+      // ✅ CRITICAL FIX: Disconnect chat client BEFORE navigating
+      // This prevents duplicate connections
+      if (chatClient) {
+        console.log('Disconnecting chat client before video call...');
+        await chatClient.disconnectUser();
+        setChatClient(null);
+        setChannel(null);
+      }
+
+      // Small delay to ensure cleanup completes
+      setTimeout(() => {
+        navigate(`/call/${callId}`);
+      }, 100);
+    } catch (error) {
+      console.error('Error starting video call:', error);
+      toast.error('Could not start video call');
+    }
   };
 
   return (

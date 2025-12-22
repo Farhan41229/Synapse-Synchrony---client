@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useAuthStore } from '@/store/authStore';
 import { useQuery } from '@tanstack/react-query';
@@ -27,6 +27,11 @@ const VideoCallPage = () => {
   const [call, setCall] = useState(null);
   const [isConnecting, setIsConnecting] = useState(true);
 
+  // ✅ Prevent double initialization (React 18 StrictMode runs effects twice in dev)
+  const hasInitializedRef = useRef(false);
+  const clientRef = useRef(null);
+  const callRef = useRef(null);
+
   const { user } = useAuthStore();
 
   const { data: tokenData } = useQuery({
@@ -36,12 +41,25 @@ const VideoCallPage = () => {
   });
 
   useEffect(() => {
+    // Skip if already initialized
+    if (hasInitializedRef.current) {
+      console.log('⏭️ Already initialized, skipping...');
+      return;
+    }
+
+    if (!tokenData?.token || !user || !callId) {
+      console.log('⚠️ Missing required data');
+      return;
+    }
+
+    hasInitializedRef.current = true;
+    console.log('🚀 Starting video call initialization...');
+    console.log('📋 User ID:', user._id);
+    console.log('📋 Call ID:', callId);
+
     const initCall = async () => {
-      if (!tokenData?.token || !user || !callId) return;
-
       try {
-        console.log('Initializing Stream video client...');
-
+        console.log('🔧 Creating StreamVideoClient...');
         const streamUser = {
           id: user._id,
           name: user.name,
@@ -53,32 +71,82 @@ const VideoCallPage = () => {
           user: streamUser,
           token: tokenData.token,
         });
+        console.log('✅ StreamVideoClient created');
 
+        // Store in ref to prevent re-creation
+        clientRef.current = videoClient;
+
+        console.log('📞 Creating call instance for:', callId);
         const callInstance = videoClient.call('default', callId);
+        callRef.current = callInstance;
 
+        console.log('🔗 Joining call...');
         await callInstance.join({ create: true });
+        console.log('✅ Successfully joined call!');
 
-        console.log('Joined call successfully');
-
+        // Set state AFTER everything is ready
         setClient(videoClient);
         setCall(callInstance);
+
+        // Monitor participants
+        callInstance.state.participants$.subscribe((participants) => {
+          console.log('👥 Participants changed:', participants.length);
+          participants.forEach((p, index) => {
+            console.log(
+              `   ${index + 1}. ${p.name || p.userId} (${p.userId})`,
+              {
+                isLocalParticipant: p.isLocalParticipant,
+                sessionId: p.sessionId,
+              }
+            );
+          });
+        });
+
+        setIsConnecting(false);
       } catch (error) {
-        console.error('Error joining call:', error);
+        console.error('❌ Error joining call:', error);
         toast.error('Could not join the call. Please try again.');
-      } finally {
+        hasInitializedRef.current = false;
         setIsConnecting(false);
       }
     };
 
     initCall();
-  }, [tokenData, user, callId]);
+
+    // Cleanup function - ONLY runs on unmount
+    return () => {
+      console.log('🧹 Cleanup: Component unmounting...');
+
+      // Leave the call
+      if (callRef.current) {
+        console.log('📴 Leaving call...');
+        callRef.current
+          .leave()
+          .then(() => console.log('✅ Left call'))
+          .catch((err) => console.error('❌ Error leaving:', err));
+      }
+
+      // Disconnect the client
+      if (clientRef.current) {
+        console.log('🔌 Disconnecting client...');
+        clientRef.current
+          .disconnectUser()
+          .then(() => {
+            console.log('✅ Disconnected');
+            clientRef.current = null;
+            callRef.current = null;
+          })
+          .catch((err) => console.error('❌ Error disconnecting:', err));
+      }
+
+      hasInitializedRef.current = false;
+    };
+  }, [tokenData?.token, user?._id, callId]); // Only re-run if these actually change
 
   // Inject CSS to fix Stream components
   useEffect(() => {
-    // Create style element
     const styleEl = document.createElement('style');
     styleEl.innerHTML = `
-      /* Fix Stream Video controls */
       .str-video__call-controls {
         position: fixed !important;
         bottom: 20px !important;
@@ -131,9 +199,10 @@ const VideoCallPage = () => {
 
     document.head.appendChild(styleEl);
 
-    // Cleanup on unmount
     return () => {
-      document.head.removeChild(styleEl);
+      if (document.head.contains(styleEl)) {
+        document.head.removeChild(styleEl);
+      }
     };
   }, []);
 
@@ -201,6 +270,7 @@ const CallContent = () => {
   const navigate = useNavigate();
 
   if (callingState === CallingState.LEFT) {
+    console.log('👋 User left the call, navigating back...');
     navigate('/dashboard/chat');
     return null;
   }
