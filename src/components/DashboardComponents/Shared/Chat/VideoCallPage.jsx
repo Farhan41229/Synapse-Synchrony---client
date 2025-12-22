@@ -21,16 +21,16 @@ import { Spinner } from '@/components/ui/spinner';
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
+// ✅ CRITICAL FIX: Store client globally to prevent duplicates
+let globalVideoClient = null;
+let globalUserId = null;
+
 const VideoCallPage = () => {
   const { callId } = useParams();
   const [client, setClient] = useState(null);
   const [call, setCall] = useState(null);
   const [isConnecting, setIsConnecting] = useState(true);
-
-  // ✅ Prevent double initialization (React 18 StrictMode runs effects twice in dev)
-  const hasInitializedRef = useRef(false);
-  const clientRef = useRef(null);
-  const callRef = useRef(null);
+  const hasJoinedRef = useRef(false); // Prevent double joins
 
   const { user } = useAuthStore();
 
@@ -41,107 +41,82 @@ const VideoCallPage = () => {
   });
 
   useEffect(() => {
-    // Skip if already initialized
-    if (hasInitializedRef.current) {
-      console.log('⏭️ Already initialized, skipping...');
-      return;
-    }
-
-    if (!tokenData?.token || !user || !callId) {
-      console.log('⚠️ Missing required data');
-      return;
-    }
-
-    hasInitializedRef.current = true;
-    console.log('🚀 Starting video call initialization...');
-    console.log('📋 User ID:', user._id);
-    console.log('📋 Call ID:', callId);
-
     const initCall = async () => {
+      if (!tokenData?.token || !user || !callId) return;
+      if (hasJoinedRef.current) return; // Prevent double joins
+
       try {
-        console.log('🔧 Creating StreamVideoClient...');
-        const streamUser = {
-          id: user._id,
-          name: user.name,
-          image: user.avatar,
-        };
+        console.log('Initializing Stream video client...');
+        hasJoinedRef.current = true;
 
-        const videoClient = new StreamVideoClient({
-          apiKey: STREAM_API_KEY,
-          user: streamUser,
-          token: tokenData.token,
-        });
-        console.log('✅ StreamVideoClient created');
+        // ✅ CRITICAL FIX: Reuse existing client if same user
+        let videoClient;
 
-        // Store in ref to prevent re-creation
-        clientRef.current = videoClient;
+        if (globalVideoClient && globalUserId === user._id) {
+          console.log('Reusing existing video client');
+          videoClient = globalVideoClient;
+        } else {
+          // Disconnect old client if different user
+          if (globalVideoClient) {
+            console.log('Disconnecting old client (different user)');
+            try {
+              await globalVideoClient.disconnectUser();
+            } catch (e) {
+              console.error('Error disconnecting old client:', e);
+            }
+          }
 
-        console.log('📞 Creating call instance for:', callId);
+          console.log('Creating new video client');
+          const streamUser = {
+            id: user._id,
+            name: user.name,
+            image: user.avatar,
+          };
+
+          videoClient = new StreamVideoClient({
+            apiKey: STREAM_API_KEY,
+            user: streamUser,
+            token: tokenData.token,
+          });
+
+          globalVideoClient = videoClient;
+          globalUserId = user._id;
+        }
+
+        // Join the call
         const callInstance = videoClient.call('default', callId);
-        callRef.current = callInstance;
 
-        console.log('🔗 Joining call...');
+        console.log('Joining call:', callId);
         await callInstance.join({ create: true });
-        console.log('✅ Successfully joined call!');
 
-        // Set state AFTER everything is ready
+        console.log('Joined call successfully');
+
         setClient(videoClient);
         setCall(callInstance);
-
-        // Monitor participants
-        callInstance.state.participants$.subscribe((participants) => {
-          console.log('👥 Participants changed:', participants.length);
-          participants.forEach((p, index) => {
-            console.log(
-              `   ${index + 1}. ${p.name || p.userId} (${p.userId})`,
-              {
-                isLocalParticipant: p.isLocalParticipant,
-                sessionId: p.sessionId,
-              }
-            );
-          });
-        });
-
-        setIsConnecting(false);
       } catch (error) {
-        console.error('❌ Error joining call:', error);
+        console.error('Error joining call:', error);
         toast.error('Could not join the call. Please try again.');
-        hasInitializedRef.current = false;
+        hasJoinedRef.current = false;
+      } finally {
         setIsConnecting(false);
       }
     };
 
     initCall();
 
-    // Cleanup function - ONLY runs on unmount
+    // ✅ Cleanup: Leave call but DON'T disconnect client (we'll reuse it)
     return () => {
-      console.log('🧹 Cleanup: Component unmounting...');
-
-      // Leave the call
-      if (callRef.current) {
-        console.log('📴 Leaving call...');
-        callRef.current
+      console.log('Component unmounting, leaving call...');
+      if (call) {
+        call
           .leave()
-          .then(() => console.log('✅ Left call'))
-          .catch((err) => console.error('❌ Error leaving:', err));
+          .then(() => console.log('Left call successfully'))
+          .catch((err) => console.error('Error leaving call:', err));
       }
-
-      // Disconnect the client
-      if (clientRef.current) {
-        console.log('🔌 Disconnecting client...');
-        clientRef.current
-          .disconnectUser()
-          .then(() => {
-            console.log('✅ Disconnected');
-            clientRef.current = null;
-            callRef.current = null;
-          })
-          .catch((err) => console.error('❌ Error disconnecting:', err));
-      }
-
-      hasInitializedRef.current = false;
+      // DON'T disconnect the client here - we'll reuse it
+      hasJoinedRef.current = false;
     };
-  }, [tokenData?.token, user?._id, callId]); // Only re-run if these actually change
+  }, [tokenData, user, callId]);
 
   // Inject CSS to fix Stream components
   useEffect(() => {
@@ -200,9 +175,7 @@ const VideoCallPage = () => {
     document.head.appendChild(styleEl);
 
     return () => {
-      if (document.head.contains(styleEl)) {
-        document.head.removeChild(styleEl);
-      }
+      document.head.removeChild(styleEl);
     };
   }, []);
 
@@ -270,7 +243,6 @@ const CallContent = () => {
   const navigate = useNavigate();
 
   if (callingState === CallingState.LEFT) {
-    console.log('👋 User left the call, navigating back...');
     navigate('/dashboard/chat');
     return null;
   }
