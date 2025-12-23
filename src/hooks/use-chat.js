@@ -16,6 +16,10 @@ export const useChat = create((set, get) => ({
   isSingleChatLoading: false,
   isSendingMsg: false,
 
+  // ✅ NEW: AI-specific state
+  aiChat: null,
+  isAIChatLoading: false,
+  isSendingAIMsg: false,
   currentAIStreamId: null,
 
   fetchAllUsers: async () => {
@@ -68,7 +72,18 @@ export const useChat = create((set, get) => ({
       const { data } = await axios.get(`${API}/chat/get-single-chat/${chatid}`);
       const result = data?.data;
       console.log('Response from Fetching a Single Chat: ', result);
-      set({ singleChat: result });
+
+      // ✅ Check if this is an AI chat and set aiChat accordingly
+      const isAIChat = result?.chat?.participants?.some(
+        (p) => p.isAI === true || p.name === 'Whoop AI'
+      );
+
+      if (isAIChat) {
+        console.log('✅ This is an AI chat, setting aiChat state');
+        set({ singleChat: result, aiChat: result.chat });
+      } else {
+        set({ singleChat: result });
+      }
     } catch (error) {
       console.log('Error in fetching The Single Chat: ', error);
       set({ singleChat: null });
@@ -135,9 +150,6 @@ export const useChat = create((set, get) => ({
       console.log('Full axios response:', response);
       console.log('Response data:', response.data);
 
-      // ✅ FIXED: Axios response structure is { data: { error, message, data } }
-      // So response.data is your API response
-      // And response.data.data contains your actual data
       const apiData = response.data;
       console.log('API data:', apiData);
 
@@ -197,6 +209,299 @@ export const useChat = create((set, get) => ({
       });
     } finally {
       set({ isSendingMsg: false });
+    }
+  },
+
+  // ✅ NEW: Get or create AI chat
+  fetchAIChat: async () => {
+    set({ isAIChatLoading: true });
+    try {
+      const { data } = await axios.get(`${API}/chat/ai-chat`);
+      console.log('AI Chat fetched:', data);
+
+      const aiChatData = data?.data;
+
+      // Add to chats list if not already there
+      if (aiChatData) {
+        get().addNewChat(aiChatData);
+        set({ aiChat: aiChatData });
+      }
+
+      return aiChatData;
+    } catch (error) {
+      console.error('Error fetching AI chat:', error);
+      set({ aiChat: null });
+      return null;
+    } finally {
+      set({ isAIChatLoading: false });
+    }
+  },
+
+  // ✅ NEW: Send message to AI
+  sendAIMessage: async (payload) => {
+    console.log('🎯 sendAIMessage called with payload:', payload);
+
+    set({ isSendingAIMsg: true });
+    const { content, user, chatId } = payload;
+
+    console.log('📦 Destructured:', { content, user: user?._id, chatId });
+
+    if (!content || !user?._id) {
+      console.error('❌ Invalid payload - missing content or user._id');
+      set({ isSendingAIMsg: false });
+      return;
+    }
+
+    console.log('✅ Validation passed, proceeding...');
+
+    // Generate temp IDs for optimistic updates
+    const tempUserMsgId = generateUUID();
+    const tempAIMsgId = generateUUID();
+
+    // Get AI user info (you might want to fetch this or hardcode it)
+    const aiUser = {
+      _id: 'ai_user_id', // This will be replaced by real AI user
+      name: 'Whoop AI',
+      avatar:
+        'https://res.cloudinary.com/dp9vvlndo/image/upload/v1759925671/ai_logo_qqman8.png',
+    };
+
+    // Create temp user message
+    const tempUserMessage = {
+      _id: tempUserMsgId,
+      chatId: chatId || get().aiChat?._id,
+      content,
+      sender: user,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'sending...',
+    };
+
+    // Create temp AI message (loading state)
+    const tempAIMessage = {
+      _id: tempAIMsgId,
+      chatId: chatId || get().aiChat?._id,
+      content: '⏳ Thinking...',
+      sender: aiUser,
+      replyTo: { _id: tempUserMsgId },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'generating...',
+    };
+
+    console.log('🤖 Sending AI message:', { content, chatId });
+
+    // Optimistically add user message
+    set((state) => {
+      const targetChatId = chatId || state.aiChat?._id;
+
+      if (!state.singleChat || state.singleChat?.chat?._id !== targetChatId) {
+        console.log('Not viewing AI chat currently');
+        return state;
+      }
+
+      return {
+        singleChat: {
+          ...state.singleChat,
+          messages: [...(state.singleChat.messages || []), tempUserMessage],
+        },
+        currentAIStreamId: tempAIMsgId,
+      };
+    });
+
+    // Add "AI is thinking" message after a brief delay
+    setTimeout(() => {
+      set((state) => {
+        const targetChatId = chatId || state.aiChat?._id;
+
+        if (!state.singleChat || state.singleChat?.chat?._id !== targetChatId) {
+          return state;
+        }
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: [...(state.singleChat.messages || []), tempAIMessage],
+          },
+        };
+      });
+    }, 300);
+
+    try {
+      console.log('📡 Making API call to:', `${API}/chat/send-ai-message`);
+      console.log('📤 Request payload:', {
+        content,
+        chatId: chatId || get().aiChat?._id,
+      });
+
+      const response = await axios.post(`${API}/chat/send-ai-message`, {
+        content,
+        chatId: chatId || get().aiChat?._id,
+      });
+
+      console.log('📥 Response received:', response);
+      console.log('🤖 AI Response data:', response.data);
+      console.log(
+        '🤖 Full Response Structure:',
+        JSON.stringify(response.data, null, 2)
+      );
+
+      const apiData = response.data;
+      const { userMessage, aiMessage, chat } = apiData?.data || {};
+
+      console.log('👤 userMessage:', userMessage);
+      console.log('🤖 aiMessage:', aiMessage);
+      console.log('💬 chat:', chat);
+
+      if (!userMessage || !aiMessage) {
+        console.error('❌ Invalid AI response structure');
+        // Remove temp messages on error
+        set((state) => {
+          if (!state.singleChat) return state;
+          return {
+            singleChat: {
+              ...state.singleChat,
+              messages: (state.singleChat.messages || []).filter(
+                (msg) => msg?._id !== tempUserMsgId && msg?._id !== tempAIMsgId
+              ),
+            },
+            currentAIStreamId: null,
+          };
+        });
+        return null;
+      }
+
+      console.log('✅ Replacing temp messages with real ones');
+
+      // Update AI chat if returned
+      if (chat) {
+        set({ aiChat: chat });
+        // Also add/update in chats list
+        get().addNewChat(chat);
+      }
+
+      // Replace temp messages with real ones
+      set((state) => {
+        const targetChatId = chat?._id || chatId || state.aiChat?._id;
+
+        if (!state.singleChat || state.singleChat?.chat?._id !== targetChatId) {
+          return { currentAIStreamId: null };
+        }
+
+        const currentMessages = state.singleChat.messages || [];
+
+        // ✅ FIXED: Remove temp messages first, then add real ones
+        const filteredMessages = currentMessages.filter(
+          (msg) => msg?._id !== tempUserMsgId && msg?._id !== tempAIMsgId
+        );
+
+        // Add real messages at the end
+        const finalMessages = [...filteredMessages, userMessage, aiMessage];
+
+        console.log('📝 Message replacement:', {
+          before: currentMessages.length,
+          afterFilter: filteredMessages.length,
+          final: finalMessages.length,
+          removedTemp: currentMessages.length - filteredMessages.length,
+        });
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: finalMessages,
+          },
+          currentAIStreamId: null,
+        };
+      });
+
+      return { userMessage, aiMessage, chat };
+    } catch (error) {
+      console.error('❌ Error sending AI message:', error);
+
+      // Remove temp messages on error
+      set((state) => {
+        if (!state.singleChat) {
+          return { isSendingAIMsg: false, currentAIStreamId: null };
+        }
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: (state.singleChat.messages || []).filter(
+              (msg) => msg?._id !== tempUserMsgId && msg?._id !== tempAIMsgId
+            ),
+          },
+          isSendingAIMsg: false,
+          currentAIStreamId: null,
+        };
+      });
+
+      // Optionally show error message
+      const errorMessage = {
+        _id: generateUUID(),
+        chatId: chatId || get().aiChat?._id,
+        content: '❌ Sorry, I encountered an error. Please try again.',
+        sender: aiUser,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: 'error',
+      };
+
+      set((state) => {
+        const targetChatId = chatId || state.aiChat?._id;
+
+        if (!state.singleChat || state.singleChat?.chat?._id !== targetChatId) {
+          return state;
+        }
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: [...(state.singleChat.messages || []), errorMessage],
+          },
+        };
+      });
+
+      return null;
+    } finally {
+      set({ isSendingAIMsg: false });
+    }
+  },
+
+  // ✅ Helper: Check if current chat is AI chat
+  isCurrentChatAI: async (chatId) => {
+    if (!chatId) {
+      console.log('❌ isCurrentChatAI: No chatId provided');
+      return false;
+    }
+
+    try {
+      console.log('🔍 Checking if chat is AI chat:', chatId);
+
+      const { data } = await axios.get(`${API}/chat/ai-chat`);
+      const aiChatData = data?.data;
+
+      if (!aiChatData?._id) {
+        console.log('❌ No AI chat found');
+        return false;
+      }
+
+      const isAI = aiChatData._id === chatId;
+      console.log('🤖 isCurrentChatAI result:', {
+        inputChatId: chatId,
+        aiChatId: aiChatData._id,
+        isAI,
+      });
+
+      // ✅ Also update aiChat state if this is the AI chat
+      if (isAI) {
+        set({ aiChat: aiChatData });
+      }
+
+      return isAI;
+    } catch (error) {
+      console.error('❌ Error checking if chat is AI:', error);
+      return false;
     }
   },
 
