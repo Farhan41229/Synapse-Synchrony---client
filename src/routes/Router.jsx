@@ -12,6 +12,7 @@ import DashboardLayout from '@/layouts/DashboardLayout';
 import ChatLayout from '@/components/DashboardComponents/Shared/Chat/ChatLayout';
 import SingleChat from '@/components/DashboardComponents/Shared/Chat/SingleChat';
 import VideoCallPage from '@/components/DashboardComponents/Shared/Chat/VideoCallPage';
+import AudioCallPage from '@/components/DashboardComponents/Shared/Chat/AudioCallPage';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
   {
     path: '/call/:callId',
     element: <VideoCallPage />,
+  },
+  {
+    path: '/audio-call/:callId',
+    element: <AudioCallPage />,
   },
 ]);
 

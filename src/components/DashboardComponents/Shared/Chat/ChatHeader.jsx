@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getOtherUserAndGroup } from '@/lib/helper';
-import { ArrowLeft, Video } from 'lucide-react';
+import { ArrowLeft, PhoneCall, Video } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import AvatarWithBadge from './AvatarWithBadge';
 import { useAuthStore } from '@/store/authStore';
@@ -23,7 +23,6 @@ const ChatHeader = ({ chat, currentUserId }) => {
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Get the other user from the chat participants
   const otherUser = chat?.participants?.find((p) => p._id !== currentUserId);
 
   const { data: tokenData } = useQuery({
@@ -56,9 +55,6 @@ const ChatHeader = ({ chat, currentUserId }) => {
 
         const channelId = [user._id, otherUser._id].sort().join('-');
 
-        console.log('Creating channel with ID:', channelId);
-        console.log('Members:', [user._id, otherUser._id]);
-
         const currChannel = client.channel('messaging', channelId, {
           members: [user._id, otherUser._id],
           name: `${user.name} and ${otherUser.name}`,
@@ -72,7 +68,7 @@ const ChatHeader = ({ chat, currentUserId }) => {
         setChannel(currChannel);
       } catch (error) {
         console.error('Error initializing chat:', error);
-        toast.error('Could not connect to video chat. Please try again.');
+        toast.error('Could not connect to chat. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -80,7 +76,6 @@ const ChatHeader = ({ chat, currentUserId }) => {
 
     initChat();
 
-    // Cleanup function
     return () => {
       if (chatClient) {
         console.log('Disconnecting chat client...');
@@ -96,11 +91,9 @@ const ChatHeader = ({ chat, currentUserId }) => {
     }
 
     try {
-      // ✅ FIXED: Use the CHAT ID as the call ID
       const callId = chatId;
       const callUrl = `${window.location.origin}/call/${callId}`;
 
-      // Send the call invitation message
       await channel.sendMessage({
         text: `🎥 Video call invitation: ${callUrl}`,
         attachments: [
@@ -113,22 +106,56 @@ const ChatHeader = ({ chat, currentUserId }) => {
 
       toast.success('Starting video call...');
 
-      // ✅ CRITICAL FIX: Disconnect chat client BEFORE navigating
-      // This prevents duplicate connections
       if (chatClient) {
-        console.log('Disconnecting chat client before video call...');
         await chatClient.disconnectUser();
         setChatClient(null);
         setChannel(null);
       }
 
-      // Small delay to ensure cleanup completes
       setTimeout(() => {
         navigate(`/call/${callId}`);
       }, 100);
     } catch (error) {
       console.error('Error starting video call:', error);
       toast.error('Could not start video call');
+    }
+  };
+
+  const handleAudioCall = async () => {
+    if (!channel) {
+      toast.error('Audio call not ready. Please wait...');
+      return;
+    }
+
+    try {
+      // Use chatId directly (same as video) since it's the same conversation
+      const callId = chatId;
+      const callUrl = `${window.location.origin}/audio-call/${callId}`;
+
+      await channel.sendMessage({
+        text: `📞 Audio call invitation: ${callUrl}`,
+        attachments: [
+          {
+            type: 'audio_call',
+            call_url: callUrl,
+          },
+        ],
+      });
+
+      toast.success('Starting audio call...');
+
+      if (chatClient) {
+        await chatClient.disconnectUser();
+        setChatClient(null);
+        setChannel(null);
+      }
+
+      setTimeout(() => {
+        navigate(`/audio-call/${callId}`);
+      }, 100);
+    } catch (error) {
+      console.error('Error starting audio call:', error);
+      toast.error('Could not start audio call');
     }
   };
 
@@ -166,7 +193,7 @@ const ChatHeader = ({ chat, currentUserId }) => {
           </p>
         </div>
       </div>
-      <div className="flex gap-20 items-center justify-between">
+      <div className="flex gap-5 items-center">
         <div
           className={`flex-1
             text-center
@@ -179,14 +206,28 @@ const ChatHeader = ({ chat, currentUserId }) => {
           Chat
         </div>
         {!isGroup && (
-          <Video
-            onClick={handleVideoCall}
-            size={30}
-            className={`hover:cursor-pointer ${
-              loading || !channel ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
-            title={loading ? 'Setting up video call...' : 'Start video call'}
-          />
+          <div className="flex gap-4 items-center">
+            <Video
+              onClick={handleVideoCall}
+              size={22}
+              className={`hover:cursor-pointer transition-all ${
+                loading || !channel
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-75 hover:scale-110'
+              }`}
+              title={loading ? 'Setting up video call...' : 'Start video call'}
+            />
+            <PhoneCall
+              onClick={handleAudioCall}
+              size={22}
+              className={`hover:cursor-pointer transition-all ${
+                loading || !channel
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-75 hover:scale-110'
+              }`}
+              title={loading ? 'Setting up audio call...' : 'Start audio call'}
+            />
+          </div>
         )}
       </div>
     </div>
