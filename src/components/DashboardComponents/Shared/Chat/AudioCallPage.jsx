@@ -343,6 +343,7 @@ const ParticipantCard = ({ participant, call }) => {
       // For remote participants, use publishedTracks
       const audioEnabled =
         participant.publishedTracks?.includes('audio') ?? false;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHasAudio(audioEnabled);
       console.log(`${participant.name} (remote) audio:`, audioEnabled);
     }
