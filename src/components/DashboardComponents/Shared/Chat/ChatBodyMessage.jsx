@@ -5,6 +5,8 @@ import AvatarWithBadge from './AvatarWithBadge';
 import { formatChatTime } from '@/lib/helper';
 import { Button } from '@/components/ui/button';
 import { ReplyIcon, Bot, Sparkles } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const ChatBodyMessage = memo(({ message, onReply }) => {
   const { user } = useAuthStore();
@@ -36,12 +38,12 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
   const containerClass = cn(
     'group flex gap-2 py-3 px-4',
     isCurrentUser && 'flex-row-reverse text-left',
-    isAIMessage && !isCurrentUser && 'bg-purple-50/50 dark:bg-purple-950/20'
+    isAIMessage && !isCurrentUser && 'bg-purple-50/50 dark:bg-purple-950/20',
   );
 
   const contentWrapperClass = cn(
     'max-w-[70%]  flex flex-col relative',
-    isCurrentUser && 'items-end'
+    isCurrentUser && 'items-end',
   );
 
   const messageClass = cn(
@@ -49,8 +51,8 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
     isCurrentUser
       ? 'bg-accent dark:bg-primary/40 rounded-tr-xl rounded-l-xl'
       : isAIMessage
-      ? 'bg-gradient-to-br from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20 border border-purple-200/50 dark:border-purple-700/50 rounded-bl-xl rounded-r-xl'
-      : 'bg-[#F5F5F5] dark:bg-accent rounded-bl-xl rounded-r-xl'
+        ? 'bg-gradient-to-br from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20 border border-purple-200/50 dark:border-purple-700/50 rounded-bl-xl rounded-r-xl'
+        : 'bg-[#F5F5F5] dark:bg-accent rounded-bl-xl rounded-r-xl',
   );
 
   const replyBoxClass = cn(
@@ -58,8 +60,8 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
     isCurrentUser
       ? 'bg-primary/20 border-l-primary'
       : isAIMessage
-      ? 'bg-purple-100 dark:bg-purple-900/30 border-l-purple-500'
-      : 'bg-gray-200 dark:bg-secondary border-l-[#CC4A31]'
+        ? 'bg-purple-100 dark:bg-purple-900/30 border-l-purple-500'
+        : 'bg-gray-200 dark:bg-secondary border-l-[#CC4A31]',
   );
 
   return (
@@ -90,7 +92,7 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
         <div
           className={cn(
             'flex items-center gap-1',
-            isCurrentUser && 'flex-row-reverse'
+            isCurrentUser && 'flex-row-reverse',
           )}
         >
           <div className={messageClass}>
@@ -100,7 +102,7 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
                 <span
                   className={cn(
                     'text-xs font-semibold',
-                    isAIMessage && 'text-purple-700 dark:text-purple-300'
+                    isAIMessage && 'text-purple-700 dark:text-purple-300',
                   )}
                 >
                   {senderName}
@@ -140,11 +142,28 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
               <p
                 className={cn(
                   isThinking &&
-                    'flex items-center gap-2 text-purple-600 dark:text-purple-400'
+                    'flex items-center gap-2 text-purple-600 dark:text-purple-400',
                 )}
               >
                 {isThinking && <Sparkles className="w-4 h-4 animate-pulse" />}
-                {message.content}
+                {isAIMessage && !isCurrentUser && (
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      ul: (props) => (
+                        <ul className="list-disc pl-6 my-2" {...props} />
+                      ),
+                      ol: (props) => (
+                        <ol className="list-decimal pl-6 my-2" {...props} />
+                      ),
+                      li: (props) => <li className="my-1" {...props} />,
+                      p: (props) => <p className="my-2" {...props} />,
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+                )}
+                {isCurrentUser && message.content}
               </p>
             )}
           </div>
@@ -163,7 +182,7 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
                 size={16}
                 className={cn(
                   'text-gray-500 dark:text-white stroke-[1.9]!',
-                  isCurrentUser && 'scale-x-[-1]'
+                  isCurrentUser && 'scale-x-[-1]',
                 )}
               />
             </Button>
