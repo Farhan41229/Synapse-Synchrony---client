@@ -7,7 +7,12 @@ import AuthHomePage from '@/pages/AuthPage/AuthHomePage';
 import SignUpPage from '@/pages/AuthPage/SignUpPage';
 import LoginPage from '@/pages/AuthPage/LoginPage';
 import VerifyEmailPage from '@/pages/AuthPage/VerifyEmailPage';
+import DashboardLayout from '@/layouts/DashboardLayout';
 
+import ChatLayout from '@/components/DashboardComponents/Shared/Chat/ChatLayout';
+import SingleChat from '@/components/DashboardComponents/Shared/Chat/SingleChat';
+import VideoCallPage from '@/components/DashboardComponents/Shared/Chat/VideoCallPage';
+import AudioCallPage from '@/components/DashboardComponents/Shared/Chat/AudioCallPage';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -32,6 +37,25 @@ const router = createBrowserRouter([
         Component: VerifyEmailPage,
       },
     ],
+  },
+  {
+    path: '/dashboard',
+    Component: DashboardLayout,
+    children: [
+      { path: 'chat', Component: ChatLayout },
+      {
+        path: 'chat/:id',
+        Component: SingleChat,
+      },
+    ],
+  },
+  {
+    path: '/call/:callId',
+    element: <VideoCallPage />,
+  },
+  {
+    path: '/audio-call/:callId',
+    element: <AudioCallPage />,
   },
 ]);
 
