@@ -38,7 +38,7 @@ const HeroSection = () => {
       icon: (
         <Star className="w-8 h-8 sm:w-10 sm:h-10 text-[#15a33d] dark:text-[#0d9132]" />
       ),
-      path: '/inclusive-chat',
+      path: '/dashboard/chat',
     },
     {
       title: 'Collaborative Learning',

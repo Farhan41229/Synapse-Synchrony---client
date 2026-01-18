@@ -3,6 +3,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* In your index.css or App.css */
+.str-video__call-controls {
+  all: revert !important;
+}
+
+.str-video__call-controls button {
+  all: revert !important;
+  cursor: pointer !important;
+  padding: 12px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+
 .btn {
   display: inline-flex;
   flex-shrink: 0;
