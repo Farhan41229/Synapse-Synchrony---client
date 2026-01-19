@@ -13,11 +13,18 @@ import ChatLayout from '@/components/DashboardComponents/Shared/Chat/ChatLayout'
 import SingleChat from '@/components/DashboardComponents/Shared/Chat/SingleChat';
 import VideoCallPage from '@/components/DashboardComponents/Shared/Chat/VideoCallPage';
 import AudioCallPage from '@/components/DashboardComponents/Shared/Chat/AudioCallPage';
+import About from '@/pages/About Page/About';
+import Contact from '@/pages/Contact Page/Contact';
+
 const router = createBrowserRouter([
   {
     path: '/',
     Component: RootLayout,
-    children: [{ index: true, Component: Home }],
+    children: [
+      { index: true, Component: Home },
+      { path: 'about', Component: About },
+      { path: 'contact', Component: Contact },
+    ],
   },
   {
     path: '/auth',

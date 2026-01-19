@@ -4,6 +4,7 @@ import { useLocation } from 'react-router';
 import AvatarWithBadge from '@/components/DashboardComponents/Shared/Chat/AvatarWithBadge';
 import { formatChatTime } from '@/lib/helper';
 import { Bot } from 'lucide-react';
+import { stripMarkdown } from '@/utils/MDRemoval';
 
 const ChatListItem = ({ chat, currentUserId, onClick }) => {
   const { pathname } = useLocation();
@@ -39,7 +40,7 @@ const ChatListItem = ({ chat, currentUserId, onClick }) => {
       }: ${lastMessage.content}`;
     }
 
-    return lastMessage.content;
+    return stripMarkdown(lastMessage.content);
   };
 
   return (
