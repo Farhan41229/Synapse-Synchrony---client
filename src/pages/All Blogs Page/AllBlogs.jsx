@@ -20,6 +20,7 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link, useSearchParams } from 'react-router';
 import { format } from 'date-fns';
+import { SkeletonLoader } from './SkeletonLoader';
 
 const AllBlogs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -136,20 +137,7 @@ const AllBlogs = () => {
   const hasActiveFilters = searchQuery || selectedCategory || selectedTag;
 
   // Skeleton Loader
-  const SkeletonLoader = () => (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <div key={i} className="animate-pulse">
-          <div className="bg-gray-200 dark:bg-gray-800 h-48 rounded-t-xl" />
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-b-xl border border-gray-200 dark:border-gray-700">
-            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded mb-3" />
-            <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-2/3 mb-3" />
-            <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  
 
   const blogs = blogsResponse?.blogs || [];
   const pagination = blogsResponse?.pagination || {};
@@ -157,7 +145,7 @@ const AllBlogs = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#04642a] to-[#15a33d] py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-linear-to-r from-[#04642a] to-[#15a33d] py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto" data-aos="fade-up">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">

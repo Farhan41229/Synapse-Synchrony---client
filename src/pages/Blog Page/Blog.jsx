@@ -46,7 +46,7 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Hero Section */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-[#04642a]/10 to-transparent dark:from-[#04642a]/20">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-linear-to-br from-[#04642a]/10 to-transparent dark:from-[#04642a]/20">
         <div className="max-w-7xl mx-auto relative z-10" data-aos="fade-up">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 bg-[#04642a]/10 dark:bg-[#04642a]/20 border border-[#04642a]/20">
@@ -55,7 +55,7 @@ const Blog = () => {
                 Campus Hub
               </span>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-[#04642a] to-[#15a33d] bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-linear-to-r from-[#04642a] to-[#15a33d] bg-clip-text text-transparent">
               SynapsePortal
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-4">
@@ -361,7 +361,7 @@ const Blog = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#04642a] to-[#15a33d]">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-linear-to-r from-[#04642a] to-[#15a33d]">
         <div className="max-w-4xl mx-auto text-center" data-aos="zoom-in">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
             Join the Conversation
