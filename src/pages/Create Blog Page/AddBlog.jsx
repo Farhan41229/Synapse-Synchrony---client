@@ -210,7 +210,7 @@ const AddBlog = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <section className="bg-gradient-to-r from-[#04642a] to-[#15a33d] py-12 px-4 sm:px-6 lg:px-8">
+      <section className="bg-linear-to-r from-[#04642a] to-[#15a33d] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto" data-aos="fade-up">
           <button
             onClick={() => navigate('/blog')}
@@ -241,7 +241,7 @@ const AddBlog = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Author Info */}
         <div
-          className="mb-8 p-6 bg-gradient-to-r from-[#04642a]/5 to-[#15a33d]/5 dark:from-[#04642a]/10 dark:to-[#15a33d]/10 rounded-xl border border-[#04642a]/20"
+          className="mb-8 p-6 bg-linear-to-r from-[#04642a]/5 to-[#15a33d]/5 dark:from-[#04642a]/10 dark:to-[#15a33d]/10 rounded-xl border border-[#04642a]/20"
           data-aos="fade-up"
         >
           <div className="flex items-center gap-4">
