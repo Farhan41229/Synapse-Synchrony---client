@@ -22,6 +22,7 @@ import BlogDetail from '@/pages/Blog Details Page/BlogDetail';
 import EventDetail from '@/pages/Event Details Page/EventDetail';
 import AllBlogs from '@/pages/All Blogs Page/AllBlogs';
 import AllEvents from '@/pages/All Events Page/AllEvents';
+import AddBlog from '@/pages/Create Blog Page/AddBlog';
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { path: 'EventDetail/:id', Component: EventDetail },
       { path: 'all', Component: AllBlogs },
       { path: 'events/all', Component: AllEvents },
+      { path: 'blogs/create', Component: AddBlog },
     ],
   },
   {
