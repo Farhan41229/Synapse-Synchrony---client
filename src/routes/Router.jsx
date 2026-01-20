@@ -20,6 +20,8 @@ import BlogLayout from '@/layouts/BlogLayout';
 import Blog from '@/pages/Blog Page/Blog';
 import BlogDetail from '@/pages/Blog Details Page/BlogDetail';
 import EventDetail from '@/pages/Event Details Page/EventDetail';
+import AllBlogs from '@/pages/All Blogs Page/AllBlogs';
+import AllEvents from '@/pages/All Events Page/AllEvents';
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,8 @@ const router = createBrowserRouter([
       { index: true, Component: Blog },
       { path: 'BlogDetail/:id', Component: BlogDetail },
       { path: 'EventDetail/:id', Component: EventDetail },
+      { path: 'all', Component: AllBlogs },
+      { path: 'events/all', Component: AllEvents },
     ],
   },
   {
