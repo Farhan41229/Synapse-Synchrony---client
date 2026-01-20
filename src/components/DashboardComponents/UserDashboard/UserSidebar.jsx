@@ -234,14 +234,7 @@ const UserSidebar = () => {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/manage-blogs'}>
-                    <FilePenLine />
-                    Manage Blogs
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
