@@ -23,6 +23,7 @@ import EventDetail from '@/pages/Event Details Page/EventDetail';
 import AllBlogs from '@/pages/All Blogs Page/AllBlogs';
 import AllEvents from '@/pages/All Events Page/AllEvents';
 import AddBlog from '@/pages/Create Blog Page/AddBlog';
+import MyBlogs from '@/components/DashboardComponents/Shared/Blogs/My Blogs/MyBlogs';
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,7 @@ const router = createBrowserRouter([
         path: 'chat/:id',
         Component: SingleChat,
       },
+      { path: 'my-blogs', Component: MyBlogs },
     ],
   },
   {
