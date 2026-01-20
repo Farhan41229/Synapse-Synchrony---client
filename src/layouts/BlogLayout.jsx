@@ -1,10 +1,17 @@
-import React from 'react';
+import { Outlet } from 'react-router';
+import Footer from '../components/Shared/Footer';
+import Navbar from '../components/Shared/Navbar/Navbar';
 
 const BlogLayout = () => {
   return (
-    <div>
-      <h1>This is the Blog Layout</h1>
-    </div>
+    <>
+      <div>
+        <nav className="sticky top-0 z-100">
+          <Navbar />
+        </nav>
+        <Footer />
+      </div>
+    </>
   );
 };
 
