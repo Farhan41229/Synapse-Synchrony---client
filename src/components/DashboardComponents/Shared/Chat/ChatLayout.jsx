@@ -13,14 +13,14 @@ const ChatLayout = () => {
       <ChatList />
 
       {/* Chat Content Area - SingleChat will render here */}
-      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="flex-1 flex items-center justify-center bg-linear-to-br from-background via-background to-muted/20">
         {!isChatSelected ? (
           // Enhanced Empty State
           <div className="max-w-2xl mx-auto px-8 text-center space-y-8">
             {/* Logo/Icon Section */}
             <div className="relative inline-block">
               <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
-              <div className="relative w-24 h-24 mx-auto bg-gradient-to-br from-primary to-primary/60 rounded-2xl flex items-center justify-center shadow-2xl">
+              <div className="relative w-24 h-24 mx-auto bg-linear-to-br from-primary to-primary/60 rounded-2xl flex items-center justify-center shadow-2xl">
                 <MessageSquare
                   className="w-12 h-12 text-primary-foreground"
                   strokeWidth={2}
@@ -30,7 +30,7 @@ const ChatLayout = () => {
 
             {/* Heading */}
             <div className="space-y-3">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Welcome to Synapse Chat
               </h1>
               <p className="text-lg text-muted-foreground max-w-md mx-auto">

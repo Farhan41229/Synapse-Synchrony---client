@@ -15,6 +15,8 @@ import VideoCallPage from '@/components/DashboardComponents/Shared/Chat/VideoCal
 import AudioCallPage from '@/components/DashboardComponents/Shared/Chat/AudioCallPage';
 import About from '@/pages/About Page/About';
 import Contact from '@/pages/Contact Page/Contact';
+import BlogMainPage from '@/pages/Blog Page/BlogMainPage';
+import BlogLayout from '@/layouts/BlogLayout';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +26,13 @@ const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: 'about', Component: About },
       { path: 'contact', Component: Contact },
+    ],
+  },
+  {
+    path: '/blog',
+    Component: BlogLayout,
+    children: [
+      { index: true, Component: Home }
     ],
   },
   {
