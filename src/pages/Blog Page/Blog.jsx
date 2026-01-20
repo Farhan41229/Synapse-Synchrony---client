@@ -201,7 +201,7 @@ const Blog = () => {
                         </div>
                       </div>
                       <Link
-                        to={`/blog/${blog._id}`}
+                        to={`/blog/BlogDetail/${blog._id}`}
                         className="text-[#04642a] dark:text-[#15a33d] font-medium text-sm hover:underline"
                       >
                         Read More →
@@ -335,7 +335,7 @@ const Blog = () => {
                         </span>
                       </div>
                       <Link
-                        to={`/blog/events/${event._id}`}
+                        to={`/blog/EventDetail/${event._id}`}
                         className="text-[#04642a] dark:text-[#15a33d] font-medium text-sm hover:underline"
                       >
                         View Details →
@@ -372,7 +372,7 @@ const Blog = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/blog/create"
+              to="/blog/blogs/create"
               className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-white text-[#04642a] rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all shadow-lg"
             >
               Write a Blog

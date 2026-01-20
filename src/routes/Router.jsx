@@ -18,6 +18,8 @@ import Contact from '@/pages/Contact Page/Contact';
 
 import BlogLayout from '@/layouts/BlogLayout';
 import Blog from '@/pages/Blog Page/Blog';
+import BlogDetail from '@/pages/Blog Details Page/BlogDetail';
+import EventDetail from '@/pages/Event Details Page/EventDetail';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +35,9 @@ const router = createBrowserRouter([
     path: '/blog',
     Component: BlogLayout,
     children: [
-      { index: true, Component: Blog }
+      { index: true, Component: Blog },
+      { path: 'BlogDetail/:id', Component: BlogDetail },
+      { path: 'EventDetail/:id', Component: EventDetail },
     ],
   },
   {
