@@ -28,6 +28,8 @@ import {
   GitPullRequest,
   X,
   MessageCircle,
+  FileText,
+  FilePenLine,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -40,8 +42,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuthStore } from '@/store/authStore';
 
-
-const role = "User";
+const role = 'User';
 const Name = 'Farhan Tahsin Khan';
 const items = [
   {
@@ -213,6 +214,31 @@ const UserSidebar = () => {
                   <Link to={'/contact'}>
                     <Mail />
                     Contact
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        {/* Blog Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Blogs</SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/my-blogs'}>
+                    <FileText />
+                    My Blogs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/manage-blogs'}>
+                    <FilePenLine />
+                    Manage Blogs
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
