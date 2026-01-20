@@ -125,7 +125,7 @@ const Blog = () => {
               </p>
             </div>
             <Link
-              to="/portal/blogs/all"
+              to="/blog/all"
               className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all"
             >
               View All Blogs
@@ -201,7 +201,7 @@ const Blog = () => {
                         </div>
                       </div>
                       <Link
-                        to={`/portal/blogs/${blog._id}`}
+                        to={`/blog/${blog._id}`}
                         className="text-[#04642a] dark:text-[#15a33d] font-medium text-sm hover:underline"
                       >
                         Read More →
@@ -216,7 +216,7 @@ const Blog = () => {
           {/* Mobile View All Button */}
           <div className="mt-8 text-center md:hidden" data-aos="fade-up">
             <Link
-              to="/portal/blogs/all"
+              to="/blog/all"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all"
             >
               View All Blogs
@@ -242,7 +242,7 @@ const Blog = () => {
               </p>
             </div>
             <Link
-              to="/portal/events/all"
+              to="/blog/events/all"
               className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all"
             >
               View All Events
@@ -335,7 +335,7 @@ const Blog = () => {
                         </span>
                       </div>
                       <Link
-                        to={`/portal/events/${event._id}`}
+                        to={`/blog/events/${event._id}`}
                         className="text-[#04642a] dark:text-[#15a33d] font-medium text-sm hover:underline"
                       >
                         View Details →
@@ -350,7 +350,7 @@ const Blog = () => {
           {/* Mobile View All Button */}
           <div className="mt-8 text-center md:hidden" data-aos="fade-up">
             <Link
-              to="/portal/events/all"
+              to="/blog/events/all"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all"
             >
               View All Events
@@ -372,14 +372,14 @@ const Blog = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/portal/blogs/create"
+              to="/blog/create"
               className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-white text-[#04642a] rounded-lg font-semibold text-lg hover:bg-gray-100 transition-all shadow-lg"
             >
               Write a Blog
               <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
-              to="/portal/events/create"
+              to="/blog/events/create"
               className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-transparent text-white border-2 border-white rounded-lg font-semibold text-lg hover:bg-white/10 transition-all shadow-lg"
             >
               Create Event
