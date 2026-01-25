@@ -24,6 +24,8 @@ import AllBlogs from '@/pages/All Blogs Page/AllBlogs';
 import AllEvents from '@/pages/All Events Page/AllEvents';
 import AddBlog from '@/pages/Create Blog Page/AddBlog';
 import MyBlogs from '@/components/DashboardComponents/Shared/Blogs/My Blogs/MyBlogs';
+import MedilinkLayout from '@/layouts/MedilinkLayout';
+import Medilink from '@/pages/Medilink Home Page/Medilink';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,11 @@ const router = createBrowserRouter([
       { path: 'about', Component: About },
       { path: 'contact', Component: Contact },
     ],
+  },
+  {
+    path: '/medilink',
+    Component: MedilinkLayout,
+    children: [{ index: true, Component: Medilink }],
   },
   {
     path: '/blog',
