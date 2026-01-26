@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router'; // Added for navigation
+import { useNavigate } from 'react-router';
 import {
   Heart,
   Shield,
@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import MedilinkChat from '@/components/Medilink/MedilinkChat';
+import MoodTracker from '@/components/Medilink/MoodTracker';
 
 export default function MedilinkHome() {
-  const navigate = useNavigate(); // Hook for routing
+  const navigate = useNavigate();
   const [emotion, setEmotion] = useState(50);
   // eslint-disable-next-line no-unused-vars
   const [mounted, setMounted] = useState(false);
@@ -64,7 +66,6 @@ export default function MedilinkHome() {
     });
   }, []);
 
-  // Corrected Logic: Find the emotion closest to the slider value
   const currentEmotion = emotions.reduce((prev, curr) =>
     Math.abs(curr.value - emotion) < Math.abs(prev.value - emotion)
       ? curr
@@ -107,14 +108,14 @@ export default function MedilinkHome() {
       setCurrentStep((c) => c + 1);
     } else {
       setShowDialog(false);
-      // Pass the selected emotion state to the chat/dashboard
-      navigate('/chat', { state: { initialEmotion: currentEmotion.label } });
+      // Navigate to Medilink chat
+      navigate('/medilink/chat/new');
     }
   };
 
   const closeDialog = () => {
     setShowDialog(false);
-    setCurrentStep(0); // Reset progress on close
+    setCurrentStep(0);
   };
 
   return (
@@ -229,6 +230,23 @@ export default function MedilinkHome() {
         </div>
       </section>
 
+      {/* Mood Tracker Section */}
+      <section className="py-24 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12" data-aos="fade-up">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              Track Your Progress
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">
+              Visualize your emotional journey and celebrate your growth
+            </p>
+          </div>
+          <div data-aos="fade-up" data-aos-delay="200">
+            <MoodTracker />
+          </div>
+        </div>
+      </section>
+
       {/* Welcome Dialog */}
       {showDialog && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -278,6 +296,9 @@ export default function MedilinkHome() {
           </div>
         </div>
       )}
+
+      {/* Floating Chat Button */}
+      <MedilinkChat />
     </div>
   );
 }

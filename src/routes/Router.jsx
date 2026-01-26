@@ -26,6 +26,7 @@ import AddBlog from '@/pages/Create Blog Page/AddBlog';
 import MyBlogs from '@/components/DashboardComponents/Shared/Blogs/My Blogs/MyBlogs';
 import MedilinkLayout from '@/layouts/MedilinkLayout';
 import Medilink from '@/pages/Medilink Home Page/Medilink';
+import MedilinkChatPage from '@/pages/Medilink Chat/MedilinkChatPage';
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,10 @@ const router = createBrowserRouter([
   {
     path: '/medilink',
     Component: MedilinkLayout,
-    children: [{ index: true, Component: Medilink }],
+    children: [
+      { index: true, Component: Medilink },
+      { path: 'chat/:sessionId', Component: MedilinkChatPage },
+    ],
   },
   {
     path: '/blog',
