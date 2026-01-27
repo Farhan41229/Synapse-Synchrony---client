@@ -33,20 +33,21 @@ export default function AISummarySheet({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl overflow-y-auto">
-        <SheetHeader>
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-gradient-to-r from-[#04642a] to-[#15a33d] rounded-lg">
-              <Sparkles className="w-5 h-5 text-white" />
+      <SheetContent className="w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl overflow-y-auto p-0">
+        <div className="p-6">
+          <SheetHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-gradient-to-r from-[#04642a] to-[#15a33d] rounded-lg">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <SheetTitle className="text-xl font-bold">AI Summary</SheetTitle>
             </div>
-            <SheetTitle className="text-xl font-bold">AI Summary</SheetTitle>
-          </div>
-          <SheetDescription className="text-left">
-            AI-generated summary of {isBlog ? 'this blog post' : 'this event'}
-          </SheetDescription>
-        </SheetHeader>
+            <SheetDescription className="text-left">
+              AI-generated summary of {isBlog ? 'this blog post' : 'this event'}
+            </SheetDescription>
+          </SheetHeader>
 
-        <div className="mt-6 space-y-6">
+          <div className="mt-6 space-y-6">
           {/* Loading State */}
           {isLoading && (
             <div className="flex flex-col items-center justify-center py-12">
@@ -194,6 +195,7 @@ export default function AISummarySheet({
               </div>
             </>
           )}
+          </div>
         </div>
       </SheetContent>
     </Sheet>
