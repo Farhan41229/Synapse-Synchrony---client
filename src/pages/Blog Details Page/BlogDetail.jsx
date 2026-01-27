@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { axiosInstance } from '@/lib/axios';
+import blogService from '@/services/blogService';
 import {
   Calendar,
   Clock,
@@ -13,14 +13,28 @@ import {
   Bookmark,
   MessageCircle,
   Tag,
+  Sparkles,
 } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { format } from 'date-fns';
 import { SkeletonLoader } from './SkeletonLoader';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
+import 'highlight.js/styles/github-dark.css'; // You can change the theme
+import AISummarySheet from '@/components/AI/AISummarySheet';
+import toast from 'react-hot-toast';
 
 const BlogDetail = () => {
   const { id } = useParams();
+  
+  // AI Summary Sheet state
+  const [summarySheetOpen, setSummarySheetOpen] = useState(false);
+  const [summaryData, setSummaryData] = useState(null);
+  const [summaryError, setSummaryError] = useState(null);
+  const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true, easing: 'ease-in-out' });
@@ -34,13 +48,31 @@ const BlogDetail = () => {
   } = useQuery({
     queryKey: ['blog', id],
     queryFn: async () => {
-      const response = await axiosInstance.get(`/portal/blogs/${id}`);
+      const response = await blogService.getBlogById(id);
       // Increment view count
-      await axiosInstance.patch(`/portal/blogs/${id}/view`);
-      return response.data.data;
+      await blogService.incrementBlogView(id);
+      return response.data;
     },
     enabled: !!id,
   });
+
+  // Handle AI Summarize
+  const handleSummarize = async () => {
+    setSummaryData(null);
+    setSummaryError(null);
+    setIsLoadingSummary(true);
+    setSummarySheetOpen(true);
+
+    try {
+      const response = await blogService.summarizeBlogWithAI(id);
+      setSummaryData(response.data);
+    } catch (err) {
+      setSummaryError(err);
+      toast.error('Failed to generate summary');
+    } finally {
+      setIsLoadingSummary(false);
+    }
+  };
 
   
 
@@ -177,14 +209,88 @@ const BlogDetail = () => {
             </div>
           )}
 
-          {/* Blog Content */}
+          {/* AI Summarize Button */}
+          <div className="mb-6" data-aos="fade-up">
+            <button
+              onClick={handleSummarize}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
+            >
+              <Sparkles className="w-5 h-5" />
+              Summarize with AI
+            </button>
+          </div>
+
+          {/* Blog Content with Markdown Rendering */}
           <div
-            className="prose prose-lg dark:prose-invert max-w-none mb-10"
+            className="prose prose-lg dark:prose-invert max-w-none mb-10 text-gray-700 dark:text-gray-300 leading-relaxed"
             data-aos="fade-up"
           >
-            <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap text-lg">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight, rehypeRaw]}
+              components={{
+                // Customize heading styles
+                h1: ({ node, ...props }) => (
+                  <h1 className="text-4xl font-bold mb-4 mt-8 text-gray-900 dark:text-white" {...props} />
+                ),
+                h2: ({ node, ...props }) => (
+                  <h2 className="text-3xl font-bold mb-3 mt-6 text-gray-900 dark:text-white" {...props} />
+                ),
+                h3: ({ node, ...props }) => (
+                  <h3 className="text-2xl font-semibold mb-2 mt-4 text-gray-900 dark:text-white" {...props} />
+                ),
+                // Customize paragraph styles
+                p: ({ node, ...props }) => (
+                  <p className="mb-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed" {...props} />
+                ),
+                // Customize code block styles
+                code: ({ node, inline, className, children, ...props }) => {
+                  if (inline) {
+                    return (
+                      <code
+                        className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 rounded text-sm font-mono"
+                        {...props}
+                      >
+                        {children}
+                      </code>
+                    );
+                  }
+                  return (
+                    <code
+                      className={`${className} block p-4 bg-gray-900 dark:bg-gray-950 rounded-lg text-sm overflow-x-auto`}
+                      {...props}
+                    >
+                      {children}
+                    </code>
+                  );
+                },
+                // Customize list styles
+                ul: ({ node, ...props }) => (
+                  <ul className="list-disc list-inside mb-4 space-y-2 text-gray-700 dark:text-gray-300" {...props} />
+                ),
+                ol: ({ node, ...props }) => (
+                  <ol className="list-decimal list-inside mb-4 space-y-2 text-gray-700 dark:text-gray-300" {...props} />
+                ),
+                // Customize link styles
+                a: ({ node, ...props }) => (
+                  <a
+                    className="text-[#04642a] dark:text-[#15a33d] hover:underline font-medium"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    {...props}
+                  />
+                ),
+                // Customize blockquote styles
+                blockquote: ({ node, ...props }) => (
+                  <blockquote
+                    className="border-l-4 border-[#04642a] dark:border-[#15a33d] pl-4 py-2 my-4 italic text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-r"
+                    {...props}
+                  />
+                ),
+              }}
+            >
               {blog.content}
-            </div>
+            </ReactMarkdown>
           </div>
 
           {/* Tags */}
@@ -280,6 +386,17 @@ const BlogDetail = () => {
           </div>
         </article>
       </div>
+
+      {/* AI Summary Sheet */}
+      <AISummarySheet
+        isOpen={summarySheetOpen}
+        onClose={() => setSummarySheetOpen(false)}
+        summary={summaryData}
+        isLoading={isLoadingSummary}
+        error={summaryError}
+        type="blog"
+        title={blog?.title}
+      />
     </div>
   );
 };
