@@ -231,6 +231,10 @@ const AddEvent = () => {
       startDate: new Date(formData.startDate).toISOString(),
       endDate: new Date(formData.endDate).toISOString(),
       location: formData.location.trim(),
+      organizer: {
+        name: user?.name || 'Event Organizer',
+        email: user?.email || '',
+      },
       capacity: formData.capacity ? parseInt(formData.capacity) : undefined,
       tags: tagsArray,
       image: formData.image,
