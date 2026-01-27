@@ -30,6 +30,10 @@ import {
   MessageCircle,
   FileText,
   FilePenLine,
+  Brain,
+  Heart,
+  Activity,
+  Lightbulb,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -103,6 +107,48 @@ const UserSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
+        {/* Wellness/Medilink Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Medilink Wellness</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness'}>
+                    <Brain />
+                    Wellness Dashboard
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness/mood-history'}>
+                    <Heart />
+                    Mood History
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness/stress-history'}>
+                    <Activity />
+                    Stress History
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness/suggestions'}>
+                    <Lightbulb />
+                    Suggestions
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
         {/* Books Group */}
         {/* <SidebarGroup>
           <SidebarGroupLabel>Books</SidebarGroupLabel>

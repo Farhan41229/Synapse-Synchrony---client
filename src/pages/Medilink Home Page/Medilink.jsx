@@ -16,7 +16,6 @@ import {
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import MedilinkChat from '@/components/Medilink/MedilinkChat';
-import MoodTracker from '@/components/Medilink/MoodTracker';
 
 export default function MedilinkHome() {
   const navigate = useNavigate();
@@ -103,13 +102,13 @@ export default function MedilinkHome() {
     },
   ];
 
-  const handleBegin = () => {
+  const handleBegin = async () => {
     if (currentStep < welcomeSteps.length - 1) {
       setCurrentStep((c) => c + 1);
     } else {
       setShowDialog(false);
-      // Navigate to Medilink chat
-      navigate('/medilink/chat/new');
+      // Navigate to session selection page
+      navigate('/medilink/sessions');
     }
   };
 
@@ -235,14 +234,52 @@ export default function MedilinkHome() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12" data-aos="fade-up">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Track Your Progress
+              Your Therapy Journey
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Visualize your emotional journey and celebrate your growth
+              Track your progress and insights with Medilink AI
             </p>
           </div>
-          <div data-aos="fade-up" data-aos-delay="200">
-            <MoodTracker />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#04642a]/10 flex items-center justify-center">
+                  <MessageSquareHeart className="w-6 h-6 text-[#04642a]" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  AI-Powered Support
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Get personalized therapeutic responses using advanced AI trained on evidence-based techniques.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#04642a]/10 flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-[#04642a]" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  Emotional Analysis
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Real-time analysis of your emotional state, risk levels, and conversation themes.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-[#04642a]/10 flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-[#04642a]" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  Private & Secure
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                All your conversations are encrypted and stored securely. Your privacy is our priority.
+              </p>
+            </div>
           </div>
         </div>
       </section>

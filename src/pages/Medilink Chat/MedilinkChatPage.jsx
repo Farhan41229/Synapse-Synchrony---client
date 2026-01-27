@@ -135,13 +135,17 @@ export default function MedilinkChatPage() {
       const response = await medilinkService.sendMessage(sessionId, currentMessage);
 
       if (response.success) {
-        // Add AI response
+        // Add AI response with mood, stress, and suggestions
         const assistantMessage = {
           role: 'assistant',
           content: response.data.response,
           timestamp: new Date(),
           metadata: {
-            analysis: response.data.analysis,
+            analysis: {
+              mood: response.data.moodReport,
+              stress: response.data.stressReport,
+              suggestions: response.data.suggestions || null,
+            },
           },
         };
         setMessages((prev) => [...prev, assistantMessage]);

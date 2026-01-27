@@ -27,6 +27,11 @@ import MyBlogs from '@/components/DashboardComponents/Shared/Blogs/My Blogs/MyBl
 import MedilinkLayout from '@/layouts/MedilinkLayout';
 import Medilink from '@/pages/Medilink Home Page/Medilink';
 import MedilinkChatPage from '@/pages/Medilink Chat/MedilinkChatPage';
+import SessionSelectPage from '@/pages/Medilink Chat/SessionSelectPage';
+import WellnessDashboard from '@/pages/Wellness Dashboard/WellnessDashboard';
+import MoodHistoryPage from '@/pages/Wellness Dashboard/MoodHistoryPage';
+import StressHistoryPage from '@/pages/Wellness Dashboard/StressHistoryPage';
+import SuggestionsPage from '@/pages/Wellness Dashboard/SuggestionsPage';
 
 const router = createBrowserRouter([
   {
@@ -43,6 +48,7 @@ const router = createBrowserRouter([
     Component: MedilinkLayout,
     children: [
       { index: true, Component: Medilink },
+      { path: 'sessions', Component: SessionSelectPage },
       { path: 'chat/:sessionId', Component: MedilinkChatPage },
     ],
   },
@@ -87,6 +93,11 @@ const router = createBrowserRouter([
         Component: SingleChat,
       },
       { path: 'my-blogs', Component: MyBlogs },
+      // Wellness/Medilink routes
+      { path: 'wellness', Component: WellnessDashboard },
+      { path: 'wellness/mood-history', Component: MoodHistoryPage },
+      { path: 'wellness/stress-history', Component: StressHistoryPage },
+      { path: 'wellness/suggestions', Component: SuggestionsPage },
     ],
   },
   {

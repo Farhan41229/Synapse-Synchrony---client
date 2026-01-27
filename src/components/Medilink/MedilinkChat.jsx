@@ -37,14 +37,20 @@ export default function MedilinkChat() {
       medilinkService.sendMessage(sessionId, message),
     onSuccess: (data) => {
       if (data.success) {
-        // Add AI response to messages
+        // Add AI response to messages with mood, stress, and suggestions
         setMessages((prev) => [
           ...prev,
           {
             role: 'assistant',
             content: data.data.response,
             timestamp: new Date().toISOString(),
-            metadata: { analysis: data.data.analysis },
+            metadata: { 
+              analysis: {
+                mood: data.data.moodReport,
+                stress: data.data.stressReport,
+                suggestions: data.data.suggestions || null,
+              }
+            },
           },
         ]);
       }

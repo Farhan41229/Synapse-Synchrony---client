@@ -62,12 +62,17 @@ export default function SessionSidebar({
               <div className="flex items-center gap-2 mb-1">
                 <MessageSquare className="w-4 h-4" />
                 <span className="font-medium truncate">
-                  {session.messages[0]?.content?.slice(0, 30) || 'New Chat'}
+                  {(() => {
+                    const firstUserMsg = session.messages.find(m => m.role === 'user');
+                    return firstUserMsg?.content?.slice(0, 30) || 'New Chat';
+                  })()}
                 </span>
               </div>
               <p className="line-clamp-2 text-gray-600 dark:text-gray-400">
-                {session.messages[session.messages.length - 1]?.content ||
-                  'No messages yet'}
+                {(() => {
+                  const lastNonSystemMsg = [...session.messages].reverse().find(m => m.role !== 'system');
+                  return lastNonSystemMsg?.content || 'No messages yet';
+                })()}
               </p>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
