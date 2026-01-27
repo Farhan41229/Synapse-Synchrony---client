@@ -34,6 +34,8 @@ import {
   Heart,
   Activity,
   Lightbulb,
+  CalendarDays,
+  CalendarPlus,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -280,7 +282,40 @@ const UserSidebar = () => {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-              
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/blog/blogs/create'}>
+                    <FilePenLine />
+                    Create Blog
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        {/* Event Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Events</SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/my-events'}>
+                    <CalendarDays />
+                    My Events
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/create-event'}>
+                    <CalendarPlus />
+                    Create Event
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

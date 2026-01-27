@@ -1,21 +1,21 @@
 import { useAuthStore } from '@/store/authStore';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import blogService from '@/services/blogService';
+import eventService from '@/services/eventService';
 import { Link } from 'react-router';
 import toast from 'react-hot-toast';
 import {
-  Heart,
-  Eye,
   Calendar,
+  Clock,
+  MapPin,
+  Users,
   Edit,
   Trash2,
   Plus,
-  FileText,
+  CalendarDays,
   AlertCircle,
   Loader2,
   Search,
-  MoreVertical,
   ExternalLink,
   Sparkles,
 } from 'lucide-react';
@@ -24,16 +24,16 @@ import 'aos/dist/aos.css';
 import { format } from 'date-fns';
 import AISummarySheet from '@/components/AI/AISummarySheet';
 
-const MyBlogs = () => {
+const MyEvents = () => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   
   // AI Summary Sheet state
   const [summarySheetOpen, setSummarySheetOpen] = useState(false);
-  const [selectedBlogForSummary, setSelectedBlogForSummary] = useState(null);
+  const [selectedEventForSummary, setSelectedEventForSummary] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
   const [summaryError, setSummaryError] = useState(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
@@ -42,55 +42,55 @@ const MyBlogs = () => {
     AOS.init({ duration: 800, once: true, easing: 'ease-in-out' });
   }, []);
 
-  // Fetch user's blogs
+  // Fetch user's events
   const {
-    data: blogs,
+    data: events,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['myBlogs'],
+    queryKey: ['myEvents'],
     queryFn: async () => {
-      const response = await blogService.getMyBlogs();
+      const response = await eventService.getMyEvents();
       return response.data;
     },
   });
 
-  // Delete blog mutation
-  const deleteBlogMutation = useMutation({
-    mutationFn: blogService.deleteBlog,
+  // Delete event mutation
+  const deleteEventMutation = useMutation({
+    mutationFn: eventService.deleteEvent,
     onSuccess: () => {
-      queryClient.invalidateQueries(['myBlogs']);
-      toast.success('Blog deleted successfully!');
+      queryClient.invalidateQueries(['myEvents']);
+      toast.success('Event deleted successfully!');
       setShowDeleteModal(false);
-      setSelectedBlog(null);
+      setSelectedEvent(null);
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to delete blog');
+      toast.error(error.response?.data?.message || 'Failed to delete event');
     },
   });
 
   // Handle delete
-  const handleDelete = (blog) => {
-    setSelectedBlog(blog);
+  const handleDelete = (event) => {
+    setSelectedEvent(event);
     setShowDeleteModal(true);
   };
 
   const confirmDelete = () => {
-    if (selectedBlog) {
-      deleteBlogMutation.mutate(selectedBlog._id);
+    if (selectedEvent) {
+      deleteEventMutation.mutate(selectedEvent._id);
     }
   };
 
   // Handle AI Summarize
-  const handleSummarize = async (blog) => {
-    setSelectedBlogForSummary(blog);
+  const handleSummarize = async (event) => {
+    setSelectedEventForSummary(event);
     setSummaryData(null);
     setSummaryError(null);
     setIsLoadingSummary(true);
     setSummarySheetOpen(true);
 
     try {
-      const response = await blogService.summarizeBlogWithAI(blog._id);
+      const response = await eventService.summarizeEventWithAI(event._id);
       setSummaryData(response.data);
     } catch (err) {
       setSummaryError(err);
@@ -100,9 +100,9 @@ const MyBlogs = () => {
     }
   };
 
-  // Filter blogs based on search
-  const filteredBlogs = blogs?.filter((blog) =>
-    blog.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter events based on search
+  const filteredEvents = events?.filter((event) =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Skeleton Loader
@@ -129,18 +129,18 @@ const MyBlogs = () => {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                My Blogs
+                My Events
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Manage and view all your published blog posts
+                Manage and view all your organized events
               </p>
             </div>
             <Link
-              to="/blog/blogs/create"
+              to="/dashboard/create-event"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all shadow-lg hover:shadow-xl"
             >
               <Plus className="w-5 h-5" />
-              Create New Blog
+              Create New Event
             </Link>
           </div>
 
@@ -151,162 +151,152 @@ const MyBlogs = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search your blogs..."
+              placeholder="Search your events..."
               className="w-full pl-12 pr-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 focus:border-[#04642a] focus:outline-none transition-all"
             />
           </div>
         </div>
 
         {/* Stats */}
-        {!isLoading && blogs && (
+        {!isLoading && events && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" data-aos="fade-up">
             <div className="p-4 bg-gradient-to-r from-[#04642a]/10 to-[#15a33d]/10 dark:from-[#04642a]/20 dark:to-[#15a33d]/20 rounded-xl border border-[#04642a]/20">
-              <FileText className="w-6 h-6 text-[#04642a] mb-2" />
+              <CalendarDays className="w-6 h-6 text-[#04642a] mb-2" />
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {blogs.length}
+                {events.length}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Total Blogs
+                Total Events
               </div>
             </div>
             <div className="p-4 bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-xl border border-blue-500/20">
-              <Heart className="w-6 h-6 text-blue-600 mb-2" />
+              <Users className="w-6 h-6 text-blue-600 mb-2" />
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {blogs.reduce((sum, blog) => sum + (blog.likeCount || blog.likes?.length || 0), 0)}
+                {events.reduce((sum, event) => sum + (event.registeredCount || event.registeredUsers?.length || 0), 0)}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Total Likes
-              </div>
-            </div>
-            <div className="p-4 bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-xl border border-purple-500/20">
-              <Eye className="w-6 h-6 text-purple-600 mb-2" />
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {blogs.reduce((sum, blog) => sum + (blog.views || 0), 0)}
-              </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                Total Views
+                Total Registrations
               </div>
             </div>
             <div className="p-4 bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-xl border border-green-500/20">
               <Calendar className="w-6 h-6 text-green-600 mb-2" />
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                {blogs.filter((blog) => {
-                  const createdDate = new Date(blog.createdAt);
-                  const monthAgo = new Date();
-                  monthAgo.setMonth(monthAgo.getMonth() - 1);
-                  return createdDate > monthAgo;
-                }).length}
+                {events.filter((event) => new Date(event.startDate) > new Date()).length}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                This Month
+                Upcoming
+              </div>
+            </div>
+            <div className="p-4 bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-xl border border-purple-500/20">
+              <Clock className="w-6 h-6 text-purple-600 mb-2" />
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {events.filter((event) => new Date(event.endDate) < new Date()).length}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Completed
               </div>
             </div>
           </div>
         )}
 
-        {/* Blogs Grid */}
+        {/* Events Grid */}
         {isLoading ? (
           <SkeletonLoader />
         ) : error ? (
           <div className="text-center py-16" data-aos="fade-up">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              Failed to load blogs
+              Failed to load events
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
               Please try again later or refresh the page
             </p>
           </div>
-        ) : filteredBlogs?.length === 0 ? (
+        ) : filteredEvents?.length === 0 ? (
           <div className="text-center py-16" data-aos="fade-up">
-            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <CalendarDays className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              {searchQuery ? 'No blogs found' : 'No blogs yet'}
+              {searchQuery ? 'No events found' : 'No events yet'}
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               {searchQuery
                 ? 'Try adjusting your search query'
-                : 'Start sharing your experiences by creating your first blog post'}
+                : 'Start organizing your first event'}
             </p>
             {!searchQuery && (
               <Link
-                to="/blog/blogs/create"
+                to="/dashboard/create-event"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all"
               >
                 <Plus className="w-5 h-5" />
-                Create Your First Blog
+                Create Your First Event
               </Link>
             )}
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBlogs?.map((blog, index) => (
+            {filteredEvents?.map((event, index) => (
               <div
-                key={blog._id}
+                key={event._id}
                 data-aos="fade-up"
                 data-aos-delay={index * 50}
                 className="group rounded-xl overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300"
               >
-                {/* Blog Image */}
+                {/* Event Image */}
                 <div className="relative h-48 overflow-hidden">
                   <img
-                    src={blog.image || 'https://i.ibb.co.com/QvRXjjrG/Study.webp'}
-                    alt={blog.title}
+                    src={event.image || 'https://i.ibb.co.com/rKJX4Dsp/Evening.webp'}
+                    alt={event.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute top-3 left-3">
                     <span className="px-3 py-1 text-xs font-semibold rounded-full bg-[#04642a] text-white">
-                      {blog.category}
+                      {event.eventType}
                     </span>
                   </div>
                   <div className="absolute top-3 right-3">
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${
-                        blog.isPublished
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-500 text-white'
-                      }`}
-                    >
-                      {blog.isPublished ? 'Published' : 'Draft'}
+                    <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-500 text-white">
+                      {event.status || 'Active'}
                     </span>
                   </div>
                 </div>
 
-                {/* Blog Content */}
+                {/* Event Content */}
                 <div className="p-6">
                   <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white line-clamp-2">
-                    {blog.title}
+                    {event.title}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4">
-                    {blog.content}
+                    {event.description}
                   </p>
 
-                  {/* Meta Info */}
-                  <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      <span>{format(new Date(blog.createdAt), 'MMM dd, yyyy')}</span>
+                  {/* Event Details */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <Calendar className="w-4 h-4 text-[#04642a]" />
+                      <span>{format(new Date(event.startDate), 'MMM dd, yyyy')}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <MapPin className="w-4 h-4 text-[#04642a]" />
+                      <span className="line-clamp-1">{event.location}</span>
                     </div>
                   </div>
 
                   {/* Stats */}
                   <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700 mb-4">
-                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                      <div className="flex items-center gap-1">
-                        <Heart className="w-4 h-4" />
-                        <span>{blog.likeCount || blog.likes?.length || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="w-4 h-4" />
-                        <span>{blog.views || 0}</span>
-                      </div>
+                    <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <Users className="w-4 h-4" />
+                      <span>
+                        {event.registeredCount || event.registeredUsers?.length || 0}
+                        {event.capacity && ` / ${event.capacity}`}
+                      </span>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
                   <div className="flex gap-2 mb-2">
                     <Link
-                      to={`/blog/BlogDetail/${blog._id}`}
+                      to={`/blog/EventDetail/${event._id}`}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all text-sm"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -319,7 +309,7 @@ const MyBlogs = () => {
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(blog)}
+                      onClick={() => handleDelete(event)}
                       className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all text-sm"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -328,7 +318,7 @@ const MyBlogs = () => {
 
                   {/* AI Summarize Button */}
                   <button
-                    onClick={() => handleSummarize(blog)}
+                    onClick={() => handleSummarize(event)}
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all text-sm"
                   >
                     <Sparkles className="w-4 h-4" />
@@ -340,17 +330,6 @@ const MyBlogs = () => {
           </div>
         )}
       </div>
-
-      {/* AI Summary Sheet */}
-      <AISummarySheet
-        isOpen={summarySheetOpen}
-        onClose={() => setSummarySheetOpen(false)}
-        summary={summaryData}
-        isLoading={isLoadingSummary}
-        error={summaryError}
-        type="blog"
-        title={selectedBlogForSummary?.title}
-      />
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
@@ -365,7 +344,7 @@ const MyBlogs = () => {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                  Delete Blog?
+                  Delete Event?
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   This action cannot be undone
@@ -374,27 +353,27 @@ const MyBlogs = () => {
             </div>
 
             <p className="text-gray-700 dark:text-gray-300 mb-6">
-              Are you sure you want to delete "<strong>{selectedBlog?.title}</strong>"?
-              All comments and interactions will also be removed.
+              Are you sure you want to delete "<strong>{selectedEvent?.title}</strong>"?
+              All registrations will also be removed.
             </p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => {
                   setShowDeleteModal(false);
-                  setSelectedBlog(null);
+                  setSelectedEvent(null);
                 }}
-                disabled={deleteBlogMutation.isPending}
+                disabled={deleteEventMutation.isPending}
                 className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-all disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmDelete}
-                disabled={deleteBlogMutation.isPending}
+                disabled={deleteEventMutation.isPending}
                 className="flex-1 px-4 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {deleteBlogMutation.isPending ? (
+                {deleteEventMutation.isPending ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
                     Deleting...
@@ -410,8 +389,19 @@ const MyBlogs = () => {
           </div>
         </div>
       )}
+
+      {/* AI Summary Sheet */}
+      <AISummarySheet
+        isOpen={summarySheetOpen}
+        onClose={() => setSummarySheetOpen(false)}
+        summary={summaryData}
+        isLoading={isLoadingSummary}
+        error={summaryError}
+        type="event"
+        title={selectedEventForSummary?.title}
+      />
     </div>
   );
 };
 
-export default MyBlogs;
+export default MyEvents;

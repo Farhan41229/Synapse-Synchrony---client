@@ -24,6 +24,8 @@ import AllBlogs from '@/pages/All Blogs Page/AllBlogs';
 import AllEvents from '@/pages/All Events Page/AllEvents';
 import AddBlog from '@/pages/Create Blog Page/AddBlog';
 import MyBlogs from '@/components/DashboardComponents/Shared/Blogs/My Blogs/MyBlogs';
+import MyEvents from '@/components/DashboardComponents/Shared/Events/MyEvents';
+import AddEvent from '@/pages/Create Event Page/AddEvent';
 import MedilinkLayout from '@/layouts/MedilinkLayout';
 import Medilink from '@/pages/Medilink Home Page/Medilink';
 import MedilinkChatPage from '@/pages/Medilink Chat/MedilinkChatPage';
@@ -92,7 +94,11 @@ const router = createBrowserRouter([
         path: 'chat/:id',
         Component: SingleChat,
       },
+      // Blog Management
       { path: 'my-blogs', Component: MyBlogs },
+      // Event Management
+      { path: 'my-events', Component: MyEvents },
+      { path: 'create-event', Component: AddEvent },
       // Wellness/Medilink routes
       { path: 'wellness', Component: WellnessDashboard },
       { path: 'wellness/mood-history', Component: MoodHistoryPage },

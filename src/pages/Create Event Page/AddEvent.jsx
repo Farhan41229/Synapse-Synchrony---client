@@ -2,25 +2,27 @@ import { useAuthStore } from '@/store/authStore';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useMutation } from '@tanstack/react-query';
-import blogService from '@/services/blogService';
+import eventService from '@/services/eventService';
 import toast from 'react-hot-toast';
 import {
   Upload,
   X,
   Image as ImageIcon,
-  FileText,
-  Tag,
-  Folder,
+  Calendar,
+  MapPin,
+  Users,
+  Briefcase,
   Send,
   ArrowLeft,
   Sparkles,
-  Eye,
   Loader2,
+  Clock,
+  Tag,
 } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-const AddBlog = () => {
+const AddEvent = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
@@ -31,52 +33,43 @@ const AddBlog = () => {
   // Form state
   const [formData, setFormData] = useState({
     title: '',
-    content: '',
-    category: '',
-    image: null,
+    description: '',
+    eventType: '',
+    startDate: '',
+    endDate: '',
+    location: '',
+    capacity: '',
     tags: '',
+    image: null,
   });
 
   const [imagePreview, setImagePreview] = useState(null);
   const [errors, setErrors] = useState({});
-  const [charCount, setCharCount] = useState(0);
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [aiTitle, setAiTitle] = useState('');
   const [aiContext, setAiContext] = useState('');
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
-  // Categories
-  const categories = [
-    {
-      value: 'experience',
-      label: 'Experience',
-      description: 'Share your personal journey',
-    },
-    {
-      value: 'academic',
-      label: 'Academic',
-      description: 'Educational insights',
-    },
-    {
-      value: 'campus-life',
-      label: 'Campus Life',
-      description: 'Daily campus experiences',
-    },
-    { value: 'tips', label: 'Tips', description: 'Helpful advice and guides' },
-    { value: 'story', label: 'Story', description: 'Tell your story' },
+  // Event Types
+  const eventTypes = [
+    { value: 'workshop', label: 'Workshop', description: 'Hands-on learning session' },
+    { value: 'seminar', label: 'Seminar', description: 'Educational talk' },
+    { value: 'extracurricular', label: 'Extracurricular', description: 'Club activities' },
+    { value: 'academic', label: 'Academic', description: 'Academic events' },
+    { value: 'social', label: 'Social', description: 'Social gathering' },
   ];
 
-  // Create blog mutation
-  const createBlogMutation = useMutation({
-    mutationFn: blogService.createBlog,
+  // Create event mutation
+  const createEventMutation = useMutation({
+    mutationFn: eventService.createEvent,
     onSuccess: (data) => {
-      toast.success('Blog published successfully!');
+      toast.success('Event created successfully!');
       setTimeout(() => {
-        navigate(`/blog/BlogDetail/${data.data._id}`);
+        navigate(`/blog/EventDetail/${data.data._id}`);
       }, 1500);
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || 'Failed to publish blog');
+      toast.error(error.response?.data?.message || 'Failed to create event');
     },
   });
 
@@ -95,11 +88,6 @@ const AddBlog = () => {
         [name]: '',
       }));
     }
-
-    // Update character count for content
-    if (name === 'content') {
-      setCharCount(value.length);
-    }
   };
 
   // Handle image upload
@@ -107,19 +95,16 @@ const AddBlog = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast.error('Please upload an image file');
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Image size should be less than 5MB');
       return;
     }
 
-    // Convert to base64
     const reader = new FileReader();
     reader.onloadstart = () => {
       toast.loading('Processing image...', { id: 'image-upload' });
@@ -149,24 +134,75 @@ const AddBlog = () => {
     toast.success('Image removed');
   };
 
+  // Handle Generate with AI
+  const handleGenerateWithAI = async () => {
+    if (!aiTitle.trim()) {
+      toast.error('Please enter an event title');
+      return;
+    }
+
+    setIsGeneratingAI(true);
+    try {
+      const response = await eventService.generateEventWithAI({
+        title: aiTitle,
+        additionalContext: aiContext,
+      });
+
+      const aiData = response.data;
+      
+      // Populate form with AI-generated data
+      setFormData((prev) => ({
+        ...prev,
+        title: aiTitle,
+        description: aiData.description,
+        eventType: aiData.suggestedType || '',
+        tags: aiData.suggestedTags?.join(', ') || '',
+        capacity: aiData.suggestedCapacity?.toString() || '',
+      }));
+
+      toast.success('Event details generated successfully!');
+      setShowAIDialog(false);
+      setAiTitle('');
+      setAiContext('');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to generate event details');
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  };
+
   // Validate form
   const validateForm = () => {
     const newErrors = {};
 
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
-    } else if (formData.title.length < 10) {
-      newErrors.title = 'Title must be at least 10 characters';
     }
 
-    if (!formData.content.trim()) {
-      newErrors.content = 'Content is required';
-    } else if (formData.content.length < 100) {
-      newErrors.content = 'Content must be at least 100 characters';
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    } else if (formData.description.length < 50) {
+      newErrors.description = 'Description must be at least 50 characters';
     }
 
-    if (!formData.category) {
-      newErrors.category = 'Please select a category';
+    if (!formData.eventType) {
+      newErrors.eventType = 'Please select an event type';
+    }
+
+    if (!formData.startDate) {
+      newErrors.startDate = 'Start date is required';
+    }
+
+    if (!formData.endDate) {
+      newErrors.endDate = 'End date is required';
+    }
+
+    if (formData.startDate && formData.endDate && new Date(formData.endDate) < new Date(formData.startDate)) {
+      newErrors.endDate = 'End date must be after start date';
+    }
+
+    if (!formData.location.trim()) {
+      newErrors.location = 'Location is required';
     }
 
     setErrors(newErrors);
@@ -188,88 +224,45 @@ const AddBlog = () => {
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
 
-    const blogData = {
+    const eventData = {
       title: formData.title.trim(),
-      content: formData.content.trim(),
-      category: formData.category,
-      image: formData.image,
+      description: formData.description.trim(),
+      eventType: formData.eventType,
+      startDate: new Date(formData.startDate).toISOString(),
+      endDate: new Date(formData.endDate).toISOString(),
+      location: formData.location.trim(),
+      capacity: formData.capacity ? parseInt(formData.capacity) : undefined,
       tags: tagsArray,
+      image: formData.image,
     };
 
-    createBlogMutation.mutate(blogData);
-  };
-
-  // Handle Generate with AI
-  const handleGenerateWithAI = async () => {
-    if (!aiTitle.trim()) {
-      toast.error('Please enter a blog title');
-      return;
-    }
-
-    setIsGeneratingAI(true);
-    try {
-      const response = await blogService.generateBlogWithAI({
-        title: aiTitle,
-        additionalContext: aiContext,
-      });
-
-      const aiData = response.data;
-      
-      // Populate form with AI-generated data
-      setFormData((prev) => ({
-        ...prev,
-        title: aiTitle,
-        content: aiData.content,
-        category: aiData.suggestedCategory || '',
-        tags: aiData.suggestedTags?.join(', ') || '',
-      }));
-
-      setCharCount(aiData.content.length);
-      toast.success('Blog content generated successfully!');
-      setShowAIDialog(false);
-      setAiTitle('');
-      setAiContext('');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to generate blog content');
-    } finally {
-      setIsGeneratingAI(false);
-    }
-  };
-
-  // Handle preview
-  const handlePreview = () => {
-    if (!formData.title || !formData.content) {
-      toast.error('Please fill in title and content to preview');
-      return;
-    }
-    toast.success('Preview feature coming soon!');
+    createEventMutation.mutate(eventData);
   };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <section className="bg-linear-to-r from-[#04642a] to-[#15a33d] py-12 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-[#04642a] to-[#15a33d] py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto" data-aos="fade-up">
           <button
-            onClick={() => navigate('/blog')}
+            onClick={() => navigate(-1)}
             className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-6 group"
           >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span>Back to Portal</span>
+            <span>Back</span>
           </button>
           <div className="text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 bg-white/10 border border-white/20">
               <Sparkles className="w-4 h-4 text-white" />
               <span className="text-sm font-medium text-white">
-                Share Your Story
+                Organize an Event
               </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Create a Blog Post
+              Create an Event
             </h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto mb-6">
-              Share your experiences, insights, and stories with the campus
-              community
+              Organize events for the campus community
             </p>
             
             {/* AI Generate Button */}
@@ -288,20 +281,18 @@ const AddBlog = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Author Info */}
         <div
-          className="mb-8 p-6 bg-linear-to-r from-[#04642a]/5 to-[#15a33d]/5 dark:from-[#04642a]/10 dark:to-[#15a33d]/10 rounded-xl border border-[#04642a]/20"
+          className="mb-8 p-6 bg-gradient-to-r from-[#04642a]/5 to-[#15a33d]/5 dark:from-[#04642a]/10 dark:to-[#15a33d]/10 rounded-xl border border-[#04642a]/20"
           data-aos="fade-up"
         >
           <div className="flex items-center gap-4">
             <img
-              src={
-                user?.avatar || 'https://i.ibb.co.com/0yrpXd6k/Blank-Pfp.webp'
-              }
+              src={user?.avatar || 'https://i.ibb.co.com/0yrpXd6k/Blank-Pfp.webp'}
               alt={user?.name}
               className="w-16 h-16 rounded-full object-cover border-2 border-[#04642a]"
             />
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Publishing as
+                Organizing as
               </p>
               <p className="text-lg font-semibold text-gray-900 dark:text-white">
                 {user?.name}
@@ -318,15 +309,15 @@ const AddBlog = () => {
           {/* Title */}
           <div data-aos="fade-up">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
-              <FileText className="w-4 h-4 text-[#04642a]" />
-              Title <span className="text-red-500">*</span>
+              <Briefcase className="w-4 h-4 text-[#04642a]" />
+              Event Title <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Enter a captivating title for your blog..."
+              placeholder="Enter an engaging title for your event..."
               className={`w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 ${
                 errors.title
                   ? 'border-red-500 focus:border-red-500'
@@ -341,85 +332,172 @@ const AddBlog = () => {
             )}
           </div>
 
-          {/* Category */}
+          {/* Event Type */}
           <div data-aos="fade-up">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-3">
-              <Folder className="w-4 h-4 text-[#04642a]" />
-              Category <span className="text-red-500">*</span>
+              <Briefcase className="w-4 h-4 text-[#04642a]" />
+              Event Type <span className="text-red-500">*</span>
             </label>
             <div className="grid md:grid-cols-5 gap-3">
-              {categories.map((cat) => (
+              {eventTypes.map((type) => (
                 <button
-                  key={cat.value}
+                  key={type.value}
                   type="button"
                   onClick={() => {
-                    setFormData((prev) => ({ ...prev, category: cat.value }));
-                    if (errors.category) {
-                      setErrors((prev) => ({ ...prev, category: '' }));
+                    setFormData((prev) => ({ ...prev, eventType: type.value }));
+                    if (errors.eventType) {
+                      setErrors((prev) => ({ ...prev, eventType: '' }));
                     }
                   }}
                   className={`p-4 rounded-lg border-2 transition-all text-left ${
-                    formData.category === cat.value
+                    formData.eventType === type.value
                       ? 'border-[#04642a] bg-[#04642a]/5 dark:bg-[#04642a]/10'
                       : 'border-gray-200 dark:border-gray-700 hover:border-[#04642a]/50'
                   }`}
                 >
                   <p className="font-semibold text-gray-900 dark:text-white mb-1">
-                    {cat.label}
+                    {type.label}
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400">
-                    {cat.description}
+                    {type.description}
                   </p>
                 </button>
               ))}
             </div>
-            {errors.category && (
+            {errors.eventType && (
               <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
                 <X className="w-4 h-4" />
-                {errors.category}
+                {errors.eventType}
               </p>
             )}
           </div>
 
-          {/* Content */}
+          {/* Description */}
           <div data-aos="fade-up">
-            <label className="flex items-center justify-between text-sm font-semibold text-gray-900 dark:text-white mb-2">
-              <span className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[#04642a]" />
-                Content <span className="text-red-500">*</span>
-              </span>
-              <span className="text-xs font-normal text-gray-500 dark:text-gray-400">
-                {charCount} characters
-              </span>
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              <Briefcase className="w-4 h-4 text-[#04642a]" />
+              Description <span className="text-red-500">*</span>
             </label>
             <textarea
-              name="content"
-              value={formData.content}
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              rows={12}
-              placeholder="Write your blog content here... Share your experiences, insights, and stories with the community."
+              rows={8}
+              placeholder="Describe your event in detail..."
               className={`w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 ${
-                errors.content
+                errors.description
                   ? 'border-red-500 focus:border-red-500'
                   : 'border-gray-200 dark:border-gray-700 focus:border-[#04642a]'
               } focus:outline-none transition-all resize-none`}
             />
-            {errors.content && (
+            {errors.description && (
               <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
                 <X className="w-4 h-4" />
-                {errors.content}
+                {errors.description}
               </p>
             )}
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              Minimum 100 characters required
-            </p>
+          </div>
+
+          {/* Dates */}
+          <div className="grid md:grid-cols-2 gap-6" data-aos="fade-up">
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                <Calendar className="w-4 h-4 text-[#04642a]" />
+                Start Date & Time <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 ${
+                  errors.startDate
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-gray-200 dark:border-gray-700 focus:border-[#04642a]'
+                } focus:outline-none transition-all`}
+              />
+              {errors.startDate && (
+                <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
+                  <X className="w-4 h-4" />
+                  {errors.startDate}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                <Clock className="w-4 h-4 text-[#04642a]" />
+                End Date & Time <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+                className={`w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 ${
+                  errors.endDate
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-gray-200 dark:border-gray-700 focus:border-[#04642a]'
+                } focus:outline-none transition-all`}
+              />
+              {errors.endDate && (
+                <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
+                  <X className="w-4 h-4" />
+                  {errors.endDate}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Location & Capacity */}
+          <div className="grid md:grid-cols-2 gap-6" data-aos="fade-up">
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                <MapPin className="w-4 h-4 text-[#04642a]" />
+                Location <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="Event venue or location"
+                className={`w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 ${
+                  errors.location
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-gray-200 dark:border-gray-700 focus:border-[#04642a]'
+                } focus:outline-none transition-all`}
+              />
+              {errors.location && (
+                <p className="mt-2 text-sm text-red-500 flex items-center gap-1">
+                  <X className="w-4 h-4" />
+                  {errors.location}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                <Users className="w-4 h-4 text-[#04642a]" />
+                Capacity (Optional)
+              </label>
+              <input
+                type="number"
+                name="capacity"
+                value={formData.capacity}
+                onChange={handleChange}
+                placeholder="Maximum attendees"
+                min="1"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 focus:border-[#04642a] focus:outline-none transition-all"
+              />
+            </div>
           </div>
 
           {/* Image Upload */}
           <div data-aos="fade-up">
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white mb-3">
               <ImageIcon className="w-4 h-4 text-[#04642a]" />
-              Featured Image (Optional)
+              Event Image (Optional)
             </label>
 
             {imagePreview ? (
@@ -436,22 +514,16 @@ const AddBlog = () => {
                 >
                   <X className="w-5 h-5" />
                 </button>
-                <div className="absolute bottom-3 left-3 px-3 py-1.5 bg-black/70 text-white rounded-lg text-sm font-medium">
-                  Featured Image
-                </div>
               </div>
             ) : (
               <label className="block cursor-pointer">
                 <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-12 text-center hover:border-[#04642a] dark:hover:border-[#15a33d] transition-all bg-gray-50 dark:bg-gray-800/50">
                   <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                   <p className="text-gray-900 dark:text-white font-semibold mb-2">
-                    Click to upload featured image
+                    Click to upload event image
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     PNG, JPG, WEBP up to 5MB
-                  </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    Image will be converted to base64 for storage
                   </p>
                 </div>
                 <input
@@ -475,58 +547,30 @@ const AddBlog = () => {
               name="tags"
               value={formData.tags}
               onChange={handleChange}
-              placeholder="freshman, university-life, tips (separate with commas)"
+              placeholder="react, nodejs, workshop (separate with commas)"
               className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 focus:border-[#04642a] focus:outline-none transition-all"
             />
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              Add relevant tags separated by commas to help readers find your
-              blog
-            </p>
           </div>
 
-          {/* Action Buttons */}
-          <div
-            className="flex flex-col sm:flex-row gap-4 pt-6"
-            data-aos="fade-up"
-          >
+          {/* Submit Button */}
+          <div className="flex gap-4 pt-6" data-aos="fade-up">
             <button
               type="submit"
-              disabled={createBlogMutation.isPending}
+              disabled={createEventMutation.isPending}
               className="flex-1 flex items-center justify-center gap-2 px-6 py-4 bg-[#04642a] text-white rounded-lg font-semibold text-lg hover:bg-[#15a33d] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
-              {createBlogMutation.isPending ? (
+              {createEventMutation.isPending ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Publishing...
+                  Creating...
                 </>
               ) : (
                 <>
                   <Send className="w-5 h-5" />
-                  Publish Blog
+                  Create Event
                 </>
               )}
             </button>
-            <button
-              type="button"
-              onClick={handlePreview}
-              disabled={createBlogMutation.isPending}
-              className="flex-1 sm:flex-none px-6 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              <Eye className="w-5 h-5" />
-              Preview
-            </button>
-          </div>
-
-          {/* Publishing Info */}
-          <div
-            className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
-            data-aos="fade-up"
-          >
-            <p className="text-sm text-blue-800 dark:text-blue-300">
-              <strong>Note:</strong> Your blog will be published immediately and
-              visible to all students on the platform. Make sure to review your
-              content before publishing.
-            </p>
           </div>
         </form>
       </div>
@@ -545,10 +589,10 @@ const AddBlog = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Generate Blog with AI
+                    Generate Event with AI
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Let AI create your blog content
+                    Let AI create your event details
                   </p>
                 </div>
               </div>
@@ -564,13 +608,13 @@ const AddBlog = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                  Blog Title <span className="text-red-500">*</span>
+                  Event Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={aiTitle}
                   onChange={(e) => setAiTitle(e.target.value)}
-                  placeholder="e.g., How to Study Effectively for Final Exams"
+                  placeholder="e.g., Python for Beginners Workshop"
                   disabled={isGeneratingAI}
                   className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-600 focus:border-[#04642a] focus:outline-none transition-all disabled:opacity-50"
                 />
@@ -583,7 +627,7 @@ const AddBlog = () => {
                 <textarea
                   value={aiContext}
                   onChange={(e) => setAiContext(e.target.value)}
-                  placeholder="Any specific points you want to cover..."
+                  placeholder="Any specific details you want to include..."
                   disabled={isGeneratingAI}
                   rows={3}
                   className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-600 focus:border-[#04642a] focus:outline-none transition-all resize-none disabled:opacity-50"
@@ -624,4 +668,4 @@ const AddBlog = () => {
   );
 };
 
-export default AddBlog;
+export default AddEvent;
