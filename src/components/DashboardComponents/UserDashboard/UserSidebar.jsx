@@ -36,6 +36,8 @@ import {
   Lightbulb,
   CalendarDays,
   CalendarPlus,
+  Stethoscope,
+  Pill,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -149,6 +151,31 @@ const UserSidebar = () => {
                   <Link to={'/dashboard/wellness/suggestions'}>
                     <Lightbulb />
                     Suggestions
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        {/* Medical Diagnosis Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Medical Diagnosis</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/medilink/diagnosis'}>
+                    <Stethoscope />
+                    Diagnosis Sessions
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/my-medications'}>
+                    <Pill />
+                    My Medications
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

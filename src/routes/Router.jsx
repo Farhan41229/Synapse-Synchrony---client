@@ -37,6 +37,9 @@ import SuggestionsPage from '@/pages/Wellness Dashboard/SuggestionsPage';
 import ProfilePage from '@/pages/Profile Page/ProfilePage';
 import EditBlog from '@/pages/Edit Blog Page/EditBlog';
 import EditEvent from '@/pages/Edit Event Page/EditEvent';
+import DiagnosisSessionsPage from '@/pages/Diagnosis/DiagnosisSessionsPage';
+import DiagnosisChatPage from '@/pages/Diagnosis/DiagnosisChatPage';
+import MyMedicationsPage from '@/pages/Diagnosis/MyMedicationsPage';
 
 const router = createBrowserRouter([
   {
@@ -55,6 +58,9 @@ const router = createBrowserRouter([
       { index: true, Component: Medilink },
       { path: 'sessions', Component: SessionSelectPage },
       { path: 'chat/:sessionId', Component: MedilinkChatPage },
+      { path: 'diagnosis', Component: DiagnosisSessionsPage },
+      { path: 'diagnosis/session/:sessionId', Component: DiagnosisChatPage },
+      { path: 'diagnosis/new', Component: DiagnosisChatPage },
     ],
   },
   {
@@ -111,6 +117,8 @@ const router = createBrowserRouter([
       { path: 'wellness/mood-history', Component: MoodHistoryPage },
       { path: 'wellness/stress-history', Component: StressHistoryPage },
       { path: 'wellness/suggestions', Component: SuggestionsPage },
+      // Medical Diagnosis
+      { path: 'my-medications', Component: MyMedicationsPage },
     ],
   },
   {

@@ -12,6 +12,7 @@ import {
   Waves,
   Brain,
   X,
+  Stethoscope,
 } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -240,7 +241,7 @@ export default function MedilinkHome() {
               Track your progress and insights with Medilink AI
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" data-aos="fade-up" data-aos-delay="200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6" data-aos="fade-up" data-aos-delay="200">
             <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-xl bg-[#04642a]/10 flex items-center justify-center">
@@ -250,9 +251,15 @@ export default function MedilinkHome() {
                   AI-Powered Support
                 </h3>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
                 Get personalized therapeutic responses using advanced AI trained on evidence-based techniques.
               </p>
+              <button
+                onClick={() => setShowDialog(true)}
+                className="w-full px-4 py-2 bg-[#04642a] hover:bg-[#15a33d] text-white rounded-lg font-medium transition-all"
+              >
+                Start Mental Health Chat
+              </button>
             </div>
             <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
@@ -263,9 +270,15 @@ export default function MedilinkHome() {
                   Emotional Analysis
                 </h3>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
                 Real-time analysis of your emotional state, risk levels, and conversation themes.
               </p>
+              <button
+                onClick={() => navigate('/dashboard/wellness')}
+                className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-all"
+              >
+                View Wellness Dashboard
+              </button>
             </div>
             <div className="p-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
@@ -276,9 +289,29 @@ export default function MedilinkHome() {
                   Private & Secure
                 </h3>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
                 All your conversations are encrypted and stored securely. Your privacy is our priority.
               </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-[#04642a]/10 to-[#15a33d]/10 border-2 border-[#04642a]/30 dark:border-[#15a33d]/30 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#04642a] to-[#15a33d] flex items-center justify-center">
+                  <Stethoscope className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                  Medical Diagnosis
+                </h3>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                Describe your physical symptoms and get AI-powered diagnosis with Bangladesh medication recommendations.
+              </p>
+              <button
+                onClick={() => navigate('/medilink/diagnosis/new')}
+                className="w-full px-4 py-2 bg-gradient-to-r from-[#04642a] to-[#15a33d] hover:shadow-lg text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+              >
+                <Stethoscope className="w-4 h-4" />
+                Start Diagnosis
+              </button>
             </div>
           </div>
         </div>
