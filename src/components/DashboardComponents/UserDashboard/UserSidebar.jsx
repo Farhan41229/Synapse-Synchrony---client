@@ -57,6 +57,11 @@ const items = [
     icon: Home,
   },
   {
+    title: 'My Profile',
+    url: '/dashboard/profile',
+    icon: User2,
+  },
+  {
     title: 'Chats',
     url: '/dashboard/chat',
     icon: MessageCircle,
@@ -331,7 +336,9 @@ const UserSidebar = () => {
                 </SidebarMenuSubButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>Account</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/profile">Account</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>Setting</DropdownMenuItem>
                 <DropdownMenuItem>Sign out</DropdownMenuItem>
               </DropdownMenuContent>

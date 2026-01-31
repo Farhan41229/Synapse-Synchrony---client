@@ -20,6 +20,7 @@ import {
   UserPlus,
   UserMinus,
   Sparkles,
+  Volume2,
 } from 'lucide-react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -30,6 +31,7 @@ import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
 import AISummarySheet from '@/components/AI/AISummarySheet';
+import TextToSpeechPlayer from '@/components/Audio/TextToSpeechPlayer';
 import toast from 'react-hot-toast';
 
 const EventDetail = () => {
@@ -42,6 +44,9 @@ const EventDetail = () => {
   const [summaryData, setSummaryData] = useState(null);
   const [summaryError, setSummaryError] = useState(null);
   const [isLoadingSummary, setIsLoadingSummary] = useState(false);
+  
+  // TTS Player state
+  const [showTTSPlayer, setShowTTSPlayer] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true, easing: 'ease-in-out' });
@@ -318,16 +323,34 @@ const EventDetail = () => {
               </div>
             )}
 
-            {/* AI Summarize Button */}
-            <div className="mb-6" data-aos="fade-up">
+            {/* AI Summarize Button & Listen Button */}
+            <div className="mb-6 flex flex-col gap-3" data-aos="fade-up">
               <button
                 onClick={handleSummarize}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
               >
                 <Sparkles className="w-5 h-5" />
                 Summarize with AI
               </button>
+              
+              <button
+                onClick={() => setShowTTSPlayer(!showTTSPlayer)}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-[#04642a] to-[#15a33d] text-white rounded-lg font-medium hover:shadow-lg transition-all"
+              >
+                <Volume2 className="w-5 h-5" />
+                {showTTSPlayer ? 'Hide Player' : 'Listen to Event'}
+              </button>
             </div>
+            
+            {/* TTS Player */}
+            {showTTSPlayer && (
+              <div className="mb-8" data-aos="fade-down">
+                <TextToSpeechPlayer 
+                  content={event.description}
+                  title={event.title}
+                />
+              </div>
+            )}
 
             {/* Event Description with Markdown Rendering */}
             <div className="mb-8" data-aos="fade-up">

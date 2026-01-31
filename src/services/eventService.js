@@ -32,7 +32,7 @@ export const getEventById = async (eventId) => {
  * @returns {Promise} - User's event list
  */
 export const getMyEvents = async () => {
-  const response = await axiosInstance.get('/portal/events/user/my-events');
+  const response = await axiosInstance.get('/portal/events/user/created');
   return response.data;
 };
 

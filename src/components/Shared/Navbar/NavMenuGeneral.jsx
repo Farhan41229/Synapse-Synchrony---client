@@ -1,6 +1,6 @@
 import { ModeToggle } from '@/components/mode-toggle';
 import NavButton from './NavButton';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { useAuthStore } from '@/store/authStore';
 import toast from 'react-hot-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -66,13 +66,15 @@ const NavMenuGeneral = () => {
           <DropdownMenuContent sideOffset={20}>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              {' '}
-              <User /> Profile
+            <DropdownMenuItem asChild>
+              <Link to="/dashboard/profile" className="cursor-pointer">
+                <User /> Profile
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              {' '}
-              <MessageCircle /> Chat
+            <DropdownMenuItem asChild>
+              <Link to="/dashboard/chat" className="cursor-pointer">
+                <MessageCircle /> Chat
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               variant="destructive"

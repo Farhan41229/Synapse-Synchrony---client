@@ -34,6 +34,9 @@ import WellnessDashboard from '@/pages/Wellness Dashboard/WellnessDashboard';
 import MoodHistoryPage from '@/pages/Wellness Dashboard/MoodHistoryPage';
 import StressHistoryPage from '@/pages/Wellness Dashboard/StressHistoryPage';
 import SuggestionsPage from '@/pages/Wellness Dashboard/SuggestionsPage';
+import ProfilePage from '@/pages/Profile Page/ProfilePage';
+import EditBlog from '@/pages/Edit Blog Page/EditBlog';
+import EditEvent from '@/pages/Edit Event Page/EditEvent';
 
 const router = createBrowserRouter([
   {
@@ -94,11 +97,15 @@ const router = createBrowserRouter([
         path: 'chat/:id',
         Component: SingleChat,
       },
+      // Profile
+      { path: 'profile', Component: ProfilePage },
       // Blog Management
       { path: 'my-blogs', Component: MyBlogs },
+      { path: 'edit-blog/:id', Component: EditBlog },
       // Event Management
       { path: 'my-events', Component: MyEvents },
       { path: 'create-event', Component: AddEvent },
+      { path: 'edit-event/:id', Component: EditEvent },
       // Wellness/Medilink routes
       { path: 'wellness', Component: WellnessDashboard },
       { path: 'wellness/mood-history', Component: MoodHistoryPage },

@@ -302,12 +302,12 @@ const MyEvents = () => {
                       <ExternalLink className="w-4 h-4" />
                       View
                     </Link>
-                    <button
-                      onClick={() => toast.success('Edit feature coming soon!')}
+                    <Link
+                      to={`/dashboard/edit-event/${event._id}`}
                       className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-all text-sm"
                     >
                       <Edit className="w-4 h-4" />
-                    </button>
+                    </Link>
                     <button
                       onClick={() => handleDelete(event)}
                       className="flex items-center justify-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-all text-sm"
