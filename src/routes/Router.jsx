@@ -47,6 +47,8 @@ import CreateNote from '@/pages/Dashboard/CreateNote';
 import EditNote from '@/pages/Dashboard/EditNote';
 import NoteDetail from '@/pages/Dashboard/NoteDetail';
 import ImageToText from '@/pages/Dashboard/ImageToText';
+import MySchedule from '@/pages/Dashboard/MySchedule';
+import UploadSchedule from '@/pages/Dashboard/UploadSchedule';
 
 const router = createBrowserRouter([
   {
@@ -123,6 +125,9 @@ const router = createBrowserRouter([
       { path: 'notes/image-to-text', Component: ImageToText },
       { path: 'notes/:id/edit', Component: EditNote },
       { path: 'notes/:id', Component: NoteDetail },
+      // Schedule
+      { path: 'schedule', Component: MySchedule },
+      { path: 'schedule/upload', Component: UploadSchedule },
       // Event Management
       { path: 'my-events', Component: MyEvents },
       { path: 'create-event', Component: AddEvent },

@@ -34,6 +34,7 @@ import {
   Heart,
   Activity,
   Lightbulb,
+  Calendar,
   CalendarDays,
   CalendarPlus,
   Stethoscope,
@@ -373,6 +374,31 @@ const UserSidebar = () => {
                   <Link to="/dashboard/notes/image-to-text">
                     <ScanText />
                     Image to text
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        {/* Schedule Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Schedule</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/schedule">
+                    <Calendar />
+                    My Schedule
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/schedule/upload">
+                    <CalendarPlus />
+                    Upload Schedule
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
