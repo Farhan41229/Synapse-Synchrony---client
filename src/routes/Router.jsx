@@ -46,6 +46,7 @@ import MyNotes from '@/pages/Dashboard/MyNotes';
 import CreateNote from '@/pages/Dashboard/CreateNote';
 import EditNote from '@/pages/Dashboard/EditNote';
 import NoteDetail from '@/pages/Dashboard/NoteDetail';
+import ImageToText from '@/pages/Dashboard/ImageToText';
 
 const router = createBrowserRouter([
   {
@@ -119,6 +120,7 @@ const router = createBrowserRouter([
       // Notes
       { path: 'notes', Component: MyNotes },
       { path: 'notes/create', Component: CreateNote },
+      { path: 'notes/image-to-text', Component: ImageToText },
       { path: 'notes/:id/edit', Component: EditNote },
       { path: 'notes/:id', Component: NoteDetail },
       // Event Management

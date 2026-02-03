@@ -42,6 +42,7 @@ import {
   HeartHandshake,
   FilePlus2,
   StickyNote,
+  ScanText,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -364,6 +365,14 @@ const UserSidebar = () => {
                   <Link to="/dashboard/notes/create">
                     <FilePlus2 />
                     Create Note
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/notes/image-to-text">
+                    <ScanText />
+                    Image to text
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

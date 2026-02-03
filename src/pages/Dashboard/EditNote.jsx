@@ -5,16 +5,7 @@ import noteService from '@/services/noteService';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Save, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import TiptapEditor from '@/components/Notes/TiptapEditor';
-
-const plainTextToHtml = (text) => {
-  if (!text || !text.trim()) return '<p></p>';
-  const paragraphs = text.split(/\n\n+/).filter((p) => p.trim());
-  if (paragraphs.length === 0) return '<p></p>';
-  const html = paragraphs
-    .map((p) => '<p>' + p.replace(/\n/g, '<br/>') + '</p>')
-    .join('');
-  return html;
-};
+import { plainTextToHtml } from '@/utils/noteContent';
 
 const EditNote = () => {
   const { id } = useParams();

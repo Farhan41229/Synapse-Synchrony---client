@@ -68,6 +68,16 @@ export const generateNoteWithAI = async (data) => {
   return response.data;
 };
 
+/**
+ * Extract text from image using Gemini Vision (server-side)
+ * @param {Object} data - { imageBase64, mimeType }
+ * @returns {Promise} - { data: { text: string } }
+ */
+export const extractTextWithGemini = async (data) => {
+  const response = await axiosInstance.post('/portal/notes/ocr/extract', data);
+  return response.data;
+};
+
 const noteService = {
   createNote,
   getMyNotes,
@@ -75,6 +85,7 @@ const noteService = {
   updateNote,
   deleteNote,
   generateNoteWithAI,
+  extractTextWithGemini,
 };
 
 export default noteService;
