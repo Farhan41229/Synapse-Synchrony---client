@@ -28,6 +28,7 @@ import 'highlight.js/styles/github-dark.css'; // You can change the theme
 import AISummarySheet from '@/components/AI/AISummarySheet';
 import TextToSpeechPlayer from '@/components/Audio/TextToSpeechPlayer';
 import ShareBlogModal from '@/components/Share/ShareBlogModal';
+import CommentsSection from '@/components/Comments/CommentsSection';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '@/store/authStore';
 
@@ -525,24 +526,11 @@ const BlogDetail = () => {
             </div>
           </div>
 
-          {/* Comments Section Placeholder */}
-          <div className="mt-12" data-aos="fade-up">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Comments ({blog.commentCount || 0})
-              </h3>
-            </div>
-            <div className="p-8 text-center bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-              <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Comments section coming soon!
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-500">
-                Soon you'll be able to share your thoughts and engage with other
-                readers.
-              </p>
-            </div>
-          </div>
+          {/* Comments Section */}
+          <CommentsSection 
+            blogId={id} 
+            commentCount={blog.commentCount || 0}
+          />
         </article>
       </div>
 
