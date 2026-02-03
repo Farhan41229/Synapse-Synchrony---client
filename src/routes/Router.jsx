@@ -45,6 +45,7 @@ import MyMedicationsPage from '@/pages/Diagnosis/MyMedicationsPage';
 import MyNotes from '@/pages/Dashboard/MyNotes';
 import CreateNote from '@/pages/Dashboard/CreateNote';
 import EditNote from '@/pages/Dashboard/EditNote';
+import NoteDetail from '@/pages/Dashboard/NoteDetail';
 
 const router = createBrowserRouter([
   {
@@ -119,6 +120,7 @@ const router = createBrowserRouter([
       { path: 'notes', Component: MyNotes },
       { path: 'notes/create', Component: CreateNote },
       { path: 'notes/:id/edit', Component: EditNote },
+      { path: 'notes/:id', Component: NoteDetail },
       // Event Management
       { path: 'my-events', Component: MyEvents },
       { path: 'create-event', Component: AddEvent },

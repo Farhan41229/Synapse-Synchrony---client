@@ -14,6 +14,7 @@ import {
   Globe,
   Loader2,
   AlertCircle,
+  Eye,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
@@ -189,8 +190,15 @@ const MyNotes = () => {
                   </div>
                   <div className="flex gap-2">
                     <Link
-                      to={`/dashboard/notes/${note._id}/edit`}
+                      to={`/dashboard/notes/${note._id}`}
                       className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all text-sm"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </Link>
+                    <Link
+                      to={`/dashboard/notes/${note._id}/edit`}
+                      className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all text-sm"
                     >
                       <Edit className="w-4 h-4" />
                       Edit
