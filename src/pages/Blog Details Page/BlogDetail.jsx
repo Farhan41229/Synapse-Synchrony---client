@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import blogService from '@/services/blogService';
 import {
   Calendar,
@@ -27,10 +27,15 @@ import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css'; // You can change the theme
 import AISummarySheet from '@/components/AI/AISummarySheet';
 import TextToSpeechPlayer from '@/components/Audio/TextToSpeechPlayer';
+import ShareBlogModal from '@/components/Share/ShareBlogModal';
 import toast from 'react-hot-toast';
+import { useAuthStore } from '@/store/authStore';
+
 
 const BlogDetail = () => {
   const { id } = useParams();
+  const queryClient = useQueryClient();
+  const { user } = useAuthStore();
   
   // AI Summary Sheet state
   const [summarySheetOpen, setSummarySheetOpen] = useState(false);
@@ -40,6 +45,14 @@ const BlogDetail = () => {
   
   // TTS Player state
   const [showTTSPlayer, setShowTTSPlayer] = useState(false);
+  
+  // Share Modal state
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  
+  // Interaction states
+  const [isLiked, setIsLiked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true, easing: 'ease-in-out' });
@@ -61,6 +74,82 @@ const BlogDetail = () => {
     enabled: !!id,
   });
 
+  // Update like/bookmark status when blog data changes
+  useEffect(() => {
+    if (blog && user) {
+      setIsLiked(blog.likes?.includes(user._id) || false);
+      setLikeCount(blog.likeCount || blog.likes?.length || 0);
+      
+      // Fetch user's bookmarked blogs to check if this blog is bookmarked
+      blogService.getMyBookmarkedBlogs().then((response) => {
+        const bookmarkedBlogIds = response.data.blogs?.map(b => b._id) || [];
+        setIsBookmarked(bookmarkedBlogIds.includes(id));
+      }).catch(() => {
+        setIsBookmarked(false);
+      });
+    } else if (blog) {
+      setIsLiked(false);
+      setIsBookmarked(false);
+      setLikeCount(blog.likeCount || blog.likes?.length || 0);
+    }
+  }, [blog, user, id]);
+
+  // Like mutation
+  const likeMutation = useMutation({
+    mutationFn: () => blogService.toggleLikeBlog(id),
+    onMutate: async () => {
+      // Check authentication
+      if (!user) {
+        toast.error('Please log in to like blogs');
+        throw new Error('Not authenticated');
+      }
+
+      // Optimistic update
+      setIsLiked(!isLiked);
+      setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+    },
+    onSuccess: () => {
+      toast.success(isLiked ? 'Blog liked!' : 'Blog unliked');
+      queryClient.invalidateQueries(['blog', id]);
+    },
+    onError: (error) => {
+      // Revert optimistic update
+      setIsLiked(!isLiked);
+      setLikeCount(isLiked ? likeCount + 1 : likeCount - 1);
+      
+      if (error.message !== 'Not authenticated') {
+        toast.error('Failed to update like');
+      }
+    },
+  });
+
+  // Bookmark mutation
+  const bookmarkMutation = useMutation({
+    mutationFn: () => blogService.toggleBookmarkBlog(id),
+    onMutate: async () => {
+      // Check authentication
+      if (!user) {
+        toast.error('Please log in to bookmark blogs');
+        throw new Error('Not authenticated');
+      }
+
+      // Optimistic update
+      setIsBookmarked(!isBookmarked);
+    },
+    onSuccess: () => {
+      toast.success(isBookmarked ? 'Bookmarked!' : 'Removed from bookmarks');
+      queryClient.invalidateQueries(['blog', id]);
+    },
+    onError: (error) => {
+      // Revert optimistic update
+      setIsBookmarked(!isBookmarked);
+      
+      if (error.message !== 'Not authenticated') {
+        toast.error('Failed to update bookmark');
+      }
+    },
+  });
+
   // Handle AI Summarize
   const handleSummarize = async () => {
     setSummaryData(null);
@@ -77,6 +166,29 @@ const BlogDetail = () => {
     } finally {
       setIsLoadingSummary(false);
     }
+  };
+
+  // Handle Like
+  const handleLike = () => {
+    if (!user) {
+      toast.error('Please log in to like blogs');
+      return;
+    }
+    likeMutation.mutate();
+  };
+
+  // Handle Bookmark
+  const handleBookmark = () => {
+    if (!user) {
+      toast.error('Please log in to bookmark blogs');
+      return;
+    }
+    bookmarkMutation.mutate();
+  };
+
+  // Handle Share
+  const handleShare = () => {
+    setShareModalOpen(true);
   };
 
   
@@ -167,10 +279,8 @@ const BlogDetail = () => {
               {/* Stats */}
               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center gap-1.5">
-                  <Heart className="w-5 h-5" />
-                  <span className="font-medium">
-                    {blog.likeCount || blog.likes?.length || 0}
-                  </span>
+                  <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : ''}`} />
+                  <span className="font-medium">{likeCount}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Eye className="w-5 h-5" />
@@ -185,12 +295,19 @@ const BlogDetail = () => {
               {/* Action Buttons */}
               <div className="flex items-center gap-2">
                 <button
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                  title="Bookmark"
+                  onClick={handleBookmark}
+                  disabled={bookmarkMutation.isPending}
+                  className={`p-2 rounded-lg transition-all ${
+                    isBookmarked
+                      ? 'bg-[#04642a] text-white hover:bg-[#15a33d]'
+                      : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'
+                  }`}
+                  title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
                 >
-                  <Bookmark className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
                 </button>
                 <button
+                  onClick={handleShare}
                   className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                   title="Share"
                 >
@@ -344,18 +461,37 @@ const BlogDetail = () => {
             data-aos="fade-up"
           >
             <div className="flex items-center gap-4">
-              <button className="flex items-center gap-2 px-6 py-2.5 bg-[#04642a] text-white rounded-lg font-medium hover:bg-[#15a33d] transition-all">
-                <Heart className="w-5 h-5" />
-                <span>Like this post</span>
+              <button
+                onClick={handleLike}
+                disabled={likeMutation.isPending}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
+                  isLiked
+                    ? 'bg-red-500 text-white hover:bg-red-600'
+                    : 'bg-[#04642a] text-white hover:bg-[#15a33d]'
+                }`}
+              >
+                <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
+                <span>{isLiked ? 'Liked' : 'Like this post'}</span>
               </button>
-              <button className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+              >
                 <Share2 className="w-5 h-5" />
                 <span>Share</span>
               </button>
             </div>
-            <button className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-              <Bookmark className="w-5 h-5" />
-              <span>Save for later</span>
+            <button
+              onClick={handleBookmark}
+              disabled={bookmarkMutation.isPending}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
+                isBookmarked
+                  ? 'bg-[#04642a] text-white hover:bg-[#15a33d]'
+                  : 'bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+              }`}
+            >
+              <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
+              <span>{isBookmarked ? 'Saved' : 'Save for later'}</span>
             </button>
           </div>
 
@@ -418,6 +554,14 @@ const BlogDetail = () => {
         isLoading={isLoadingSummary}
         error={summaryError}
         type="blog"
+        title={blog?.title}
+      />
+
+      {/* Share Modal */}
+      <ShareBlogModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        blogId={id}
         title={blog?.title}
       />
     </div>

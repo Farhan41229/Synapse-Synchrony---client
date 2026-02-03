@@ -97,6 +97,41 @@ export const incrementBlogView = async (blogId) => {
   return response.data;
 };
 
+/**
+ * Toggle bookmark on a blog
+ * @param {string} blogId - Blog ID
+ * @returns {Promise} - Updated bookmark status
+ */
+export const toggleBookmarkBlog = async (blogId) => {
+  const response = await axiosInstance.patch(`/portal/blogs/${blogId}/bookmark`);
+  return response.data;
+};
+
+/**
+ * Get user's bookmarked blogs
+ * @param {Object} params - Query parameters (page, limit)
+ * @returns {Promise} - Bookmarked blog list with pagination
+ */
+export const getMyBookmarkedBlogs = async (params = {}) => {
+  const queryParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) queryParams.append(key, value);
+  });
+  
+  const response = await axiosInstance.get(`/portal/blogs/user/my-bookmarks?${queryParams.toString()}`);
+  return response.data;
+};
+
+/**
+ * Increment blog share count
+ * @param {string} blogId - Blog ID
+ * @returns {Promise} - Updated share count
+ */
+export const incrementBlogShare = async (blogId) => {
+  const response = await axiosInstance.patch(`/portal/blogs/${blogId}/share`);
+  return response.data;
+};
+
 // ========== BLOG COMMENTS ==========
 
 /**
@@ -194,6 +229,9 @@ const blogService = {
   deleteBlog,
   toggleLikeBlog,
   incrementBlogView,
+  toggleBookmarkBlog,
+  getMyBookmarkedBlogs,
+  incrementBlogShare,
   getBlogComments,
   addBlogComment,
   updateBlogComment,
