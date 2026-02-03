@@ -42,6 +42,9 @@ import EditEvent from '@/pages/Edit Event Page/EditEvent';
 import DiagnosisSessionsPage from '@/pages/Diagnosis/DiagnosisSessionsPage';
 import DiagnosisChatPage from '@/pages/Diagnosis/DiagnosisChatPage';
 import MyMedicationsPage from '@/pages/Diagnosis/MyMedicationsPage';
+import MyNotes from '@/pages/Dashboard/MyNotes';
+import CreateNote from '@/pages/Dashboard/CreateNote';
+import EditNote from '@/pages/Dashboard/EditNote';
 
 const router = createBrowserRouter([
   {
@@ -112,6 +115,10 @@ const router = createBrowserRouter([
       { path: 'bookmarked-blogs', Component: BookmarkedBlogs },
       { path: 'liked-blogs', Component: LikedBlogs },
       { path: 'edit-blog/:id', Component: EditBlog },
+      // Notes
+      { path: 'notes', Component: MyNotes },
+      { path: 'notes/create', Component: CreateNote },
+      { path: 'notes/:id/edit', Component: EditNote },
       // Event Management
       { path: 'my-events', Component: MyEvents },
       { path: 'create-event', Component: AddEvent },

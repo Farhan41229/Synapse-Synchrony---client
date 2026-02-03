@@ -40,6 +40,8 @@ import {
   Pill,
   BookmarkCheck,
   HeartHandshake,
+  FilePlus2,
+  StickyNote,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -337,6 +339,31 @@ const UserSidebar = () => {
                   <Link to={'/blog/blogs/create'}>
                     <FilePenLine />
                     Create Blog
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Notes Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Notes</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/notes">
+                    <StickyNote />
+                    My Notes
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/notes/create">
+                    <FilePlus2 />
+                    Create Note
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
