@@ -132,6 +132,21 @@ export const incrementBlogShare = async (blogId) => {
   return response.data;
 };
 
+/**
+ * Get user's liked blogs
+ * @param {Object} params - Query parameters (page, limit)
+ * @returns {Promise} - Liked blog list with pagination
+ */
+export const getMyLikedBlogs = async (params = {}) => {
+  const queryParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) queryParams.append(key, value);
+  });
+  
+  const response = await axiosInstance.get(`/portal/blogs/user/my-liked-blogs?${queryParams.toString()}`);
+  return response.data;
+};
+
 // ========== BLOG COMMENTS ==========
 
 /**
@@ -232,6 +247,7 @@ const blogService = {
   toggleBookmarkBlog,
   getMyBookmarkedBlogs,
   incrementBlogShare,
+  getMyLikedBlogs,
   getBlogComments,
   addBlogComment,
   updateBlogComment,

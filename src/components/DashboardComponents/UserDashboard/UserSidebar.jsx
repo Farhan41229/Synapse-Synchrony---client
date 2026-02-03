@@ -38,6 +38,8 @@ import {
   CalendarPlus,
   Stethoscope,
   Pill,
+  BookmarkCheck,
+  HeartHandshake,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -311,6 +313,22 @@ const UserSidebar = () => {
                   <Link to={'/dashboard/my-blogs'}>
                     <FileText />
                     My Blogs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/bookmarked-blogs'}>
+                    <BookmarkCheck />
+                    Bookmarked Blogs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/liked-blogs'}>
+                    <HeartHandshake />
+                    Liked Blogs
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

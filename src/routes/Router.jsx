@@ -24,6 +24,8 @@ import AllBlogs from '@/pages/All Blogs Page/AllBlogs';
 import AllEvents from '@/pages/All Events Page/AllEvents';
 import AddBlog from '@/pages/Create Blog Page/AddBlog';
 import MyBlogs from '@/components/DashboardComponents/Shared/Blogs/My Blogs/MyBlogs';
+import BookmarkedBlogs from '@/pages/Dashboard/BookmarkedBlogs';
+import LikedBlogs from '@/pages/Dashboard/LikedBlogs';
 import MyEvents from '@/components/DashboardComponents/Shared/Events/MyEvents';
 import AddEvent from '@/pages/Create Event Page/AddEvent';
 import MedilinkLayout from '@/layouts/MedilinkLayout';
@@ -107,6 +109,8 @@ const router = createBrowserRouter([
       { path: 'profile', Component: ProfilePage },
       // Blog Management
       { path: 'my-blogs', Component: MyBlogs },
+      { path: 'bookmarked-blogs', Component: BookmarkedBlogs },
+      { path: 'liked-blogs', Component: LikedBlogs },
       { path: 'edit-blog/:id', Component: EditBlog },
       // Event Management
       { path: 'my-events', Component: MyEvents },
