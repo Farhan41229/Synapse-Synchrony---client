@@ -49,6 +49,7 @@ import NoteDetail from '@/pages/Dashboard/NoteDetail';
 import ImageToText from '@/pages/Dashboard/ImageToText';
 import MySchedule from '@/pages/Dashboard/MySchedule';
 import UploadSchedule from '@/pages/Dashboard/UploadSchedule';
+import Dashboard from '@/pages/Dashboard/Dashboard';
 
 const router = createBrowserRouter([
   {
@@ -107,6 +108,7 @@ const router = createBrowserRouter([
     path: '/dashboard',
     Component: DashboardLayout,
     children: [
+      { index: true, Component: Dashboard },
       { path: 'chat', Component: ChatLayout },
       {
         path: 'chat/:id',

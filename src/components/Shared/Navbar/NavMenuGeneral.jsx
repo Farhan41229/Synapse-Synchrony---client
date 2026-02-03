@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChartBar, LogOut, MessageCircle, User } from 'lucide-react';
+import { ChartBar, LogOut, MessageCircle, User, FileText, Heart, LayoutDashboard } from 'lucide-react';
 
 const NavMenuGeneral = () => {
   const navigate = useNavigate();
@@ -67,6 +67,11 @@ const NavMenuGeneral = () => {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
+              <Link to="/dashboard" className="cursor-pointer">
+                <LayoutDashboard /> Dashboard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link to="/dashboard/profile" className="cursor-pointer">
                 <User /> Profile
               </Link>
@@ -74,6 +79,16 @@ const NavMenuGeneral = () => {
             <DropdownMenuItem asChild>
               <Link to="/dashboard/chat" className="cursor-pointer">
                 <MessageCircle /> Chat
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/blog" className="cursor-pointer">
+                <FileText /> Blog
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/medilink" className="cursor-pointer">
+                <Heart /> Medilink
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
