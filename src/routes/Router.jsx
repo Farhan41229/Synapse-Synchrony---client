@@ -49,7 +49,9 @@ import NoteDetail from '@/pages/Dashboard/NoteDetail';
 import ImageToText from '@/pages/Dashboard/ImageToText';
 import MySchedule from '@/pages/Dashboard/MySchedule';
 import UploadSchedule from '@/pages/Dashboard/UploadSchedule';
+import EditSchedule from '@/pages/Dashboard/EditSchedule';
 import Dashboard from '@/pages/Dashboard/Dashboard';
+import NotFound from '@/pages/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -130,6 +132,7 @@ const router = createBrowserRouter([
       // Schedule
       { path: 'schedule', Component: MySchedule },
       { path: 'schedule/upload', Component: UploadSchedule },
+      { path: 'schedule/:id/edit', Component: EditSchedule },
       // Event Management
       { path: 'my-events', Component: MyEvents },
       { path: 'create-event', Component: AddEvent },
@@ -150,6 +153,10 @@ const router = createBrowserRouter([
   {
     path: '/audio-call/:callId',
     element: <AudioCallPage />,
+  },
+  {
+    path: '*',
+    Component: NotFound,
   },
 ]);
 

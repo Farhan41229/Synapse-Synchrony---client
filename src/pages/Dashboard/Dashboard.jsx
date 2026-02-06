@@ -14,7 +14,6 @@ import {
   Calendar,
   Plus,
   ArrowRight,
-  Loader2,
   Clock,
   MapPin,
   User,
@@ -118,86 +117,95 @@ const Dashboard = () => {
   };
 
   // Stat Card Component
-  const StatCard = ({ icon: Icon, title, count, label, color, action, loading }) => (
-    <div
+  const StatCard = ({ icon: Icon, title, count, iconBg, action, loading }) => (
+    <button
+      type="button"
       onClick={action}
-      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all cursor-pointer group ${color}`}
+      className="w-full text-left bg-white dark:bg-gray-800 rounded-xl border border-gray-200/80 dark:border-gray-700/80 p-6 hover:shadow-xl hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[#04642a]/30 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className={`p-3 rounded-lg bg-opacity-10`}>
-          <Icon className="w-6 h-6" />
+      <div className="flex items-start justify-between">
+        <div className={`p-3 rounded-xl ${iconBg} shrink-0`}>
+          <Icon className="w-6 h-6 text-white" />
         </div>
-        <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-[#04642a] group-hover:translate-x-0.5 transition-all shrink-0 mt-1" />
       </div>
       {loading ? (
-        <div className="space-y-2">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3 animate-pulse" />
+        <div className="mt-5 space-y-2">
+          <div className="h-9 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20 animate-pulse" />
         </div>
       ) : (
-        <>
-          <div className="text-3xl font-bold mb-1">{count}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">{title}</div>
-        </>
+        <div className="mt-5">
+          <div className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{count}</div>
+          <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-0.5">{title}</div>
+        </div>
       )}
-    </div>
+    </button>
   );
 
   // Quick Action Button Component
-  const QuickActionBtn = ({ icon: Icon, label, onClick, color = 'bg-[#04642a]' }) => (
+  const QuickActionBtn = ({ icon: Icon, label, onClick, color }) => (
     <button
+      type="button"
       onClick={onClick}
-      className={`${color} hover:opacity-90 text-white p-4 rounded-lg flex items-center gap-3 transition-all hover:scale-105 shadow-sm`}
+      className={`w-full ${color} hover:opacity-95 text-white py-3.5 px-4 rounded-xl flex items-center gap-3 transition-all duration-200 hover:shadow-lg active:scale-[0.98] font-medium text-sm`}
     >
-      <Icon className="w-5 h-5" />
-      <span className="font-medium">{label}</span>
+      <Icon className="w-5 h-5 shrink-0" />
+      <span>{label}</span>
     </button>
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gray-100/80 dark:bg-gray-950 py-6 sm:py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
         {/* Welcome Header */}
-        <div className="bg-gradient-to-r from-[#04642a] to-[#058a38] text-white rounded-lg p-8 shadow-lg">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">
-            {getGreeting()}, {user?.name?.split(' ')[0] || 'there'}! 👋
-          </h1>
-          <p className="text-lg opacity-90">
-            {format(new Date(), 'EEEE, MMMM do, yyyy')}
-          </p>
+        <div className="relative overflow-hidden bg-gradient-to-br from-[#04642a] via-[#057a32] to-[#04642a] text-white rounded-2xl px-6 py-8 sm:px-8 sm:py-10 shadow-xl">
+          <div className="relative z-10">
+            <p className="text-white/90 text-sm font-medium uppercase tracking-wider mb-1">
+              {format(new Date(), 'EEEE, MMMM do')}
+            </p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+              {getGreeting()}, {user?.name?.split(' ')[0] || 'there'}
+            </h1>
+            <p className="mt-2 text-white/80 text-base sm:text-lg">
+              Here&apos;s what&apos;s happening today.
+            </p>
+          </div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden />
+          <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 rounded-full translate-y-1/2 -translate-x-1/2" aria-hidden />
         </div>
 
         {/* Quick Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           <StatCard
             icon={FileText}
             title="My Blogs"
-            count={blogsData?.total || 0}
-            color="text-blue-600"
+            count={blogsData?.total ?? 0}
+            iconBg="bg-blue-500"
             action={() => navigate('/dashboard/my-blogs')}
             loading={blogsLoading}
           />
           <StatCard
             icon={StickyNote}
             title="My Notes"
-            count={notesData?.total || 0}
-            color="text-purple-600"
+            count={notesData?.total ?? 0}
+            iconBg="bg-violet-500"
             action={() => navigate('/dashboard/notes')}
             loading={notesLoading}
           />
           <StatCard
             icon={CalendarDays}
             title="My Events"
-            count={eventsData?.total || 0}
-            color="text-orange-600"
+            count={eventsData?.total ?? 0}
+            iconBg="bg-amber-500"
             action={() => navigate('/dashboard/my-events')}
             loading={eventsLoading}
           />
           <StatCard
             icon={Calendar}
             title="Schedule"
-            count={scheduleData?.data ? 'Active' : 'Not Set'}
-            color="text-green-600"
+            count={scheduleData?.data ? 'Active' : 'Not set'}
+            iconBg="bg-emerald-600"
             action={() => navigate(scheduleData?.data ? '/dashboard/schedule' : '/dashboard/schedule/upload')}
             loading={scheduleLoading}
           />
@@ -205,60 +213,61 @@ const Dashboard = () => {
 
         {/* Today's Schedule Widget */}
         {scheduleData?.data && todaysClasses.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Calendar className="w-6 h-6 text-[#04642a]" />
-                Today's Schedule
+          <div className="bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/40">
+                  <Calendar className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                </span>
+                Today&apos;s Schedule
               </h2>
               <button
+                type="button"
                 onClick={() => navigate('/dashboard/schedule')}
-                className="text-[#04642a] hover:text-[#035a24] font-medium flex items-center gap-1"
+                className="text-sm font-medium text-[#04642a] hover:text-[#035a24] dark:text-emerald-400 dark:hover:text-emerald-300 flex items-center gap-1 transition-colors"
               >
-                View Full <ArrowRight className="w-4 h-4" />
+                View full <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {todaysClasses.map((slot, idx) => (
                 <div
                   key={idx}
-                  className={`p-4 rounded-lg border ${
+                  className={`p-4 rounded-xl border-l-4 transition-colors ${
                     slot === nextClass
-                      ? 'border-[#04642a] bg-green-50 dark:bg-green-900/20'
-                      : 'border-gray-200 dark:border-gray-700'
+                      ? 'border-l-[#04642a] bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-200/50 dark:border-emerald-800/50'
+                      : 'border-l-gray-200 dark:border-l-gray-600 bg-gray-50/50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/50'
                   }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <Clock className="w-4 h-4 text-gray-500" />
-                        <span className="font-semibold text-gray-900 dark:text-white">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                        <Clock className="w-4 h-4 text-gray-500 shrink-0" />
+                        <span className="font-semibold text-gray-900 dark:text-white text-sm">
                           {slot.timeRange}
                         </span>
                         {slot === nextClass && (
-                          <span className="px-2 py-1 bg-[#04642a] text-white text-xs rounded-full">
-                            Next Class
+                          <span className="px-2.5 py-0.5 bg-[#04642a] text-white text-xs font-medium rounded-full">
+                            Next
                           </span>
                         )}
                       </div>
-                      <div className="ml-7 space-y-1">
-                        <p className="text-lg font-bold text-gray-900 dark:text-white">
-                          {slot.course}
-                        </p>
-                        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                          {slot.room && (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />
-                              {slot.room}
-                            </span>
-                          )}
-                          {slot.teacher && (
-                            <span className="flex items-center gap-1">
-                              <User className="w-3 h-3" />
-                              {slot.teacher}
-                            </span>
-                          )}
-                        </div>
+                      <p className="text-base font-bold text-gray-900 dark:text-white ml-6">
+                        {slot.course}
+                      </p>
+                      <div className="ml-6 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {slot.room && (
+                          <span className="flex items-center gap-1">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {slot.room}
+                          </span>
+                        )}
+                        {slot.teacher && (
+                          <span className="flex items-center gap-1">
+                            <User className="w-3.5 h-3.5" />
+                            {slot.teacher}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -269,282 +278,308 @@ const Dashboard = () => {
         )}
 
         {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
           {/* Recent Notes Widget */}
-          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <StickyNote className="w-5 h-5 text-purple-600" />
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/40">
+                  <StickyNote className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                </span>
                 Recent Notes
               </h2>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-1">
                 <button
+                  type="button"
                   onClick={() => navigate('/dashboard/notes/create')}
-                  className="text-[#04642a] hover:text-[#035a24] font-medium flex items-center gap-1 text-sm"
+                  className="text-sm font-medium text-[#04642a] hover:text-[#035a24] dark:text-emerald-500 flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
                 >
-                  <Plus className="w-4 h-4" />
-                  New
+                  <Plus className="w-4 h-4" /> New
                 </button>
                 <button
+                  type="button"
                   onClick={() => navigate('/dashboard/notes')}
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium flex items-center gap-1 text-sm"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
-                  View All <ArrowRight className="w-4 h-4" />
+                  View all <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
             {notesLoading ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                  <div key={i} className="h-20 bg-gray-100 dark:bg-gray-700/50 rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : notesData?.recent.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {notesData.recent.map((note) => (
-                  <div
+                  <button
+                    type="button"
                     key={note._id}
                     onClick={() => navigate(`/dashboard/notes/${note._id}`)}
-                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-all cursor-pointer group"
+                    className="w-full text-left p-4 rounded-xl border border-gray-200/80 dark:border-gray-700/80 hover:border-violet-200 dark:hover:border-violet-700/50 hover:bg-violet-50/50 dark:hover:bg-violet-900/10 transition-all duration-200 group"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-[#04642a] transition-colors">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-violet-700 dark:group-hover:text-violet-400 transition-colors truncate">
                           {note.title}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                           {formatSafeDate(note.createdAt, 'MMM dd, yyyy')}
                         </p>
                       </div>
                       <span
-                        className={`px-2 py-1 text-xs rounded-full ${
+                        className={`shrink-0 px-2.5 py-1 text-xs font-medium rounded-full ${
                           note.visibility === 'public'
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400'
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300'
+                            : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'
                         }`}
                       >
                         {note.visibility}
                       </span>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <StickyNote className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 mb-4">No notes yet</p>
+              <div className="text-center py-10">
+                <div className="w-14 h-14 rounded-2xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center mx-auto mb-4">
+                  <StickyNote className="w-7 h-7 text-violet-500 dark:text-violet-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 font-medium">No notes yet</p>
                 <button
+                  type="button"
                   onClick={() => navigate('/dashboard/notes/create')}
-                  className="px-4 py-2 bg-[#04642a] text-white rounded-lg hover:bg-[#035a24] transition-colors"
+                  className="px-5 py-2.5 bg-[#04642a] hover:bg-[#035a24] text-white rounded-xl font-medium transition-colors shadow-sm"
                 >
-                  Create Your First Note
+                  Create your first note
                 </button>
               </div>
             )}
           </div>
 
           {/* Quick Actions Panel */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#04642a]" />
+          <div className="bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 p-6 shadow-sm">
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-5 flex items-center gap-2.5">
+              <span className="p-2 rounded-lg bg-[#04642a]/10 dark:bg-emerald-900/40">
+                <TrendingUp className="w-5 h-5 text-[#04642a] dark:text-emerald-400" />
+              </span>
               Quick Actions
             </h2>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2.5">
               <QuickActionBtn
                 icon={FileText}
                 label="Create Blog"
                 onClick={() => navigate('/blog/blogs/create')}
-                color="bg-blue-600"
+                color="bg-blue-500 hover:bg-blue-600"
               />
               <QuickActionBtn
                 icon={StickyNote}
                 label="Create Note"
                 onClick={() => navigate('/dashboard/notes/create')}
-                color="bg-purple-600"
+                color="bg-violet-500 hover:bg-violet-600"
               />
               <QuickActionBtn
                 icon={CalendarPlus}
                 label="Add Event"
                 onClick={() => navigate('/dashboard/create-event')}
-                color="bg-orange-600"
+                color="bg-amber-500 hover:bg-amber-600"
               />
               <QuickActionBtn
                 icon={Upload}
                 label="Upload Schedule"
                 onClick={() => navigate('/dashboard/schedule/upload')}
-                color="bg-green-600"
+                color="bg-emerald-600 hover:bg-emerald-700"
               />
               <QuickActionBtn
                 icon={MessageCircle}
                 label="Wellness Chat"
                 onClick={() => navigate('/medilink/sessions')}
-                color="bg-teal-600"
+                color="bg-teal-500 hover:bg-teal-600"
               />
               <QuickActionBtn
                 icon={Stethoscope}
                 label="Medical Diagnosis"
                 onClick={() => navigate('/medilink/diagnosis')}
-                color="bg-red-600"
+                color="bg-rose-500 hover:bg-rose-600"
               />
             </div>
           </div>
         </div>
 
         {/* Two Column Layout - Blogs & Wellness */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
           {/* Recent Blogs Widget */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <FileText className="w-5 h-5 text-blue-600" />
+          <div className="bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/40">
+                  <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </span>
                 Recent Blogs
               </h2>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-1">
                 <button
+                  type="button"
                   onClick={() => navigate('/blog/blogs/create')}
-                  className="text-[#04642a] hover:text-[#035a24] font-medium flex items-center gap-1 text-sm"
+                  className="text-sm font-medium text-[#04642a] hover:text-[#035a24] dark:text-emerald-500 flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
                 >
-                  <Plus className="w-4 h-4" />
-                  New
+                  <Plus className="w-4 h-4" /> New
                 </button>
                 <button
+                  type="button"
                   onClick={() => navigate('/dashboard/my-blogs')}
-                  className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium flex items-center gap-1 text-sm"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:hover:text-white flex items-center gap-1 px-2 py-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 >
-                  View All <ArrowRight className="w-4 h-4" />
+                  View all <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
             {blogsLoading ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                  <div key={i} className="h-16 bg-gray-100 dark:bg-gray-700/50 rounded-xl animate-pulse" />
                 ))}
               </div>
             ) : blogsData?.recent.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {blogsData.recent.map((blog) => (
-                  <div
+                  <button
+                    type="button"
                     key={blog._id}
                     onClick={() => navigate(`/blog/BlogDetail/${blog._id}`)}
-                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-all cursor-pointer group"
+                    className="w-full text-left p-4 rounded-xl border border-gray-200/80 dark:border-gray-700/80 hover:border-blue-200 dark:hover:border-blue-700/50 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-all duration-200 group"
                   >
-                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-[#04642a] transition-colors line-clamp-1">
+                    <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-1">
                       {blog.title}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                       {formatSafeDate(blog.createdAt, 'MMM dd, yyyy')}
                     </p>
-                  </div>
+                  </button>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <FileText className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 mb-4">No blogs yet</p>
+              <div className="text-center py-10">
+                <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-7 h-7 text-blue-500 dark:text-blue-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 font-medium">No blogs yet</p>
                 <button
+                  type="button"
                   onClick={() => navigate('/blog/blogs/create')}
-                  className="px-4 py-2 bg-[#04642a] text-white rounded-lg hover:bg-[#035a24] transition-colors"
+                  className="px-5 py-2.5 bg-[#04642a] hover:bg-[#035a24] text-white rounded-xl font-medium transition-colors shadow-sm"
                 >
-                  Write Your First Blog
+                  Write your first blog
                 </button>
               </div>
             )}
           </div>
 
           {/* Wellness Overview Widget */}
-          <div className="bg-gradient-to-br from-teal-50 to-blue-50 dark:from-teal-900/20 dark:to-blue-900/20 rounded-lg border border-teal-200 dark:border-teal-800 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <Brain className="w-5 h-5 text-teal-600" />
+          <div className="relative overflow-hidden bg-gradient-to-br from-teal-50 via-cyan-50/50 to-teal-100 dark:from-teal-950/50 dark:via-gray-900 dark:to-teal-950/50 rounded-2xl border border-teal-200/80 dark:border-teal-800/80 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-5 relative z-10">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-teal-200/80 dark:bg-teal-800/50">
+                  <Brain className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+                </span>
                 Wellness Overview
               </h2>
               <button
+                type="button"
                 onClick={() => navigate('/dashboard/wellness')}
-                className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1 text-sm"
+                className="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 flex items-center gap-1 transition-colors"
               >
                 Details <ArrowRight className="w-4 h-4" />
               </button>
             </div>
             {wellnessData?.data ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg">
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center justify-between p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-xl border border-teal-100 dark:border-teal-800/50">
                   <div className="flex items-center gap-3">
-                    <Heart className="w-5 h-5 text-pink-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Mood Score</span>
+                    <Heart className="w-5 h-5 text-rose-500" />
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">Mood Score</span>
                   </div>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
                     {wellnessData.data.summary?.averageMood?.toFixed(1) || 'N/A'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-xl border border-teal-100 dark:border-teal-800/50">
                   <div className="flex items-center gap-3">
-                    <Activity className="w-5 h-5 text-orange-500" />
-                    <span className="text-gray-700 dark:text-gray-300">Stress Level</span>
+                    <Activity className="w-5 h-5 text-amber-500" />
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">Stress Level</span>
                   </div>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
                     {wellnessData.data.summary?.averageStress?.toFixed(1) || 'N/A'}
                   </span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => navigate('/medilink/sessions')}
-                  className="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 shadow-sm"
                 >
                   <MessageCircle className="w-5 h-5" />
                   Start Wellness Session
                 </button>
               </div>
             ) : (
-              <div className="text-center py-8">
-                <Brain className="w-16 h-16 text-teal-300 dark:text-teal-600 mx-auto mb-4" />
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Start tracking your wellness
-                </p>
+              <div className="text-center py-8 relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-teal-200/80 dark:bg-teal-800/50 flex items-center justify-center mx-auto mb-4">
+                  <Brain className="w-7 h-7 text-teal-600 dark:text-teal-400" />
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-4 font-medium">Start tracking your wellness</p>
                 <button
+                  type="button"
                   onClick={() => navigate('/medilink/sessions')}
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-medium transition-colors shadow-sm"
                 >
-                  Begin Journey
+                  Begin journey
                 </button>
               </div>
             )}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-200/30 dark:bg-teal-500/10 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden />
           </div>
         </div>
 
         {/* Upcoming Events Widget */}
         {eventsData && eventsData.upcoming.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <CalendarDays className="w-5 h-5 text-orange-600" />
+          <div className="bg-white dark:bg-gray-800/95 rounded-2xl border border-gray-200/80 dark:border-gray-700/80 p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                <span className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/40">
+                  <CalendarDays className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                </span>
                 Upcoming Events
               </h2>
               <button
+                type="button"
                 onClick={() => navigate('/dashboard/my-events')}
-                className="text-[#04642a] hover:text-[#035a24] font-medium flex items-center gap-1"
+                className="text-sm font-medium text-[#04642a] hover:text-[#035a24] dark:text-emerald-400 flex items-center gap-1 transition-colors"
               >
-                View All <ArrowRight className="w-4 h-4" />
+                View all <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {eventsData.upcoming.map((event) => (
-                <div
+                <button
+                  type="button"
                   key={event._id}
                   onClick={() => navigate(`/blog/EventDetail/${event._id}`)}
-                  className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-all cursor-pointer group"
+                  className="text-left p-4 rounded-xl border border-gray-200/80 dark:border-gray-700/80 hover:border-amber-200 dark:hover:border-amber-700/50 hover:bg-amber-50/50 dark:hover:bg-amber-900/10 transition-all duration-200 group"
                 >
-                  <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-[#04642a] transition-colors line-clamp-2 mb-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors line-clamp-2 mb-1.5">
                     {event.title}
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
                     {formatSafeDate(event.eventDate, 'MMM dd, yyyy')}
                   </p>
                   {event.eventType && (
-                    <span className="inline-block mt-2 px-2 py-1 bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400 text-xs rounded-full">
+                    <span className="inline-block mt-2 px-2.5 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 text-xs font-medium rounded-full">
                       {event.eventType}
                     </span>
                   )}
-                </div>
+                </button>
               ))}
             </div>
           </div>

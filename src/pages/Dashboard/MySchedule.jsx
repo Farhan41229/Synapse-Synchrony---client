@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import scheduleService from '@/services/scheduleService';
 import toast from 'react-hot-toast';
-import { Calendar, CalendarPlus, Loader2, Trash2, RefreshCw } from 'lucide-react';
+import { Calendar, CalendarPlus, Loader2, Trash2, RefreshCw, Pencil } from 'lucide-react';
 
 const MySchedule = () => {
   const navigate = useNavigate();
@@ -124,6 +124,7 @@ const MySchedule = () => {
             </div>
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={() => refetch()}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                 title="Refresh"
@@ -131,6 +132,16 @@ const MySchedule = () => {
                 <RefreshCw className="w-4 h-4" />
               </button>
               <button
+                type="button"
+                onClick={() => navigate(`/dashboard/schedule/${schedule._id}/edit`)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                title="Edit Schedule"
+              >
+                <Pencil className="w-4 h-4" />
+                Edit
+              </button>
+              <button
+                type="button"
                 onClick={() => navigate('/dashboard/schedule/upload')}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#04642a] text-white font-medium hover:bg-[#035a24] transition-colors"
               >
@@ -138,6 +149,7 @@ const MySchedule = () => {
                 Upload New
               </button>
               <button
+                type="button"
                 onClick={() => handleDelete(schedule._id)}
                 disabled={deleteMutation.isPending}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-red-300 dark:border-red-700 text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50"
