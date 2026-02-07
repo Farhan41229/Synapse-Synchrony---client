@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ReplyIcon, Bot, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import VoiceMessage from './VoiceMessage';
 
 const ChatBodyMessage = memo(({ message, onReply }) => {
   const { user } = useAuthStore();
@@ -135,6 +136,15 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
 
             {message?.image && (
               <img src={message.image} alt="" className="rounded-lg max-w-xs" />
+            )}
+
+            {/* Voice Message */}
+            {message?.messageType === 'voice' && message?.voiceUrl && (
+              <VoiceMessage
+                voiceUrl={message.voiceUrl}
+                duration={message.voiceDuration || 0}
+                isSender={isCurrentUser}
+              />
             )}
 
             {/* ✅ Message content with thinking indicator */}

@@ -505,6 +505,116 @@ export const useChat = create((set, get) => ({
     }
   },
 
+  sendVoiceMessage: async (payload) => {
+    set({ isSendingMsg: true });
+    const { chatId, audioBlob, duration, replyTo, user } = payload;
+
+    if (!chatId || !audioBlob || !user?._id) {
+      set({ isSendingMsg: false });
+      return;
+    }
+
+    const tempUserId = generateUUID();
+
+    const tempMessage = {
+      _id: tempUserId,
+      chatId,
+      messageType: 'voice',
+      voiceUrl: URL.createObjectURL(audioBlob), // Temporary local URL
+      voiceDuration: duration,
+      sender: user,
+      replyTo: replyTo || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'uploading...',
+    };
+
+    // Add temp message optimistically
+    set((state) => {
+      if (!state.singleChat || state.singleChat?.chat?._id !== chatId) {
+        return state;
+      }
+
+      return {
+        singleChat: {
+          ...state.singleChat,
+          messages: [...(state.singleChat.messages || []), tempMessage],
+        },
+      };
+    });
+
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append('chatId', chatId);
+      formData.append('audio', audioBlob, 'voice-message.webm');
+      if (replyTo) {
+        formData.append('replyTo', replyTo);
+      }
+
+      const response = await axios.post(
+        `${API}/chat/create-voice-message`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      const voiceMessage = response.data?.data;
+
+      if (!voiceMessage) {
+        // Remove temp message on error
+        set((state) => {
+          if (!state.singleChat) return state;
+          return {
+            singleChat: {
+              ...state.singleChat,
+              messages: (state.singleChat.messages || []).filter(
+                (msg) => msg?._id !== tempUserId
+              ),
+            },
+          };
+        });
+        return;
+      }
+
+      // Replace temp message with real one
+      set((state) => {
+        if (!state.singleChat) return state;
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: (state.singleChat.messages || []).map((msg) =>
+              msg?._id === tempUserId ? voiceMessage : msg
+            ),
+          },
+        };
+      });
+
+    } catch (error) {
+      console.error('Error sending voice message:', error);
+
+      // Remove temp message on error
+      set((state) => {
+        if (!state.singleChat) return state;
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: (state.singleChat.messages || []).filter(
+              (msg) => msg?._id !== tempUserId
+            ),
+          },
+        };
+      });
+    } finally {
+      set({ isSendingMsg: false });
+    }
+  },
+
   addNewChat: (newChat) => {
     set((state) => {
       const existingChatIndex = state.chats.findIndex(

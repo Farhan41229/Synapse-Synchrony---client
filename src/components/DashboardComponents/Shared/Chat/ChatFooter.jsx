@@ -4,10 +4,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Paperclip, Send, X, Sparkles } from 'lucide-react';
+import { Paperclip, Send, X, Sparkles, Mic } from 'lucide-react';
 import { Form, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import ChatReplyBar from './ChatReplyBar';
+import VoiceRecorder from './VoiceRecorder';
 import { useChat } from '@/hooks/use-chat';
 import { useAuthStore } from '@/store/authStore';
 
@@ -76,6 +77,7 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
   const isSending = isAI ? isSendingAIMsg : isSendingMsg;
 
   const [image, setImage] = useState(null);
+  const [isRecordingMode, setIsRecordingMode] = useState(false);
   const imageInputRef = useRef(null);
 
   const form = useForm({
@@ -198,71 +200,95 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
         )}
 
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="max-w-6xl px-8.5 mx-auto
-            flex items-end gap-2
-            "
-          >
-            {/* ✅ Hide image upload for AI chats */}
-            {!isAI && (
-              <div className="flex items-center gap-1.5">
+          {isRecordingMode ? (
+            <div className="max-w-6xl px-8.5 mx-auto w-full">
+              <VoiceRecorder
+                chatId={chatId}
+                replyTo={replyTo?._id}
+                onCancel={() => setIsRecordingMode(false)}
+              />
+            </div>
+          ) : (
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="max-w-6xl px-8.5 mx-auto
+              flex items-end gap-2
+              "
+            >
+              {/* ✅ Hide image upload for AI chats */}
+              {!isAI && (
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={isSending}
+                    className="rounded-full"
+                    onClick={() => imageInputRef.current?.click()}
+                  >
+                    <Paperclip className="h-4 w-4" />
+                  </Button>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    disabled={isSending}
+                    ref={imageInputRef}
+                    onChange={handleImageChange}
+                  />
+                </div>
+              )}
+
+              <FormField
+                control={form.control}
+                name="message"
+                disabled={isSending}
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <Input
+                      {...field}
+                      autoComplete="off"
+                      placeholder={
+                        isAI ? 'Ask AI anything...' : 'Type new message'
+                      }
+                      className="min-h-10 bg-background"
+                    />
+                  </FormItem>
+                )}
+              />
+
+              {/* ✅ Microphone button for voice messages (hide for AI chats) */}
+              {!isAI && (
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
                   disabled={isSending}
                   className="rounded-full"
-                  onClick={() => imageInputRef.current?.click()}
+                  onClick={() => setIsRecordingMode(true)}
                 >
-                  <Paperclip className="h-4 w-4" />
+                  <Mic className="h-4 w-4" />
                 </Button>
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  disabled={isSending}
-                  ref={imageInputRef}
-                  onChange={handleImageChange}
-                />
-              </div>
-            )}
-
-            <FormField
-              control={form.control}
-              name="message"
-              disabled={isSending}
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <Input
-                    {...field}
-                    autoComplete="off"
-                    placeholder={
-                      isAI ? 'Ask AI anything...' : 'Type new message'
-                    }
-                    className="min-h-10 bg-background"
-                  />
-                </FormItem>
               )}
-            />
 
-            <Button
-              type="submit"
-              size="icon"
-              className={
-                isAI
-                  ? 'rounded-lg bg-purple-600 hover:bg-purple-700'
-                  : 'rounded-lg'
-              }
-              disabled={isSending}
-            >
-              {isSending ? (
-                <span className="animate-spin">⏳</span>
-              ) : (
-                <Send className="h-3.5 w-3.5" />
-              )}
-            </Button>
-          </form>
+              <Button
+                type="submit"
+                size="icon"
+                className={
+                  isAI
+                    ? 'rounded-lg bg-purple-600 hover:bg-purple-700'
+                    : 'rounded-lg'
+                }
+                disabled={isSending}
+              >
+                {isSending ? (
+                  <span className="animate-spin">⏳</span>
+                ) : (
+                  <Send className="h-3.5 w-3.5" />
+                )}
+              </Button>
+            </form>
+          )}
         </Form>
       </div>
 
