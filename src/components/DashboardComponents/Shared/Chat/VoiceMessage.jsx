@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const VoiceMessage = ({ voiceUrl, duration, isSender }) => {
+const VoiceMessage = ({ voiceUrl, duration, transcription, isSender }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [showTranscript, setShowTranscript] = useState(false);
   const audioRef = useRef(null);
 
   const formatTime = (seconds) => {
@@ -56,39 +57,66 @@ const VoiceMessage = ({ voiceUrl, duration, isSender }) => {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className={`flex items-center gap-2 p-2 rounded-lg min-w-[200px] ${
+    <div className={`flex flex-col gap-1 min-w-[200px] rounded-lg p-2 ${
       isSender ? 'bg-primary text-primary-foreground' : 'bg-sidebar-accent'
     }`}>
-      <audio ref={audioRef} src={voiceUrl} preload="metadata" />
-      
-      <Button
-        size="icon"
-        variant="ghost"
-        onClick={togglePlay}
-        className="size-8 rounded-full shrink-0 hover:bg-current/10"
-      >
-        {isPlaying ? (
-          <Pause className="size-4" />
-        ) : (
-          <Play className="size-4 ml-0.5" />
-        )}
-      </Button>
+      {/* Audio Player Row */}
+      <div className="flex items-center gap-2">
+        <audio ref={audioRef} src={voiceUrl} preload="metadata" />
+        
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={togglePlay}
+          className="size-8 rounded-full shrink-0 hover:bg-current/10"
+        >
+          {isPlaying ? (
+            <Pause className="size-4" />
+          ) : (
+            <Play className="size-4 ml-0.5" />
+          )}
+        </Button>
 
-      <div className="flex-1 min-w-0">
-        {/* Waveform/Progress bar */}
-        <div className="relative h-8 flex items-center">
-          <div className="w-full h-1 bg-current/20 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-current transition-all duration-100"
-              style={{ width: `${progress}%` }}
-            />
+        <div className="flex-1 min-w-0">
+          <div className="relative h-8 flex items-center">
+            <div className="w-full h-1 bg-current/20 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-current transition-all duration-100"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
         </div>
+
+        <span className="text-xs shrink-0 opacity-70">
+          {formatTime(isPlaying ? currentTime : duration)}
+        </span>
       </div>
 
-      <span className="text-xs shrink-0 opacity-70">
-        {formatTime(isPlaying ? currentTime : duration)}
-      </span>
+      {/* Transcription Toggle & Text */}
+      {transcription && (
+        <div className="border-t border-current/10 pt-1 mt-1">
+          {!showTranscript ? (
+            <button 
+              onClick={() => setShowTranscript(true)}
+              className="text-[10px] font-medium opacity-70 hover:opacity-100 flex items-center gap-1 w-full"
+            >
+              <span className="bg-current/10 px-1.5 py-0.5 rounded">Aa</span>
+              Show Transcript
+            </button>
+          ) : (
+            <div className="text-xs space-y-1 animate-in fade-in slide-in-from-top-1">
+              <p className="opacity-90 leading-relaxed">{transcription}</p>
+              <button 
+                onClick={() => setShowTranscript(false)}
+                className="text-[10px] opacity-60 hover:opacity-100"
+              >
+                Hide
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

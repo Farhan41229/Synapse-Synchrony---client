@@ -148,6 +148,7 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
               <VoiceMessage
                 voiceUrl={message.voiceUrl}
                 duration={message.voiceDuration || 0}
+                transcription={message.voiceTranscription}
                 isSender={isCurrentUser}
               />
             )}
