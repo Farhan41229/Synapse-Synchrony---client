@@ -22,12 +22,9 @@ const LocationMessage = ({ latitude, longitude, address, placeName, message, isS
           marginHeight="0"
           marginWidth="0"
           src={staticMapUrl}
-          className="pointer-events-none"
           title="Location Map"
         />
-        
-        {/* Overlay to prevent interaction */}
-        <div className="absolute inset-0 bg-transparent" />
+
       </div>
 
       {/* Location Info */}
