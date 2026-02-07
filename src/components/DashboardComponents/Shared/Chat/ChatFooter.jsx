@@ -4,11 +4,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Paperclip, Send, X, Sparkles, Mic } from 'lucide-react';
+import { Paperclip, Send, X, Sparkles, Mic, MapPin } from 'lucide-react';
 import { Form, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import ChatReplyBar from './ChatReplyBar';
 import VoiceRecorder from './VoiceRecorder';
+import LocationPicker from './LocationPicker';
 import { useChat } from '@/hooks/use-chat';
 import { useAuthStore } from '@/store/authStore';
 
@@ -78,6 +79,7 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
 
   const [image, setImage] = useState(null);
   const [isRecordingMode, setIsRecordingMode] = useState(false);
+  const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
   const imageInputRef = useRef(null);
 
   const form = useForm({
@@ -257,18 +259,33 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
                 )}
               />
 
-              {/* ✅ Microphone button for voice messages (hide for AI chats) */}
+              {/* ✅ Location & Microphone buttons (hide for AI chats) */}
               {!isAI && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  disabled={isSending}
-                  className="rounded-full"
-                  onClick={() => setIsRecordingMode(true)}
-                >
-                  <Mic className="h-4 w-4" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={isSending}
+                    className="rounded-full"
+                    onClick={() => setIsLocationPickerOpen(true)}
+                    title="Share Location"
+                  >
+                    <MapPin className="h-4 w-4" />
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    disabled={isSending}
+                    className="rounded-full"
+                    onClick={() => setIsRecordingMode(true)}
+                    title="Voice Message"
+                  >
+                    <Mic className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
 
               <Button
@@ -300,6 +317,14 @@ const ChatFooter = ({ chatId, currentUserId, replyTo, onCancelReply }) => {
           onCancel={onCancelReply}
         />
       )}
+
+      {/* ✅ Location Picker Dialog */}
+      <LocationPicker
+        chatId={chatId}
+        replyTo={replyTo?._id}
+        isOpen={isLocationPickerOpen}
+        onClose={() => setIsLocationPickerOpen(false)}
+      />
     </>
   );
 };

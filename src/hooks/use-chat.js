@@ -615,6 +615,116 @@ export const useChat = create((set, get) => ({
     }
   },
 
+  sendLocationMessage: async (payload) => {
+    set({ isSendingMsg: true });
+    const { chatId, latitude, longitude, address, placeName, message, replyTo, user } = payload;
+
+    if (!chatId || !latitude || !longitude || !user?._id) {
+      set({ isSendingMsg: false });
+      return;
+    }
+
+    const tempUserId = generateUUID();
+
+    const tempMessage = {
+      _id: tempUserId,
+      chatId,
+      messageType: 'location',
+      location: {
+        latitude,
+        longitude,
+        address: address || '',
+        placeName: placeName || '',
+      },
+      content: message || '',
+      sender: user,
+      replyTo: replyTo || null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'sending...',
+    };
+
+    // Add temp message optimistically
+    set((state) => {
+      if (!state.singleChat || state.singleChat?.chat?._id !== chatId) {
+        return state;
+      }
+
+      return {
+        singleChat: {
+          ...state.singleChat,
+          messages: [...(state.singleChat.messages || []), tempMessage],
+        },
+      };
+    });
+
+    try {
+      const response = await axios.post(
+        `${API}/chat/create-location-message`,
+        {
+          chatId,
+          latitude,
+          longitude,
+          address: address || '',
+          placeName: placeName || '',
+          content: message || '',
+          replyTo: replyTo || null,
+        }
+      );
+
+      const locationMessage = response.data?.data;
+
+      if (!locationMessage) {
+        // Remove temp message on error
+        set((state) => {
+          if (!state.singleChat) return state;
+          return {
+            singleChat: {
+              ...state.singleChat,
+              messages: (state.singleChat.messages || []).filter(
+                (msg) => msg?._id !== tempUserId
+              ),
+            },
+          };
+        });
+        return;
+      }
+
+      // Replace temp message with real one
+      set((state) => {
+        if (!state.singleChat) return state;
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: (state.singleChat.messages || []).map((msg) =>
+              msg?._id === tempUserId ? locationMessage : msg
+            ),
+          },
+        };
+      });
+
+    } catch (error) {
+      console.error('Error sending location message:', error);
+
+      // Remove temp message on error
+      set((state) => {
+        if (!state.singleChat) return state;
+
+        return {
+          singleChat: {
+            ...state.singleChat,
+            messages: (state.singleChat.messages || []).filter(
+              (msg) => msg?._id !== tempUserId
+            ),
+          },
+        };
+      });
+    } finally {
+      set({ isSendingMsg: false });
+    }
+  },
+
   addNewChat: (newChat) => {
     set((state) => {
       const existingChatIndex = state.chats.findIndex(

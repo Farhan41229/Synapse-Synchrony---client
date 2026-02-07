@@ -8,6 +8,7 @@ import { ReplyIcon, Bot, Sparkles } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import VoiceMessage from './VoiceMessage';
+import LocationMessage from './LocationMessage';
 
 const ChatBodyMessage = memo(({ message, onReply }) => {
   const { user } = useAuthStore();
@@ -129,7 +130,11 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
                 "
                 >
                   {message?.replyTo?.content ||
-                    (message?.replyTo?.image ? '📷 Photo' : '')}
+                    (message?.replyTo?.image ? '📷 Photo' : '') ||
+                    (message?.replyTo?.voiceUrl ? '🎤 Voice Message' : '') ||
+                    (message?.replyTo?.messageType === 'location'
+                      ? '📍 Location'
+                      : '')}
                 </p>
               </div>
             )}
@@ -147,8 +152,20 @@ const ChatBodyMessage = memo(({ message, onReply }) => {
               />
             )}
 
+            {/* ✅ Location Message */}
+            {message?.messageType === 'location' && message?.location && (
+              <LocationMessage
+                latitude={message.location.latitude}
+                longitude={message.location.longitude}
+                address={message.location.address}
+                placeName={message.location.placeName}
+                message={message.content}
+                isSender={isCurrentUser}
+              />
+            )}
+
             {/* ✅ Message content with thinking indicator */}
-            {message?.content && (
+            {message?.content && message?.messageType !== 'location' && (
               <p
                 className={cn(
                   isThinking &&
