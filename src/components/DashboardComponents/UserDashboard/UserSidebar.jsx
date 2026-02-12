@@ -12,17 +12,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSubButton,
-  SidebarSeparator,
 } from '@/components/ui/sidebar';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import {
   Home,
   ChevronUp,
-  ChevronDown,
   User2,
   Plus,
   LibraryBig,
@@ -51,15 +44,9 @@ import {
   FilePlus2,
   StickyNote,
   ScanText,
-  LayoutDashboard,
-  HeartPulse,
-  Compass,
-  Settings,
-  LogOut,
-  Circle,
 } from 'lucide-react';
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import React from 'react';
+import { Link } from 'react-router';
 import { FaExchangeAlt } from 'react-icons/fa';
 import {
   DropdownMenu,
@@ -90,165 +77,117 @@ const items = [
 ];
 const UserSidebar = () => {
   const { user } = useAuthStore();
-  const location = useLocation();
-  const pathname = location.pathname;
-  
-  // State for collapsible groups
-  const [openGroups, setOpenGroups] = useState({
-    application: true,      // Default open
-    wellness: false,        // Default closed
-    medical: false,         // Default closed
-    navigation: true,       // Default open
-    blogs: false,           // Default closed
-    notes: false,           // Default closed
-    schedule: false,        // Default closed
-    events: false,          // Default closed
-  });
-  
   // console.log(user);
   const photourl = user?.avatar;
   return (
     <Sidebar collapsible="icon" className="z-20">
-      <SidebarHeader className="border-b border-sidebar-border p-4">
-        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="size-8 rounded-lg overflow-hidden">
-            <img
-              src={photourl || '/default-avatar.png'}
-              alt="logo"
-              className="size-8 object-cover"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-sm">Synapse Synchrony</span>
-            <span className="text-xs text-sidebar-muted">User Dashboard</span>
-          </div>
-        </Link>
+      <SidebarHeader className="">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link to="/">
+                <img
+                  src={photourl ? photourl : ''}
+                  alt="logo"
+                  width={30}
+                  height={30}
+                  className="rounded-full min-h-5 min-w-5"
+                />
+                <span>{role} Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="overflow-y-auto overflow-x-hidden px-2">
+      <SidebarContent>
         {/* Application Group */}
-        <Collapsible open={openGroups.application} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, application: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <LayoutDashboard className="size-4" />
-                  <span>Application</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={pathname === item.url} tooltip={item.title}>
-                        <Link to={item.url}>
-                          <item.icon />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                      {item.title === 'Inbox' && (
-                        <SidebarMenuBadge>24</SidebarMenuBadge>
-                      )}
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup>
+          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <a href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </a>
+                  </SidebarMenuButton>
+                  {item.title === 'Inbox' && (
+                    <SidebarMenuBadge>24</SidebarMenuBadge>
+                  )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         
         {/* Wellness/Medilink Group */}
-        <Collapsible open={openGroups.wellness} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, wellness: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <HeartPulse className="size-4" />
-                  <span>Medilink Wellness</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/wellness'}>
-                        <Brain />
-                        Wellness Dashboard
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/wellness/mood-history'}>
-                        <Heart />
-                        Mood History
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/wellness/stress-history'}>
-                        <Activity />
-                        Stress History
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/wellness/suggestions'}>
-                        <Lightbulb />
-                        Suggestions
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup>
+          <SidebarGroupLabel>Medilink Wellness</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness'}>
+                    <Brain />
+                    Wellness Dashboard
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness/mood-history'}>
+                    <Heart />
+                    Mood History
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness/stress-history'}>
+                    <Activity />
+                    Stress History
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/wellness/suggestions'}>
+                    <Lightbulb />
+                    Suggestions
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         
         {/* Medical Diagnosis Group */}
-        <Collapsible open={openGroups.medical} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, medical: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <Stethoscope className="size-4" />
-                  <span>Medical Diagnosis</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/medilink/diagnosis'}>
-                        <Stethoscope />
-                        Diagnosis Sessions
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/my-medications'}>
-                        <Pill />
-                        My Medications
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup>
+          <SidebarGroupLabel>Medical Diagnosis</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/medilink/diagnosis'}>
+                    <Stethoscope />
+                    Diagnosis Sessions
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/my-medications'}>
+                    <Pill />
+                    My Medications
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         
         {/* Books Group */}
         {/* <SidebarGroup>
@@ -341,244 +280,174 @@ const UserSidebar = () => {
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
-        </Collapsible>
-        
-        {/* Navigation Group */}
-        <Collapsible open={openGroups.navigation} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, navigation: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <Compass className="size-4" />
-                  <span>Navigation</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/about'}>
-                        <Info />
-                        About
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/contact'}>
-                        <Mail />
-                        Contact
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        
-        {/* Blogs Group */}
-        <Collapsible open={openGroups.blogs} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, blogs: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <FileText className="size-4" />
-                  <span>Blogs</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/blogs'}>
-                        <FileText />
-                        All Blogs
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/my-blogs'}>
-                        <BookmarkCheck />
-                        My Blogs
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/create-blog'}>
-                        <FilePenLine />
-                        Create Blog
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        </SidebarGroup> */}
+        {/* navigation Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/about'}>
+                    <Info />
+                    About
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/contact'}>
+                    <Mail />
+                    Contact
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        {/* Blog Group */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Blogs</SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/my-blogs'}>
+                    <FileText />
+                    My Blogs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/bookmarked-blogs'}>
+                    <BookmarkCheck />
+                    Bookmarked Blogs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/liked-blogs'}>
+                    <HeartHandshake />
+                    Liked Blogs
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/blog/blogs/create'}>
+                    <FilePenLine />
+                    Create Blog
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
         {/* Notes Group */}
-        <Collapsible open={openGroups.notes} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, notes: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <StickyNote className="size-4" />
-                  <span>Notes</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/dashboard/notes">
-                        <StickyNote />
-                        My Notes
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/dashboard/notes/create">
-                        <FilePlus2 />
-                        Create Note
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/dashboard/notes/image-to-text">
-                        <ScanText />
-                        Image to text
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup>
+          <SidebarGroupLabel>Notes</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/notes">
+                    <StickyNote />
+                    My Notes
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/notes/create">
+                    <FilePlus2 />
+                    Create Note
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/notes/image-to-text">
+                    <ScanText />
+                    Image to text
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         
         {/* Schedule Group */}
-        <Collapsible open={openGroups.schedule} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, schedule: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <Calendar className="size-4" />
-                  <span>Schedule</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/dashboard/schedule">
-                        <Calendar />
-                        My Schedule
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to="/dashboard/schedule/upload">
-                        <CalendarPlus />
-                        Upload Schedule
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup>
+          <SidebarGroupLabel>Schedule</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/schedule">
+                    <Calendar />
+                    My Schedule
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/dashboard/schedule/upload">
+                    <CalendarPlus />
+                    Upload Schedule
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
         
         {/* Event Group */}
-        <Collapsible open={openGroups.events} onOpenChange={(open) => setOpenGroups(prev => ({ ...prev, events: open }))}>
-          <SidebarGroup>
-            <CollapsibleTrigger asChild>
-              <SidebarGroupLabel className="text-sidebar-group-label font-semibold tracking-wide uppercase text-xs flex items-center justify-between cursor-pointer hover:bg-sidebar-accent rounded-md px-2 py-1.5 transition-colors group">
-                <div className="flex items-center gap-2">
-                  <CalendarDays className="size-4" />
-                  <span>Events</span>
-                </div>
-                <ChevronDown className="size-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-              </SidebarGroupLabel>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/my-events'}>
-                        <CalendarDays />
-                        My Events
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link to={'/dashboard/create-event'}>
-                        <CalendarPlus />
-                        Create Event
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <SidebarGroup>
+          <SidebarGroupLabel>Events</SidebarGroupLabel>
+
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/my-events'}>
+                    <CalendarDays />
+                    My Events
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={'/dashboard/create-event'}>
+                    <CalendarPlus />
+                    Create Event
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border p-2">
+      <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <SidebarMenuSubButton className="h-12 hover:bg-sidebar-accent transition-colors">
-                  <div className="size-8 rounded-full bg-sidebar-accent flex items-center justify-center overflow-hidden">
-                    {photourl ? (
-                      <img src={photourl} alt="User" className="size-8 rounded-full object-cover" />
-                    ) : (
-                      <span className="text-sm font-medium">{user?.name?.[0] || 'U'}</span>
-                    )}
-                  </div>
-                  <div className="flex flex-col flex-1 min-w-0 text-left">
-                    <span className="text-sm font-medium truncate">{user?.name || Name}</span>
-                    <span className="text-xs text-sidebar-muted truncate">{user?.email || 'user@synapse.com'}</span>
-                  </div>
-                  <ChevronUp className="size-4" />
+                <SidebarMenuSubButton>
+                  <User2 /> {Name?.slice(0, 19)}{' '}
+                  <ChevronUp className="ml-auto" />
                 </SidebarMenuSubButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56" side="top">
-                <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link to="/dashboard/profile" className="flex items-center gap-2">
-                    <User2 className="size-4" />
-                    <span>Account</span>
-                  </Link>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard/profile">Account</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
-                  <Settings className="size-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2 text-destructive focus:text-destructive">
-                  <LogOut className="size-4" />
-                  <span>Sign out</span>
-                </DropdownMenuItem>
+                <DropdownMenuItem>Setting</DropdownMenuItem>
+                <DropdownMenuItem>Sign out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
