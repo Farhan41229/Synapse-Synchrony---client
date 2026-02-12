@@ -38,7 +38,6 @@ import {
   CalendarDays,
   CalendarPlus,
   Stethoscope,
-  Pill,
   BookmarkCheck,
   HeartHandshake,
   FilePlus2,
@@ -164,24 +163,16 @@ const UserSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         
-        {/* Medical Diagnosis Group */}
+        {/* Health Assessment Group */}
         <SidebarGroup>
-          <SidebarGroupLabel>Medical Diagnosis</SidebarGroupLabel>
+          <SidebarGroupLabel>Health Assessment</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link to={'/medilink/diagnosis'}>
                     <Stethoscope />
-                    Diagnosis Sessions
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/my-medications'}>
-                    <Pill />
-                    My Medications
+                    Health Assessments
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

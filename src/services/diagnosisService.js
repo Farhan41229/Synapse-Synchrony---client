@@ -1,20 +1,22 @@
 import { axiosInstance } from '@/lib/axios';
 
 export const diagnosisService = {
-  // Session management
+  // Create a new diagnosis session
   createSession: async () => {
     const response = await axiosInstance.post('/portal/diagnosis/session');
     return response.data;
   },
 
-  submitSymptoms: async (sessionId, symptoms) => {
+  // Send a message in the diagnosis conversation
+  sendMessage: async (sessionId, message) => {
     const response = await axiosInstance.post(
       `/portal/diagnosis/session/${sessionId}/message`,
-      { symptoms }
+      { message }
     );
     return response.data;
   },
 
+  // Get full session history (for loading existing sessions)
   getSessionHistory: async (sessionId) => {
     const response = await axiosInstance.get(
       `/portal/diagnosis/session/${sessionId}/history`
@@ -22,40 +24,28 @@ export const diagnosisService = {
     return response.data;
   },
 
+  // Get all sessions list
   getAllSessions: async () => {
     const response = await axiosInstance.get('/portal/diagnosis/sessions');
     return response.data;
   },
 
-  // Medication management
-  getUserMedications: async (params) => {
-    const response = await axiosInstance.get('/portal/diagnosis/medications', {
-      params,
-    });
-    return response.data;
-  },
-
-  updateMedicationStatus: async (id, status, notes) => {
-    const response = await axiosInstance.patch(
-      `/portal/diagnosis/medications/${id}/status`,
-      { status, notes }
-    );
-    return response.data;
-  },
-
-  addMedicationNote: async (id, note) => {
+  // Save user's location to a session
+  saveUserLocation: async (sessionId, locationData) => {
     const response = await axiosInstance.post(
-      `/portal/diagnosis/medications/${id}/note`,
-      { note }
+      `/portal/diagnosis/session/${sessionId}/location`,
+      locationData
     );
     return response.data;
   },
 
-  getMedicationInfo: async (medicationName) => {
+  // Get nearby hospitals/clinics based on coordinates
+  getNearbyFacilities: async (latitude, longitude, radius = 5000) => {
     const response = await axiosInstance.get(
-      '/portal/diagnosis/medication-info',
+      '/portal/diagnosis/nearby-facilities',
       {
-        params: { name: medicationName },
+        params: { latitude, longitude, radius },
+        timeout: 50000, // 50 second timeout on client side
       }
     );
     return response.data;

@@ -41,7 +41,7 @@ import EditBlog from '@/pages/Edit Blog Page/EditBlog';
 import EditEvent from '@/pages/Edit Event Page/EditEvent';
 import DiagnosisSessionsPage from '@/pages/Diagnosis/DiagnosisSessionsPage';
 import DiagnosisChatPage from '@/pages/Diagnosis/DiagnosisChatPage';
-import MyMedicationsPage from '@/pages/Diagnosis/MyMedicationsPage';
+
 import MyNotes from '@/pages/Dashboard/MyNotes';
 import CreateNote from '@/pages/Dashboard/CreateNote';
 import EditNote from '@/pages/Dashboard/EditNote';
@@ -142,8 +142,7 @@ const router = createBrowserRouter([
       { path: 'wellness/mood-history', Component: MoodHistoryPage },
       { path: 'wellness/stress-history', Component: StressHistoryPage },
       { path: 'wellness/suggestions', Component: SuggestionsPage },
-      // Medical Diagnosis
-      { path: 'my-medications', Component: MyMedicationsPage },
+      // Medical Diagnosis (medications page removed in diagnosis overhaul)
     ],
   },
   {

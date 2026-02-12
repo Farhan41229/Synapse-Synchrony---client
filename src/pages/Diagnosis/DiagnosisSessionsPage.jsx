@@ -8,7 +8,7 @@ import {
   Calendar,
   AlertCircle,
   Clock,
-  Pill,
+  MessageSquare,
   Loader2,
   ArrowRight,
 } from 'lucide-react';
@@ -97,10 +97,10 @@ const DiagnosisSessionsPage = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl md:text-4xl font-bold text-white">
-                    Medical Diagnosis
+                    Health Assessments
                   </h1>
                   <p className="text-white/90 mt-1">
-                    Your diagnosis history and health assessments
+                    Your consultation history and health guidance
                   </p>
                 </div>
               </div>
@@ -129,11 +129,11 @@ const DiagnosisSessionsPage = () => {
           <div className="text-center py-12" data-aos="fade-up">
             <Stethoscope className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              No Diagnosis Sessions Yet
+              No Health Assessments Yet
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Start your first medical diagnosis session to get AI-powered health
-              assessments
+              Start your first health consultation to get AI-powered guidance
+              and assessment
             </p>
             <button
               onClick={() => navigate('/medilink/diagnosis/new')}
@@ -171,30 +171,35 @@ const DiagnosisSessionsPage = () => {
 
                 {/* Content */}
                 <div className="p-4">
-                  {/* Symptoms Preview */}
+                  {/* Main Concern Preview */}
                   <div className="mb-4">
                     <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                      Symptoms
+                      Main Concern
                     </h4>
                     <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                      {session.preview.symptoms || 'No symptoms recorded'}
+                      {session.preview.mainConcern || session.preview.symptoms || 'No details recorded'}
                     </p>
                   </div>
 
-                  {/* Diagnosis */}
-                  {session.preview.diagnosis && (
+                  {/* Assessment */}
+                  {(session.preview.primaryCondition || session.preview.diagnosis) && (
                     <div className="mb-4">
                       <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                        Diagnosis
+                        Assessment
                       </h4>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {session.preview.diagnosis}
+                        {session.preview.primaryCondition || session.preview.diagnosis}
                       </p>
                     </div>
                   )}
 
                   {/* Badges */}
                   <div className="flex flex-wrap gap-2 mb-4">
+                    {session.phase && session.phase !== 'assessed' && session.phase !== 'follow_up' && (
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
+                        In Progress
+                      </span>
+                    )}
                     {session.preview.severity && (
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-semibold border ${getSeverityColor(
@@ -213,12 +218,17 @@ const DiagnosisSessionsPage = () => {
                         {session.preview.urgency}
                       </span>
                     )}
+                    {session.preview.shouldVisitDoctor && (
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800">
+                        Doctor Visit Recommended
+                      </span>
+                    )}
                   </div>
 
                   {/* Messages Count */}
                   <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                     <span className="flex items-center gap-1">
-                      <Pill className="w-4 h-4" />
+                      <MessageSquare className="w-4 h-4" />
                       {session.messageCount} messages
                     </span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

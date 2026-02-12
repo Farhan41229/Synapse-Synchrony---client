@@ -1,3 +1,8 @@
+/**
+ * @deprecated This page is no longer used as of the diagnosis system overhaul.
+ * The AI no longer prescribes medications. Kept for reference only.
+ * Do not import or route to this component in new code.
+ */
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { diagnosisService } from '@/services/diagnosisService';
