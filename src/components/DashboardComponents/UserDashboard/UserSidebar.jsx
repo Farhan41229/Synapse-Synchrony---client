@@ -19,8 +19,6 @@ import {
   User2,
   Plus,
   LibraryBig,
-  Mail,
-  Info,
   BookType,
   ShoppingCart,
   ClipboardList,
@@ -28,21 +26,15 @@ import {
   GitPullRequest,
   X,
   MessageCircle,
-  FileText,
-  FilePenLine,
   Brain,
   Heart,
   Activity,
   Lightbulb,
-  Calendar,
-  CalendarDays,
-  CalendarPlus,
+  Pill,
+  ScanLine,
   Stethoscope,
-  BookmarkCheck,
-  HeartHandshake,
-  FilePlus2,
-  StickyNote,
-  ScanText,
+  FileText,
+  Upload,
 } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router';
@@ -272,99 +264,24 @@ const UserSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup> */}
-        {/* navigation Group */}
+        {/* Reports Group */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-
+          <SidebarGroupLabel>Reports</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to={'/about'}>
-                    <Info />
-                    About
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/contact'}>
-                    <Mail />
-                    Contact
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        {/* Blog Group */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Blogs</SidebarGroupLabel>
-
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/my-blogs'}>
+                  <Link to="/dashboard/reports">
                     <FileText />
-                    My Blogs
+                    My Reports
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/bookmarked-blogs'}>
-                    <BookmarkCheck />
-                    Bookmarked Blogs
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/liked-blogs'}>
-                    <HeartHandshake />
-                    Liked Blogs
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/blog/blogs/create'}>
-                    <FilePenLine />
-                    Create Blog
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Notes Group */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Notes</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/dashboard/notes">
-                    <StickyNote />
-                    My Notes
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/dashboard/notes/create">
-                    <FilePlus2 />
-                    Create Note
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to="/dashboard/notes/image-to-text">
-                    <ScanText />
-                    Image to text
+                  <Link to="/dashboard/reports/extract">
+                    <Upload />
+                    Extract Report
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -372,24 +289,24 @@ const UserSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         
-        {/* Schedule Group */}
+        {/* Medicine Group */}
         <SidebarGroup>
-          <SidebarGroupLabel>Schedule</SidebarGroupLabel>
+          <SidebarGroupLabel>Medicine</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/dashboard/schedule">
-                    <Calendar />
-                    My Schedule
+                  <Link to="/dashboard/medicine">
+                    <Pill />
+                    My Prescriptions
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to="/dashboard/schedule/upload">
-                    <CalendarPlus />
-                    Upload Schedule
+                  <Link to="/dashboard/medicine/extract">
+                    <ScanLine />
+                    Extract Prescription
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -397,31 +314,6 @@ const UserSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
         
-        {/* Event Group */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Events</SidebarGroupLabel>
-
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/my-events'}>
-                    <CalendarDays />
-                    My Events
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={'/dashboard/create-event'}>
-                    <CalendarPlus />
-                    Create Event
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
