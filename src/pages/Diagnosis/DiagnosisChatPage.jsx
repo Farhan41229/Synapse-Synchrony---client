@@ -28,15 +28,16 @@ import toast from 'react-hot-toast';
 const hasValidAssessment = (message) => {
   const assessment = message.assessment || message.diagnosis;
   if (!assessment) return false;
-  
+
   // Check for new format (assessment)
   if (message.assessment) {
     return Boolean(
-      assessment.primaryCondition ||
-      assessment.possibleConditions?.length > 0
+      assessment.possibleConditions?.length > 0 ||
+      assessment.reliefSuggestions?.length > 0 ||
+      assessment.urgency
     );
   }
-  
+
   // Check for old format (diagnosis) - backward compatibility
   if (message.diagnosis) {
     return Boolean(
@@ -44,7 +45,7 @@ const hasValidAssessment = (message) => {
       assessment.possibleDiseases?.length > 0
     );
   }
-  
+
   return false;
 };
 
@@ -395,7 +396,7 @@ const AssessmentCard = ({
   locationError,
 }) => {
   const [expanded, setExpanded] = useState({
-    conditions: false,
+    conditions: true,
     warnings: true,
   });
 
@@ -450,9 +451,6 @@ const AssessmentCard = ({
   };
 
   // Normalize field names for backward compat with old diagnosis format
-  const primaryCondition = isNewFormat
-    ? assessment.primaryCondition
-    : assessment.primaryDiagnosis;
   const conditions = isNewFormat
     ? assessment.possibleConditions
     : assessment.possibleDiseases;
@@ -471,22 +469,6 @@ const AssessmentCard = ({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden shadow-lg">
-      {/* Emergency Alert */}
-      {assessment.urgency?.toLowerCase() === 'emergency' && (
-        <div className="bg-red-600 text-white p-4 flex items-center gap-3 animate-pulse">
-          <AlertTriangle className="w-6 h-6 flex-shrink-0" />
-          <div>
-            <p className="font-bold">
-              URGENT: Seek Emergency Medical Care Immediately!
-            </p>
-            <p className="text-sm">
-              Please call your local emergency number or go to the nearest
-              emergency room
-            </p>
-          </div>
-        </div>
-      )}
-
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-6">
@@ -497,41 +479,27 @@ const AssessmentCard = ({
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
               Health Assessment
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               Based on your consultation responses
             </p>
-          </div>
-        </div>
-
-        {/* Primary Condition */}
-        <div
-          className={`p-4 rounded-lg border-2 ${severityColors.border} ${severityColors.bg} mb-4`}
-        >
-          <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase">
-              Primary Assessment
-            </h4>
+            {/* Severity & Urgency badges */}
             <div className="flex items-center gap-2 flex-wrap">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-bold ${severityColors.bg} ${severityColors.text}`}
-              >
-                {assessment.severity}
-              </span>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-bold ${getUrgencyColor(assessment.urgency)}`}
-              >
-                {assessment.urgency}
-              </span>
-              {assessment.confidence && (
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                  {assessment.confidence} confidence
+              {assessment.severity && (
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold ${severityColors.bg} ${severityColors.text}`}
+                >
+                  {assessment.severity}
+                </span>
+              )}
+              {assessment.urgency && (
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-bold ${getUrgencyColor(assessment.urgency)}`}
+                >
+                  {assessment.urgency}
                 </span>
               )}
             </div>
           </div>
-          <p className="text-lg font-bold text-gray-900 dark:text-white">
-            {primaryCondition}
-          </p>
         </div>
 
         {/* Possible Conditions */}

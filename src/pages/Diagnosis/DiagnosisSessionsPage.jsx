@@ -181,18 +181,6 @@ const DiagnosisSessionsPage = () => {
                     </p>
                   </div>
 
-                  {/* Assessment */}
-                  {(session.preview.primaryCondition || session.preview.diagnosis) && (
-                    <div className="mb-4">
-                      <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                        Assessment
-                      </h4>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">
-                        {session.preview.primaryCondition || session.preview.diagnosis}
-                      </p>
-                    </div>
-                  )}
-
                   {/* Badges */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {session.phase && session.phase !== 'assessed' && session.phase !== 'follow_up' && (
